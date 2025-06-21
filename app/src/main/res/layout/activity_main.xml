@@ -41,11 +41,12 @@
             android:layout_marginEnd="@dimen/margin_medium"
             android:layout_weight="333"
             android:backgroundTint="#ffffff"
+            android:textSize="22sp"
             android:text="@string/button_search"
             android:textColor="@color/YP_Black"
             android:textAllCaps="false"
             app:cornerRadius="@dimen/margin_medium"
-            app:icon="@drawable/search_light_mode"
+            app:icon="@drawable/ic_search_24"
             app:iconGravity="textStart"
             app:iconTint="@color/YP_Black" />
 
@@ -59,11 +60,12 @@
             android:layout_marginEnd="@dimen/margin_medium"
             android:layout_weight="333"
             android:backgroundTint="#ffffff"
+            android:textSize="22sp"
             android:text="@string/button_mediat"
             android:textColor="@color/YP_Black"
             android:textAllCaps="false"
             app:cornerRadius="@dimen/margin_medium"
-            app:icon="@drawable/play_b_l"
+            app:icon="@drawable/ic_media_lib_24"
             app:iconGravity="textStart"
             app:iconTint="@color/YP_Black" />
 
@@ -77,11 +79,12 @@
             android:layout_marginEnd="@dimen/margin_medium"
             android:layout_weight="333"
             android:backgroundTint="#ffffff"
+            android:textSize="22sp"
             android:text="@string/button_settings"
             android:textColor="@color/YP_Black"
             android:textAllCaps="false"
             app:cornerRadius="@dimen/margin_medium"
-            app:icon="@drawable/setting_light_mode"
+            app:icon="@drawable/ic_gear_24"
             app:iconGravity="textStart"
             app:iconTint="@color/YP_Black" />
     </LinearLayout>

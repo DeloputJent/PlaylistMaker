@@ -31,6 +31,7 @@ class MainActivity : AppCompatActivity() {
                 startActivity(displayLibIntent)
             }
         }
+
         pushmedialib.setOnClickListener(buttonClickListener)
 
         val button2ClickListener: View.OnClickListener = object : View.OnClickListener {
@@ -40,8 +41,5 @@ class MainActivity : AppCompatActivity() {
             }
         }
         pushsearch.setOnClickListener(button2ClickListener)
-
-        enableEdgeToEdge()
-
     }
 }

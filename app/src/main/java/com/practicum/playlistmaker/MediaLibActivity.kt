@@ -9,8 +9,6 @@ import androidx.core.view.WindowInsetsCompat
 class MediaLibActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContentView(R.layout.activity_media_lib)
-
     }
 }
