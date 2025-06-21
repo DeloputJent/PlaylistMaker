@@ -7,13 +7,84 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
-    <TextView
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:text="Hello World!"
-      app:layout_constraintBottom_toBottomOf="parent"
-      app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintEnd_toEndOf="parent"
-      app:layout_constraintTop_toTopOf="parent" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@color/YP_Blue">
 
-  </androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:layout_width="304dp"
+            android:layout_height="56dp"
+            android:layout_marginStart="@dimen/margin_small"
+            android:layout_marginTop="@dimen/margin_small"
+            android:layout_marginBottom="@dimen/margin_medium"
+            android:paddingStart="@dimen/margin_medium"
+            android:gravity="center_vertical"
+            android:text="@string/app_name"
+            android:textColor="@color/white"
+            android:textSize="22sp" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_marginBottom="24dp"
+        android:background="@color/YP_Blue">
+
+        <Button
+            android:id="@+id/searchbutton"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_gravity="center"
+            android:layout_marginStart="@dimen/margin_medium"
+            android:layout_marginTop="@dimen/margin_medium"
+            android:layout_marginEnd="@dimen/margin_medium"
+            android:layout_weight="333"
+            android:backgroundTint="#ffffff"
+            android:text="@string/button_search"
+            android:textColor="@color/YP_Black"
+            android:textAllCaps="false"
+            app:cornerRadius="@dimen/margin_medium"
+            app:icon="@drawable/search_light_mode"
+            app:iconGravity="textStart"
+            app:iconTint="@color/YP_Black" />
+
+        <Button
+            android:id="@+id/libbutton"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_gravity="center"
+            android:layout_marginStart="@dimen/margin_medium"
+            android:layout_marginTop="@dimen/margin_medium"
+            android:layout_marginEnd="@dimen/margin_medium"
+            android:layout_weight="333"
+            android:backgroundTint="#ffffff"
+            android:text="@string/button_mediat"
+            android:textColor="@color/YP_Black"
+            android:textAllCaps="false"
+            app:cornerRadius="@dimen/margin_medium"
+            app:icon="@drawable/play_b_l"
+            app:iconGravity="textStart"
+            app:iconTint="@color/YP_Black" />
+
+        <Button
+            android:id="@+id/setbutton"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_gravity="center"
+            android:layout_marginStart="@dimen/margin_medium"
+            android:layout_marginTop="@dimen/margin_medium"
+            android:layout_marginEnd="@dimen/margin_medium"
+            android:layout_weight="333"
+            android:backgroundTint="#ffffff"
+            android:text="@string/button_settings"
+            android:textColor="@color/YP_Black"
+            android:textAllCaps="false"
+            app:cornerRadius="@dimen/margin_medium"
+            app:icon="@drawable/setting_light_mode"
+            app:iconGravity="textStart"
+            app:iconTint="@color/YP_Black" />
+    </LinearLayout>
+
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
