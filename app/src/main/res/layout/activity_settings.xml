@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -7,24 +7,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:visibility="visible"
-    tools:visibility="visible">
+    tools:visibility="visible"
+    android:background="?attr/colorSecondary"
+    android:orientation="vertical">
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="?attr/colorSecondary"
-        android:orientation="vertical"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <LinearLayout
-            android:layout_width="304dp"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
             android:layout_marginStart="@dimen/margin_small"
             android:layout_marginTop="@dimen/margin_small"
-            android:layout_height="48dp"
             android:background="?attr/colorSecondary"
             android:orientation="horizontal">
-
             <Button
                 android:id="@+id/backtoMain"
                 android:background="@android:color/transparent"
@@ -39,7 +32,6 @@
                 app:iconPadding="0dp"
                 app:iconTint="?attr/colorOnSecondary"
                 tools:visibility="visible" />
-
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="48dp"
@@ -53,23 +45,63 @@
                 android:textSize="22sp" />
         </LinearLayout>
 
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="61dp"
-            android:layout_marginTop="24dp"
-            android:background="?attr/colorSecondary">
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        style="@style/TextView16sp"
+        android:layout_width="match_parent"
+        android:layout_height="61dp"
+        android:layout_marginTop="24dp"
+        android:background="?attr/colorSecondary"
+        android:paddingVertical="20dp"
+        android:paddingStart="@dimen/margin_medium"
+        android:paddingEnd="6dp"
+        android:text="@string/choose_theme"
+        app:thumbTint="@color/switchthumb_color"
+        app:switchMinWidth="32dp"
+        app:trackTint="@color/switchtrack_color" />
 
-            <TextView
-                style="@style/TextView16sp"
-                android:text="@string/choose_theme"/>
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="61dp"
+        android:background="?attr/colorSecondary">
 
-            <Switch
-                android:layout_width="56dp"
-                android:layout_height="40dp"
-                android:layout_gravity="end|center_vertical"
-                android:layout_marginEnd="6dp"
-                app:tint="?attr/colorOnSecondary"
-                tools:visibility="visible"/>
+        <TextView
+            style="@style/TextView16sp"
+            android:paddingStart="@dimen/margin_medium"
+            android:text="@string/shareIt"/>
+
+        <Button
+            android:id="@+id/sharingButton"
+            android:background="@android:color/transparent"
+            style="@style/InvisibleButton56x40OnSettings"
+            tools:visibility="visible" />
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="end|center_vertical"
+            android:layout_marginEnd="12dp"
+            android:src="@drawable/ic_share_this_24"/>
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="61dp"
+        android:background="?attr/colorSecondary">
+
+        <TextView
+            style="@style/TextView16sp"
+            android:paddingStart="@dimen/margin_medium"
+            android:text="@string/needSupport"/>
+        <Button
+            android:id="@+id/callSupportButton"
+            android:background="@android:color/transparent"
+            style="@style/InvisibleButton56x40OnSettings"
+            tools:visibility="visible" />
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="end|center_vertical"
+            android:layout_marginEnd="12dp"
+            android:src="@drawable/ic_call_support_24"/>
         </FrameLayout>
 
         <FrameLayout
@@ -79,54 +111,7 @@
 
             <TextView
                 style="@style/TextView16sp"
-                android:text="@string/shareIt"/>
-            <Button
-                android:id="@+id/sharingButton"
-                android:background="@android:color/transparent"
-                style="@style/InvisibleButton56x40OnSettings"
-                tools:visibility="visible" />
-
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_gravity="end|center_vertical"
-                android:layout_marginEnd="12dp"
-                android:src="@drawable/ic_share_this_24"
-                app:tint="?attr/colorOnSecondary" />
-
-        </FrameLayout>
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="61dp"
-            android:background="?attr/colorSecondary">
-
-            <TextView
-                style="@style/TextView16sp"
-                android:text="@string/needSupport"/>
-
-            <Button
-                android:id="@+id/callSupportButton"
-                android:background="@android:color/transparent"
-                style="@style/InvisibleButton56x40OnSettings"
-                tools:visibility="visible" />
-
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_gravity="end|center_vertical"
-                android:layout_marginEnd="12dp"
-                app:tint="?attr/colorOnSecondary"
-                android:src="@drawable/ic_call_support_24"/>
-        </FrameLayout>
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="61dp"
-            android:background="?attr/colorSecondary">
-
-            <TextView
-                style="@style/TextView16sp"
+                android:paddingStart="@dimen/margin_medium"
                 android:text="@string/user_agreement"/>
 
             <Button
@@ -140,10 +125,6 @@
                 android:layout_height="24dp"
                 android:layout_gravity="end|center_vertical"
                 android:layout_marginEnd="12dp"
-                app:tint="?attr/colorOnSecondary"
                 android:src="@drawable/ic_right_angle_bracket_24" />
         </FrameLayout>
-
-    </LinearLayout>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

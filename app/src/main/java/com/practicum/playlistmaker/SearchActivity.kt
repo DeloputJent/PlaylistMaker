@@ -13,6 +13,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.isVisible
+import androidx.core.view.updatePadding
 
 class SearchActivity : AppCompatActivity() {
 
@@ -34,7 +36,17 @@ class SearchActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         setContentView(R.layout.activity_search)
+
+        val currentView=findViewById<View>(R.id.search)
+        ViewCompat.setOnApplyWindowInsetsListener(currentView) { view, insets ->
+            val statusBar = insets.getInsets(WindowInsetsCompat.Type.statusBars())
+            val navigationBar = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
+            view.updatePadding(bottom = navigationBar.bottom)
+            view.updatePadding(top = statusBar.top)
+            insets
+        }
 
         val pushbackbutton=findViewById<Button>(R.id.fromSearchBackToMain)
 
@@ -57,20 +69,12 @@ class SearchActivity : AppCompatActivity() {
         val textInputControl = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                clearButton.visibility = clearButtonVisibility(s)
+                clearButton.isVisible = !s.isNullOrEmpty()
             }
             override fun afterTextChanged(s: Editable?) {
                 searchedName=s.toString()
             }
         }
         inputEditText.addTextChangedListener(textInputControl)
-    }
-
-    fun clearButtonVisibility(s: CharSequence?): Int {
-            return if (s.isNullOrEmpty()) {
-                View.GONE
-            } else {
-                View.VISIBLE
-            }
     }
 }
