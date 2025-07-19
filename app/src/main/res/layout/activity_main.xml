@@ -7,11 +7,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:background="@color/YP_Blue">
+        android:background="?attr/colorPrimary">
 
         <TextView
             android:layout_width="304dp"
@@ -21,73 +22,46 @@
             android:layout_marginBottom="@dimen/margin_medium"
             android:paddingStart="@dimen/margin_medium"
             android:gravity="center_vertical"
+            android:font="@font/ys_display_medium"
+            android:letterSpacing="0"
             android:text="@string/app_name"
-            android:textColor="@color/white"
+            android:textColor="?attr/colorOnPrimary"
             android:textSize="22sp" />
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:layout_marginBottom="24dp"
-        android:background="@color/YP_Blue">
 
-        <Button
-            android:id="@+id/searchbutton"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_gravity="center"
-            android:layout_marginStart="@dimen/margin_medium"
-            android:layout_marginTop="@dimen/margin_medium"
-            android:layout_marginEnd="@dimen/margin_medium"
-            android:layout_weight="333"
-            android:backgroundTint="#ffffff"
-            android:textSize="22sp"
-            android:text="@string/button_search"
-            android:textColor="@color/YP_Black"
-            android:textAllCaps="false"
-            app:cornerRadius="@dimen/margin_medium"
-            app:icon="@drawable/ic_search_24"
-            app:iconGravity="textStart"
-            app:iconTint="@color/YP_Black" />
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_marginBottom="24dp"
+            android:background="?attr/colorPrimary">
 
-        <Button
-            android:id="@+id/libbutton"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_gravity="center"
-            android:layout_marginStart="@dimen/margin_medium"
-            android:layout_marginTop="@dimen/margin_medium"
-            android:layout_marginEnd="@dimen/margin_medium"
-            android:layout_weight="333"
-            android:backgroundTint="#ffffff"
-            android:textSize="22sp"
-            android:text="@string/button_mediat"
-            android:textColor="@color/YP_Black"
-            android:textAllCaps="false"
-            app:cornerRadius="@dimen/margin_medium"
-            app:icon="@drawable/ic_media_lib_24"
-            app:iconGravity="textStart"
-            app:iconTint="@color/YP_Black" />
+            <Button
+                android:id="@+id/searchbutton"
+                style="@style/ButtonOnMainStyle"
+                android:text="@string/button_search"
+                app:cornerRadius="@dimen/corner_radius"
+                app:icon="@drawable/ic_search_24"
+                app:iconGravity="textStart"
+                app:iconTint="@color/YP_Black"/>
 
-        <Button
-            android:id="@+id/setbutton"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_gravity="center"
-            android:layout_marginStart="@dimen/margin_medium"
-            android:layout_marginTop="@dimen/margin_medium"
-            android:layout_marginEnd="@dimen/margin_medium"
-            android:layout_weight="333"
-            android:backgroundTint="#ffffff"
-            android:textSize="22sp"
-            android:text="@string/button_settings"
-            android:textColor="@color/YP_Black"
-            android:textAllCaps="false"
-            app:cornerRadius="@dimen/margin_medium"
-            app:icon="@drawable/ic_gear_24"
-            app:iconGravity="textStart"
-            app:iconTint="@color/YP_Black" />
-    </LinearLayout>
+            <Button
+                android:id="@+id/libbutton"
+                style="@style/ButtonOnMainStyle"
+                android:text="@string/button_mediat"
+                app:cornerRadius="@dimen/corner_radius"
+                app:icon="@drawable/ic_media_lib_24"
+                app:iconGravity="textStart"
+                app:iconTint="@color/YP_Black" />
+
+            <Button
+                android:id="@+id/setbutton"
+                style="@style/ButtonOnMainStyle"
+                android:text="@string/button_settings"
+                app:cornerRadius="@dimen/corner_radius"
+                app:icon="@drawable/ic_gear_24"
+                app:iconGravity="textStart"
+                app:iconTint="@color/YP_Black" />
+        </LinearLayout>
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
