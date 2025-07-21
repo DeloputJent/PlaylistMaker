@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="ButtonOnMainStyle" parent="Widget.MaterialComponents.Button.UnelevatedButton">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:layout_marginStart">@dimen/margin_medium</item>
+        <item name="android:layout_marginTop">@dimen/margin_medium</item>
+        <item name="android:layout_marginEnd">@dimen/margin_medium</item>
+        <item name="android:layout_weight">333</item>
+        <item name="android:backgroundTint">#ffffff</item>
+        <item name="android:font">@font/ys_display_medium</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="android:textSize">22sp</item>
+        <item name="android:textColor">@color/YP_Black</item>
+        <item name="android:textAllCaps">false</item>
+    </style>
+
+    <style name="TextView16sp">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:textColor">@color/YP_Black</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+
+    <style name="InvisibleButton56x40OnSettings">
+        <item name="android:layout_width">56dp</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:layout_marginEnd">6dp</item>
+        <item name="android:layout_gravity">end|center_vertical</item>
+        <item name="android:backgroundTint">?attr/colorSecondary</item>
+    </style>
+
+    <style name="GreyText16sp">
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:textColor">@color/YP_Black</item>
+        <item name="android:textColorHint">@color/YP_Gray</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:fontWeight">400</item>
+        <item name="android:lineHeight">100dp</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+</resources>
