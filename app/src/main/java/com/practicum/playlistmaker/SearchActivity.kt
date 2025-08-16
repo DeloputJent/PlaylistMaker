@@ -24,8 +24,6 @@ import androidx.recyclerview.widget.RecyclerView
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 
 class SearchActivity : AppCompatActivity() {
 
@@ -69,12 +67,7 @@ class SearchActivity : AppCompatActivity() {
             insets
         }
 
-        val translateBaseUrl = "https://itunes.apple.com"
-        val retrofit = Retrofit.Builder()
-            .baseUrl(translateBaseUrl)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-        val iTunesService = retrofit.create(iTunesSearchAPI::class.java)
+        val iTunesService=NetWorkClient()
 
         pushbackbutton=findViewById(R.id.fromSearchBackToMain)
         clearButton = findViewById(R.id.clearSearchSign)
@@ -96,6 +89,9 @@ class SearchActivity : AppCompatActivity() {
 
         clearButton.setOnClickListener {
             inputEditText.setText("")
+            errorSign.visibility = GONE
+            searchProblemMessage.visibility = GONE
+            refreshThisSearchButton.visibility = GONE
             trackList.clear()
             trackAdapter.notifyDataSetChanged()
             val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
@@ -109,13 +105,20 @@ class SearchActivity : AppCompatActivity() {
             }
             override fun afterTextChanged(s: Editable?) {
                 searchedName=s.toString()
+                if (s != null) {
+                    if (s.isNullOrEmpty()) {
+                        errorSign.visibility = GONE
+                        searchProblemMessage.visibility = GONE
+                        refreshThisSearchButton.visibility = GONE
+                    }
+                }
             }
         }
 
         inputEditText.addTextChangedListener(textInputControl)
 
         fun searchThisTrack(songName:String) {
-            iTunesService.search(songName)
+            iTunesService.Service.search(songName)
                 .enqueue(object : Callback<iTunesResponse> {
                     override fun onResponse(call: Call<iTunesResponse>,
                                             response: Response<iTunesResponse>) {
