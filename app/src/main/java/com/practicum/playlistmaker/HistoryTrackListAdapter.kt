@@ -4,8 +4,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 
-class TrackListAdapter (
-    private val tracks: List<Track>, private val searchHistoryList: ArrayList<Track>
+class HistoryTrackListAdapter (
+    private val tracksInHistory: List<Track>
 ) : RecyclerView.Adapter<TrackListViewHolder> () {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackListViewHolder {
@@ -14,19 +14,12 @@ class TrackListAdapter (
     }
 
     override fun onBindViewHolder(holder: TrackListViewHolder, position: Int) {
-        holder.bind(tracks[position])
-        holder.bind(tracks.get(position))
-        holder.itemView.setOnClickListener{
-            searchHistoryList.removeIf { track ->
-                track.trackId == tracks[position].trackId
-            }
-            if (searchHistoryList.size==10) searchHistoryList.removeAt(9)
-            searchHistoryList.add(tracks.get(position))
-            holder.marked(tracks.get(position))
-        }
+        var acceptedTracks:List<Track> = tracksInHistory
+        acceptedTracks=acceptedTracks.reversed()
+        holder.bind(acceptedTracks[position])
     }
 
     override fun getItemCount(): Int {
-        return tracks.size
+        return tracksInHistory.size
     }
 }

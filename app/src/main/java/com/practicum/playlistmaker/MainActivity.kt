@@ -10,6 +10,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 
 class MainActivity : AppCompatActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -52,4 +53,5 @@ class MainActivity : AppCompatActivity() {
         }
         pushsearch.setOnClickListener(button2ClickListener)
     }
+
 }
