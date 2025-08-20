@@ -5,7 +5,9 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 
 class TrackListAdapter (
-    private val tracks: List<Track>, private val searchHistoryList: ArrayList<Track>
+    private val tracks: MutableList<Track>,
+    private val searchHistoryList: MutableList<Track> = mutableListOf(),
+    private val clickListener: (Track) -> Unit={}
 ) : RecyclerView.Adapter<TrackListViewHolder> () {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackListViewHolder {
@@ -15,14 +17,7 @@ class TrackListAdapter (
 
     override fun onBindViewHolder(holder: TrackListViewHolder, position: Int) {
         holder.bind(tracks[position])
-        holder.bind(tracks.get(position))
-        holder.itemView.setOnClickListener{
-            searchHistoryList.removeIf { track ->
-                track.trackId == tracks[position].trackId
-            }
-            if (searchHistoryList.size==10) searchHistoryList.removeAt(9)
-            searchHistoryList.add(tracks.get(position))
-            holder.marked(tracks.get(position))
+        holder.itemView.setOnClickListener{clickListener(tracks[position])
         }
     }
 

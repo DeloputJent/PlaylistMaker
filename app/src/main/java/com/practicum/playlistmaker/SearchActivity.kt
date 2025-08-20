@@ -1,11 +1,9 @@
 package com.practicum.playlistmaker
 
-import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -24,7 +22,6 @@ import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -63,9 +60,8 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var historyOfSearchView:LinearLayout
     private lateinit var clearHistoryOfSearchButton:Button
 
-    private val trackList:ArrayList<Track> = arrayListOf()
-    private var historyList:ArrayList<Track> = arrayListOf()
-
+    private val trackList:MutableList<Track> = mutableListOf()
+    private var historyList:MutableList<Track> = mutableListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -104,16 +100,20 @@ class SearchActivity : AppCompatActivity() {
         searchHistory=SearchHistory(lookedTracks)
 
         var historyList2 = searchHistory.readFromMemory()
-        historyList.addAll(historyList2)
+        historyList = historyList2.toMutableList()
 
         val recyclerView = findViewById<RecyclerView>(R.id.foundedTracksList)
         recyclerView.layoutManager = LinearLayoutManager(this)
-        val trackAdapter = TrackListAdapter(trackList, historyList)
+        val trackAdapter = TrackListAdapter(trackList, historyList,
+            clickListener = {track ->
+            historyList.removeIf { it.trackId == track.trackId }
+            if (historyList.size == 10) historyList.removeAt(9)
+            historyList.add(0, track)})
         recyclerView.adapter = trackAdapter
 
         val recyclerViewHistory = findViewById<RecyclerView>(R.id.TracksSearchHistory)
         recyclerViewHistory.layoutManager = LinearLayoutManager(this)
-        val trackAdapterHistory = HistoryTrackListAdapter(historyList)
+        val trackAdapterHistory = TrackListAdapter(historyList)
         recyclerViewHistory.adapter = trackAdapterHistory
 
         clearButton.setOnClickListener {

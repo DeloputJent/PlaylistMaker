@@ -121,7 +121,7 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/TracksSearchHistory"
                 android:layout_width="match_parent"
-                android:layout_height="183dp"
+                android:layout_height="wrap_content"
                 android:backgroundTint="@color/YP_Black"
                 android:textAlignment="viewStart"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>

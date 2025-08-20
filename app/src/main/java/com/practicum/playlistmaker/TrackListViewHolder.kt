@@ -1,7 +1,6 @@
 package com.practicum.playlistmaker
 
 import android.content.Context
-import android.graphics.Color
 import android.util.TypedValue
 import android.view.View
 import android.widget.ImageView
@@ -18,11 +17,6 @@ class TrackListViewHolder (itemView: View): RecyclerView.ViewHolder(itemView) {
     private val artist: TextView = itemView.findViewById(R.id.TheArtist)
     private val trackLength: TextView = itemView.findViewById(R.id.SongLength)
     private val cover: ImageView = itemView.findViewById(R.id.AlbumCover)
-
-
-    fun marked(track: Track) {
-        songName.setTextColor(Color.parseColor("#3772E7"))
-    }
 
     fun bind(track: Track) {
         songName.text = track.trackName.trim()
@@ -44,6 +38,4 @@ class TrackListViewHolder (itemView: View): RecyclerView.ViewHolder(itemView) {
             dp,
             context.resources.displayMetrics).toInt()
     }
-
-
 }

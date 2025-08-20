@@ -4,19 +4,19 @@ import android.content.SharedPreferences
 import com.google.gson.Gson
 
 class SearchHistory (val sharedPreferences: SharedPreferences) {
-
-    fun writeInMemory(scroll:ArrayList<Track>) {
-        val json = Gson().toJson(scroll)
+    private val gson=Gson()
+    fun writeInMemory(scroll:MutableList<Track>) {
+        val json = gson.toJson(scroll)
         sharedPreferences.edit().putString(TRACKS_KEY, json).apply()
     }
 
-    fun readFromMemory(): Array<Track> {
+    fun readFromMemory(): MutableList<Track> {
         val json = sharedPreferences.getString(TRACKS_KEY, null)
 
         return if (json == null) {
-            emptyArray()
+            mutableListOf()
         } else {
-            Gson().fromJson(json, Array<Track>::class.java)
+            gson.fromJson(json, Array<Track>::class.java).toMutableList()
         }
     }
 
