@@ -20,4 +20,16 @@
     <string name="refresh_search_button">Обновить</string>
     <string name="You_searched_for">Вы искали</string>
     <string name="Clear_history">Очистить историю</string>
+    <string name="Back_from_screen_button">Вернуться на предыдущий экран</string>
+    <string name="Track_Artwork">Обложка альбома или трэка</string>
+
+    <string name="Track_played_time">0:00</string>
+    <string name="Track_duration">Длительность</string>
+    <string name="Track_Collection">Альбом</string>
+    <string name="Release_year">Год</string>
+    <string name="Track_genre">Жанр</string>
+    <string name="Country">Страна</string>
+
+
+
 </resources>
