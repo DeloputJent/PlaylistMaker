@@ -46,6 +46,7 @@
         </LinearLayout>
 
     <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/switchDayNight"
         style="@style/TextView16sp"
         android:layout_width="match_parent"
         android:layout_height="61dp"

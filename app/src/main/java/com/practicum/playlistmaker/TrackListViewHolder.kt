@@ -18,7 +18,6 @@ class TrackListViewHolder (itemView: View): RecyclerView.ViewHolder(itemView) {
     private val trackLength: TextView = itemView.findViewById(R.id.SongLength)
     private val cover: ImageView = itemView.findViewById(R.id.AlbumCover)
 
-
     fun bind(track: Track) {
         songName.text = track.trackName.trim()
         artist.text = track.artistName.trim()
@@ -39,6 +38,4 @@ class TrackListViewHolder (itemView: View): RecyclerView.ViewHolder(itemView) {
             dp,
             context.resources.displayMetrics).toInt()
     }
-
-
 }
