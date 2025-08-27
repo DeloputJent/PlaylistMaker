@@ -1,5 +1,6 @@
 package com.practicum.playlistmaker
 
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.Editable
@@ -90,6 +91,8 @@ class SearchActivity : AppCompatActivity() {
         clearHistoryOfSearchButton = findViewById(R.id.clearHistoryButton)
         historyOfSearchView = findViewById(R.id.historyLayout)
 
+        val displayPlayerIntent= Intent(this@SearchActivity, MusicPlayerActivity::class.java)
+
         pushbackbutton.setOnClickListener {
             finish()
         }
@@ -108,12 +111,18 @@ class SearchActivity : AppCompatActivity() {
             clickListener = {track ->
             historyList.removeIf { it.trackId == track.trackId }
             if (historyList.size == 10) historyList.removeAt(9)
-            historyList.add(0, track)})
+            historyList.add(0, track)
+                displayPlayerIntent.putExtra("current_track", track)
+                startActivity(displayPlayerIntent)})
+
         recyclerView.adapter = trackAdapter
 
         val recyclerViewHistory = findViewById<RecyclerView>(R.id.TracksSearchHistory)
         recyclerViewHistory.layoutManager = LinearLayoutManager(this)
-        val trackAdapterHistory = TrackListAdapter(historyList)
+        val trackAdapterHistory = TrackListAdapter(historyList,clickListener = {track ->
+            displayPlayerIntent.putExtra("current_track", track) // Исправление здесь
+            startActivity(displayPlayerIntent)})
+
         recyclerViewHistory.adapter = trackAdapterHistory
 
         clearButton.setOnClickListener {

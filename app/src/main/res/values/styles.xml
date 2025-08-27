@@ -53,4 +53,40 @@
         <item name="android:letterSpacing">0</item>
     </style>
 
+    <style name="Black_White_Text22sp_medium">
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:textColor">@color/YP_Black</item>
+        <item name="android:textSize">22sp</item>
+        <item name="android:fontWeight">400</item>
+        <item name="android:lineHeight">100dp</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+
+    <style name="Black_White_Text14sp_medium">
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:textColor">@color/YP_Black</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:fontWeight">400</item>
+        <item name="android:lineHeight">100dp</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+
+    <style name="Gray_White_Text13sp_regular">
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:textColor">@color/YP_Gray</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:fontWeight">400</item>
+        <item name="android:lineHeight">100dp</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+
+    <style name="Black_White_Text13sp_regular">
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:textColor">@color/YP_Black</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:fontWeight">400</item>
+        <item name="android:lineHeight">100dp</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+
 </resources>
