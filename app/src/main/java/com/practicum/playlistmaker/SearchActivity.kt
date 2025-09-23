@@ -3,6 +3,8 @@ package com.practicum.playlistmaker
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -14,6 +16,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -44,6 +47,8 @@ class SearchActivity : AppCompatActivity() {
     companion object {
         const val MEMMORY = ""
         const val MEMMORY_DEF = ""
+        private const val SEARCH_DEBOUNCE_DELAY = 2000L
+        private const val CLICK_DEBOUNCE_DELAY = 1000L
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
@@ -87,6 +92,7 @@ class SearchActivity : AppCompatActivity() {
         errorSign = findViewById(R.id.errorSign)
         searchProblemMessage = findViewById(R.id.searchProblemMessage)
         refreshThisSearchButton = findViewById(R.id.refreshThisSearchButton)
+        var progressBar: ProgressBar=findViewById(R.id.progressBar)
 
         clearHistoryOfSearchButton = findViewById(R.id.clearHistoryButton)
         historyOfSearchView = findViewById(R.id.historyLayout)
@@ -107,13 +113,30 @@ class SearchActivity : AppCompatActivity() {
 
         val recyclerView = findViewById<RecyclerView>(R.id.foundedTracksList)
         recyclerView.layoutManager = LinearLayoutManager(this)
+
+        var isClickAllowed = true
+        val handler = Handler(Looper.getMainLooper())
+
+        fun clickDebounce() : Boolean {
+            val current = isClickAllowed
+            if (isClickAllowed) {
+                isClickAllowed = false
+                handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
+            }
+            return current
+        }
+
         val trackAdapter = TrackListAdapter(trackList, historyList,
             clickListener = {track ->
-            historyList.removeIf { it.trackId == track.trackId }
-            if (historyList.size == 10) historyList.removeAt(9)
-            historyList.add(0, track)
-                displayPlayerIntent.putExtra("current_track", track)
-                startActivity(displayPlayerIntent)})
+                if (clickDebounce()) {
+                    historyList.removeIf { it.trackId == track.trackId }
+                    if (historyList.size == 10) historyList.removeAt(9)
+                    historyList.add(0, track)
+                    displayPlayerIntent.putExtra("current_track", track)
+                    startActivity(displayPlayerIntent)
+                }
+            }
+        )
 
         recyclerView.adapter = trackAdapter
 
@@ -143,10 +166,66 @@ class SearchActivity : AppCompatActivity() {
             historyOfSearchView.visibility=GONE
         }
 
+        fun searchThisTrack(songName:String) {
+            if(songName.isNotEmpty()) {
+                errorSign.visibility = GONE
+                searchProblemMessage.visibility = GONE
+                refreshThisSearchButton.visibility = GONE
+                trackList.clear()
+                trackAdapter.notifyDataSetChanged()
+                progressBar.visibility = VISIBLE
+                iTunesService.Service.search(songName)
+                .enqueue(object : Callback<iTunesResponse> {
+                    override fun onResponse(call: Call<iTunesResponse>,
+                                            response: Response<iTunesResponse>) {
+                        progressBar.visibility = GONE
+                        if (response.code() == 200) {
+                            if (response.body()?.results?.isNotEmpty() == true) {
+                                trackList.addAll(response.body()?.results!!)
+                                trackAdapter.notifyDataSetChanged()
+                            }
+                            if (trackList.isEmpty()) {
+                                errorSign.setImageResource(R.drawable.ic_nothing_found_120)
+                                searchProblemMessage.setText(R.string.nothing_found)
+                                errorSign.visibility = VISIBLE
+                                searchProblemMessage.visibility = VISIBLE
+                            }
+                        } else {
+                            errorSign.setImageResource(R.drawable.ic_no_connection_120)
+                            errorSign.visibility = VISIBLE
+                            searchProblemMessage.setText(R.string.problem_with_connection)
+                            searchProblemMessage.visibility = VISIBLE
+                            refreshThisSearchButton.visibility = VISIBLE
+                        }
+                    }//onResponse
+
+                    override fun onFailure(call: Call<iTunesResponse>, t: Throwable) {
+                        progressBar.visibility = GONE
+                        trackList.clear()
+                        trackAdapter.notifyDataSetChanged()
+                        errorSign.setImageResource(R.drawable.ic_no_connection_120)
+                        errorSign.visibility = VISIBLE
+                        searchProblemMessage.setText(R.string.problem_with_connection)
+                        searchProblemMessage.visibility = VISIBLE
+                        refreshThisSearchButton.visibility = VISIBLE
+                    } //onFailure
+                })
+            }
+        } //fun searchThisTrack()
+
+        val searchRunnable = Runnable { searchThisTrack(inputEditText.text.toString()) }
+
+        fun searchDebounce() {
+            handler.removeCallbacks(searchRunnable)
+            handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
+        }
+
         val textInputControl = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 clearButton.isVisible = !s.isNullOrEmpty()
+
+                searchDebounce()
 
                 if (inputEditText.hasFocus() && s?.isEmpty()==true && historyList.isNotEmpty()) {
                     recyclerView.visibility = GONE
@@ -171,56 +250,14 @@ class SearchActivity : AppCompatActivity() {
 
         inputEditText.addTextChangedListener(textInputControl)
 
-        fun searchThisTrack(songName:String) {
-            iTunesService.Service.search(songName)
-                .enqueue(object : Callback<iTunesResponse> {
-                    override fun onResponse(call: Call<iTunesResponse>,
-                                            response: Response<iTunesResponse>) {
-                        errorSign.visibility = GONE
-                        searchProblemMessage.visibility = GONE
-                        refreshThisSearchButton.visibility = GONE
-                        trackList.clear()
-                        trackAdapter.notifyDataSetChanged()
-                        if (response.code() == 200) {
-                            if (response.body()?.results?.isNotEmpty() == true) {
-                                trackList.addAll(response.body()?.results!!)
-                                trackAdapter.notifyDataSetChanged()
-                            }
-                            if (trackList.isEmpty()) {
-                                errorSign.setImageResource(R.drawable.ic_nothing_found_120)
-                                searchProblemMessage.setText(R.string.nothing_found)
-                                errorSign.visibility = VISIBLE
-                                searchProblemMessage.visibility = VISIBLE
-                            }
-                        } else {
-                            errorSign.setImageResource(R.drawable.ic_no_connection_120)
-                            errorSign.visibility = VISIBLE
-                            searchProblemMessage.setText(R.string.problem_with_connection)
-                            searchProblemMessage.visibility = VISIBLE
-                            refreshThisSearchButton.visibility = VISIBLE
-                        }
-                    }//onResponse
-
-                    override fun onFailure(call: Call<iTunesResponse>, t: Throwable) {
-                        trackList.clear()
-                        trackAdapter.notifyDataSetChanged()
-                        errorSign.setImageResource(R.drawable.ic_no_connection_120)
-                        errorSign.visibility = VISIBLE
-                        searchProblemMessage.setText(R.string.problem_with_connection)
-                        searchProblemMessage.visibility = VISIBLE
-                        refreshThisSearchButton.visibility = VISIBLE
-                    } //onFailure
-                })
-        } //fun searchThisTrack()
-
         refreshThisSearchButton.setOnClickListener{
-            searchThisTrack(inputEditText.text.toString())
+                searchThisTrack(inputEditText.text.toString())
         }
 
         inputEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 if (inputEditText.text.isNotEmpty()) {
-                    searchThisTrack(inputEditText.text.toString())
+                    searchRunnable
                 }
                 true
             }

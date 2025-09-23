@@ -149,6 +149,15 @@
         </LinearLayout>
     </LinearLayout>
 
+    <ProgressBar android:id="@+id/progressBar"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="248dp"
+        android:indeterminateTint="@color/YP_Blue"
+        android:visibility="gone"
+        tools:visibility="visible"/>
+
     <ImageView
         android:id="@+id/errorSign"
         android:layout_width="wrap_content"
@@ -157,7 +166,8 @@
         android:layout_marginTop="210dp"
         android:scaleType="center"
         android:src="@drawable/ic_no_connection_120"
-        android:visibility="gone"/>
+        android:visibility="gone"
+        tools:visibility="visible"/>
 
     <TextView
         android:id="@+id/searchProblemMessage"
