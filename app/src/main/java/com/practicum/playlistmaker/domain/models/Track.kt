@@ -1,9 +1,8 @@
-package com.practicum.playlistmaker
+package com.practicum.playlistmaker.domain.models
 
 import java.io.Serializable
 import java.text.SimpleDateFormat
 import java.util.Locale
-
 
 data class Track (val trackName: String, // Название композиции
                  val artistName: String, // Имя исполнителя
@@ -20,6 +19,3 @@ data class Track (val trackName: String, // Название композици�
     fun formatTrackTime():String = SimpleDateFormat("mm:ss", Locale.getDefault())
         .format(trackTimeMillis.toLong())
 }
-
-
-

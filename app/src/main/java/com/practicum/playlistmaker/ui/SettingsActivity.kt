@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker
+package com.practicum.playlistmaker.ui
 
 import android.content.Intent
 import android.net.Uri
@@ -11,6 +11,8 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import com.google.android.material.switchmaterial.SwitchMaterial
+import com.practicum.playlistmaker.App
+import com.practicum.playlistmaker.R
 
 class SettingsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,7 +47,7 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         pushshare.setOnClickListener{
-            val shareIntent=Intent(Intent.ACTION_SEND)
+            val shareIntent= Intent(Intent.ACTION_SEND)
             shareIntent.type="text/plain"
             val shareBody=getString(R.string.link_to_yandex_course)
             shareIntent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.this_app_made_with_course))
@@ -53,8 +55,8 @@ class SettingsActivity : AppCompatActivity() {
             startActivity(Intent.createChooser(shareIntent,getString(R.string.share_with_help) ))
         }
         pushsupport.setOnClickListener{
-            val sendIntent=Intent(Intent.ACTION_SENDTO)
-            sendIntent.data=Uri.parse("mailto:")
+            val sendIntent= Intent(Intent.ACTION_SENDTO)
+            sendIntent.data= Uri.parse("mailto:")
             sendIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf(getString(R.string.my_mail)))
             sendIntent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.mail_theme_to_devs))
             sendIntent.putExtra(Intent.EXTRA_TEXT,getString(R.string.thanks_to_devs))

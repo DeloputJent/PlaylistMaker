@@ -1,48 +1,37 @@
-package com.practicum.playlistmaker
+package com.practicum.playlistmaker.ui
 
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.View
-import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.constraintlayout.widget.ConstraintSet.GONE
-import androidx.core.util.TypedValueCompat.dpToPx
+import androidx.core.util.TypedValueCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.practicum.playlistmaker.R
+import com.practicum.playlistmaker.domain.models.Track
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 class MusicPlayerActivity : AppCompatActivity() {
-    companion object{
-        private const val STATE_DEFAULT = 0
-        private const val STATE_PREPARED = 1
-        private const val STATE_PLAYING = 2
-        private const val STATE_PAUSED = 3
-
-        private const val DELAY = 1000L
-
-        private const val TIMER_CHECK_DELAY =300L
-    }
-
     private lateinit var pushbackbutton: ImageButton
     private lateinit var playTrack_button: ImageView
 
-    private lateinit var played_time:TextView
+    private lateinit var played_time: TextView
 
     private var mediaPlayer = MediaPlayer()
 
     private var playerState = STATE_DEFAULT
 
-    var mainThreadHandler: Handler? = Handler(Looper.getMainLooper())
+    private val mainThreadHandler: Handler? = Handler(Looper.getMainLooper())
     fun startPlayer() {
         mediaPlayer.start()
         playTrack_button.setImageResource(R.drawable.pause_button)
@@ -93,8 +82,7 @@ class MusicPlayerActivity : AppCompatActivity() {
         val current_track_country = findViewById<TextView>(R.id.current_track_country)
         playTrack_button = findViewById(R.id.playTrack_button)
         played_time =findViewById<TextView>(R.id.current_played_Time)
-        played_time.setText("00:00")
-
+        played_time.setText(SimpleDateFormat("mm:ss", Locale.getDefault()).format(0.0))
         val collection = findViewById<TextView>(R.id.collection)
         val track_release_year = findViewById<TextView>(R.id.track_release_year)
 
@@ -128,7 +116,11 @@ class MusicPlayerActivity : AppCompatActivity() {
             Glide.with(this)
                 .load(currentTrack.getCoverArtwork())
                 .centerCrop()
-                .transform(RoundedCorners(dpToPx(8f, this.resources.displayMetrics).toInt()))
+                .transform(
+                    RoundedCorners(
+                        TypedValueCompat.dpToPx(8f, this.resources.displayMetrics).toInt()
+                    )
+                )
                 .placeholder(R.drawable.img_placeholder_312)
                 .into(trackArtWork)
         }
@@ -154,7 +146,6 @@ class MusicPlayerActivity : AppCompatActivity() {
                 }
                 STATE_PREPARED, STATE_PAUSED -> {
                     startPlayer()
-
                 }
             }
         }
@@ -173,5 +164,11 @@ class MusicPlayerActivity : AppCompatActivity() {
         mainThreadHandler?.removeCallbacks(timerRunnable)
         mediaPlayer.release()
     }
-
+    companion object{
+        private const val STATE_DEFAULT = 0
+        private const val STATE_PREPARED = 1
+        private const val STATE_PLAYING = 2
+        private const val STATE_PAUSED = 3
+        private const val TIMER_CHECK_DELAY =300L
+    }
 }

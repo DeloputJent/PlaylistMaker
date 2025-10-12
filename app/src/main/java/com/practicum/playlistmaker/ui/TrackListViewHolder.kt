@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker
+package com.practicum.playlistmaker.ui
 
 import android.content.Context
 import android.util.TypedValue
@@ -8,6 +8,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.practicum.playlistmaker.R
+import com.practicum.playlistmaker.domain.models.Track
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -21,8 +23,10 @@ class TrackListViewHolder (itemView: View): RecyclerView.ViewHolder(itemView) {
     fun bind(track: Track) {
         songName.text = track.trackName.trim()
         artist.text = track.artistName.trim()
-        trackLength.text = SimpleDateFormat("mm:ss",
-            Locale.getDefault())
+        trackLength.text = SimpleDateFormat(
+            "mm:ss",
+            Locale.getDefault()
+        )
                   .format(track.trackTimeMillis.toLong())
         Glide.with(itemView)
             .load(track.artworkUrl100)
