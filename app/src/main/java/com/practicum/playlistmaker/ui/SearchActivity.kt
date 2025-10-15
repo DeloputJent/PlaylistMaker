@@ -1,7 +1,6 @@
 package com.practicum.playlistmaker.ui
 
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -27,21 +26,18 @@ import androidx.core.view.updatePadding
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker.Creator
-import com.practicum.playlistmaker.data.network.RetrofitNetWorkClient
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.data.sharedpreferences.SearchHistory
 import com.practicum.playlistmaker.domain.models.Track
-import com.practicum.playlistmaker.data.dto.iTunesResponse
 import com.practicum.playlistmaker.domain.api.TracksInteractor
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import com.practicum.playlistmaker.presentation.TrackListAdapter
 
 class SearchActivity : AppCompatActivity() {
     private val tracksInteractor = Creator.provideTracksInteractor()
+
     var searchedName:String?=""
 
-    lateinit var searchHistory: SearchHistory
+    lateinit var historyOfSearch: SearchHistory
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -104,12 +100,11 @@ class SearchActivity : AppCompatActivity() {
 
         inputEditText.setText(searchedName)
 
-        //lookedTracks
-        searchHistory= SearchHistory(this)
+        historyOfSearch = Creator.getHistoryOfSearch(this)
 
-        historyList = searchHistory.readFromMemory()
+        historyList = historyOfSearch.readFromMemory()
 
-        recyclerView = findViewById<RecyclerView>(R.id.foundedTracksList)
+        recyclerView = findViewById(R.id.foundedTracksList)
         recyclerView.layoutManager = LinearLayoutManager(this)
 
         var isClickAllowed = true
@@ -160,7 +155,7 @@ class SearchActivity : AppCompatActivity() {
         clearHistoryOfSearchButton.setOnClickListener{
             historyList.clear()
             trackAdapterHistory.notifyDataSetChanged()
-            searchHistory.clearMemory()
+            historyOfSearch.clearMemory()
             historyOfSearchView.visibility=GONE
         }
 
@@ -225,7 +220,7 @@ class SearchActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-        if (historyList.isNotEmpty()) searchHistory.writeInMemory(historyList)
+        if (historyList.isNotEmpty()) historyOfSearch.writeInMemory(historyList)
     }
 
     override fun onDestroy() {
@@ -240,18 +235,17 @@ class SearchActivity : AppCompatActivity() {
             trackAdapter.notifyDataSetChanged()
             progressBar.visibility = VISIBLE
             tracksInteractor.searchTracks(songName,object: TracksInteractor.TracksConsumer {
-                override fun consume(foundTracks: MutableList<Track>) {
+                override fun consume(foundTracks: List<Track>) {
                     handler.post {
                         progressBar.visibility = GONE
                         trackList.clear()
-                        if (foundTracks != null && foundTracks.isNotEmpty()) {
-                        trackList.addAll(foundTracks)}
+                        if (foundTracks.isNotEmpty()) {
+                        trackList.addAll(foundTracks)
+                        }
                         if (trackList.isNotEmpty()){
                             trackAdapter.notifyDataSetChanged()
                         } else {
-                            //if (tracksInteractor. == 200) {
                                 showNothingFoundMessage()
-                            //}
                             }
                         }
                     }

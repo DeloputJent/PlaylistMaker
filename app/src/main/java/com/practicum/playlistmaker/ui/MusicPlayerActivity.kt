@@ -126,7 +126,7 @@ class MusicPlayerActivity : AppCompatActivity() {
         }
         current_Played_Track.setText(currentTrack?.trackName)
         current_artist.setText(currentTrack?.artistName)
-        current_track_time.setText(currentTrack?.formatTrackTime())
+        current_track_time.setText(currentTrack?.trackTimeMillis)
         if (currentTrack?.collectionName.isNullOrEmpty()) {
             current_collection_name.visibility = View.GONE
             collection.visibility = View.GONE
