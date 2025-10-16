@@ -234,43 +234,33 @@ class SearchActivity : AppCompatActivity() {
             trackList.clear()
             trackAdapter.notifyDataSetChanged()
             progressBar.visibility = VISIBLE
-            tracksInteractor.searchTracks(songName,object: TracksInteractor.TracksConsumer {
-                override fun consume(foundTracks: List<Track>) {
+            tracksInteractor.searchTracks(songName, object : TracksInteractor.TracksConsumer {
+                override fun consume(foundTracks: List<Track>?) {
                     handler.post {
                         progressBar.visibility = GONE
                         trackList.clear()
-                        if (foundTracks.isNotEmpty()) {
-                        trackList.addAll(foundTracks)
-                        }
-                        if (trackList.isNotEmpty()){
-                            trackAdapter.notifyDataSetChanged()
-                        } else {
+                        if (foundTracks != null) {
+                            if (foundTracks.isNotEmpty()) {
+                                trackList.addAll(foundTracks)
+                            }
+                            if (trackList.isNotEmpty()) {
+                                trackAdapter.notifyDataSetChanged()
+                            } else {
+                                progressBar.visibility = GONE
+                                trackList.clear()
+                                trackAdapter.notifyDataSetChanged()
                                 showNothingFoundMessage()
                             }
+                        } else {
+                            progressBar.visibility = GONE
+                            trackList.clear()
+                            trackAdapter.notifyDataSetChanged()
+                            showNoNetMessageAndButton()
                         }
                     }
-                })
-            }
-                /*
-                if (response.code() == 200) {
-                    if (response.body()?.results?.isNotEmpty() == true) {
-                        trackList.addAll(response.body()?.results!!)
-                        trackAdapter.notifyDataSetChanged()
-                    }
-
-                } else {
-                    showNoNetMessageAndButton()
                 }
-            }//onResponse
-
-            override fun onFailure(call: Call<iTunesResponse>, t: Throwable) {
-                progressBar.visibility = GONE
-                trackList.clear()
-                trackAdapter.notifyDataSetChanged()
-                showNoNetMessageAndButton()
-            } //onFailure
-        }*/
-
+            })
+        }
     } //fun searchThisTrack()
 
     fun showNothingFoundMessage() {

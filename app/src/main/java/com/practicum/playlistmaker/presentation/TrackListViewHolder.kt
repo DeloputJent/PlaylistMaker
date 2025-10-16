@@ -23,11 +23,8 @@ class TrackListViewHolder (itemView: View): RecyclerView.ViewHolder(itemView) {
     fun bind(track: Track) {
         songName.text = track.trackName.trim()
         artist.text = track.artistName.trim()
-        trackLength.text = SimpleDateFormat(
-            "mm:ss",
-            Locale.getDefault()
-        )
-                  .format(track.trackTimeMillis.toLong())
+        trackLength.text = track.trackTimeMillis.trim()
+
         Glide.with(itemView)
             .load(track.artworkUrl100)
             .centerCrop()

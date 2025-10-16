@@ -23,9 +23,9 @@ import java.util.Locale
 
 class MusicPlayerActivity : AppCompatActivity() {
     private lateinit var pushbackbutton: ImageButton
-    private lateinit var playTrack_button: ImageView
+    private lateinit var playTrackButton: ImageView
 
-    private lateinit var played_time: TextView
+    private lateinit var playedTime: TextView
 
     private var mediaPlayer = MediaPlayer()
 
@@ -34,12 +34,12 @@ class MusicPlayerActivity : AppCompatActivity() {
     private val mainThreadHandler: Handler? = Handler(Looper.getMainLooper())
     fun startPlayer() {
         mediaPlayer.start()
-        playTrack_button.setImageResource(R.drawable.pause_button)
+        playTrackButton.setImageResource(R.drawable.pause_button)
         playerState = STATE_PLAYING
         timerDebounce()
     }
 
-    fun timerCounter() {played_time.setText(SimpleDateFormat("mm:ss", Locale.getDefault()).format(mediaPlayer.currentPosition))}
+    fun timerCounter() {playedTime.setText(SimpleDateFormat("mm:ss", Locale.getDefault()).format(mediaPlayer.currentPosition))}
     private val timerRunnable = Runnable {
         timerCounter()
         timerDebounce()
@@ -51,7 +51,7 @@ class MusicPlayerActivity : AppCompatActivity() {
 
     fun pausePlayer() {
         mediaPlayer.pause()
-        playTrack_button.setImageResource(R.drawable.ic_start_play_84)
+        playTrackButton.setImageResource(R.drawable.ic_start_play_84)
         mainThreadHandler?.removeCallbacks(timerRunnable)
         playerState = STATE_PAUSED
     }
@@ -80,9 +80,9 @@ class MusicPlayerActivity : AppCompatActivity() {
         val current_track_release_year = findViewById<TextView>(R.id.current_track_release_year)
         val current_track_genre = findViewById<TextView>(R.id.current_track_genre)
         val current_track_country = findViewById<TextView>(R.id.current_track_country)
-        playTrack_button = findViewById(R.id.playTrack_button)
-        played_time =findViewById<TextView>(R.id.current_played_Time)
-        played_time.setText(SimpleDateFormat("mm:ss", Locale.getDefault()).format(0.0))
+        playTrackButton = findViewById(R.id.playTrack_button)
+        playedTime =findViewById<TextView>(R.id.current_played_Time)
+        playedTime.setText(SimpleDateFormat("mm:ss", Locale.getDefault()).format(0.0))
         val collection = findViewById<TextView>(R.id.collection)
         val track_release_year = findViewById<TextView>(R.id.track_release_year)
 
@@ -98,10 +98,10 @@ class MusicPlayerActivity : AppCompatActivity() {
                     playerState = STATE_PREPARED
                 }
                 mediaPlayer.setOnCompletionListener {
-                    playTrack_button.setImageResource(R.drawable.ic_start_play_84)
+                    playTrackButton.setImageResource(R.drawable.ic_start_play_84)
                     playerState = STATE_PREPARED
                     mainThreadHandler?.removeCallbacks(timerRunnable)
-                    played_time.setText("00:00")
+                    playedTime.setText("00:00")
                 }
             }
         }
@@ -114,7 +114,7 @@ class MusicPlayerActivity : AppCompatActivity() {
 
         if (currentTrack != null) {
             Glide.with(this)
-                .load(currentTrack.getCoverArtwork())
+                .load(currentTrack.coverArtworkUrl)
                 .centerCrop()
                 .transform(
                     RoundedCorners(
@@ -135,11 +135,11 @@ class MusicPlayerActivity : AppCompatActivity() {
         if (currentTrack?.releaseDate.isNullOrEmpty()) {
             current_track_release_year.visibility = View.GONE
             track_release_year.visibility = View.GONE
-        } else {current_track_release_year.setText(currentTrack?.releaseDate?.substring(0, 4))}
+        } else {current_track_release_year.setText(currentTrack?.releaseDate)}
         current_track_genre.setText(currentTrack?.primaryGenreName)
         current_track_country.setText(currentTrack?.country)
 
-        playTrack_button.setOnClickListener {
+        playTrackButton.setOnClickListener {
             when(playerState) {
                 STATE_PLAYING -> {
                     pausePlayer()
