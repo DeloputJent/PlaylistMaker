@@ -29,17 +29,22 @@ class MusicPlayerRepositoryImpl(val mediaPlayer : MediaPlayer) {
         playerState = STATE_PLAYING
     }
 
-    fun getCurrentPlayedTime() = SimpleDateFormat("mm:ss", Locale.getDefault()).format(mediaPlayer.currentPosition)
+    fun getCurrentPlayedTime() = mediaPlayer.currentPosition
 
     fun pausePlayer() {
         mediaPlayer.pause()
         playerState = STATE_PAUSED
     }
 
-    companion object{
-        private const val STATE_DEFAULT = 0
-        private const val STATE_PREPARED = 1
-        private const val STATE_PLAYING = 2
-        private const val STATE_PAUSED = 3
+    fun releasePlayer() {
+        mediaPlayer.release()
+        playerState = STATE_DEFAULT
+    }
+
+    companion object {
+        const val STATE_DEFAULT = 0
+        const val STATE_PREPARED = 1
+        const val STATE_PLAYING = 2
+        const val STATE_PAUSED = 3
     }
 }
