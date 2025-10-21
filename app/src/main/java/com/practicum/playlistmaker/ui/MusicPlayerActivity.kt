@@ -17,15 +17,15 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker.Creator
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.data.MusicPlayerRepositoryImpl.Companion.STATE_PAUSED
-import com.practicum.playlistmaker.data.MusicPlayerRepositoryImpl.Companion.STATE_PLAYING
-import com.practicum.playlistmaker.data.MusicPlayerRepositoryImpl.Companion.STATE_PREPARED
+import com.practicum.playlistmaker.data.mediaplayer.MusicPlayerRepositoryImpl.Companion.STATE_PAUSED
+import com.practicum.playlistmaker.data.mediaplayer.MusicPlayerRepositoryImpl.Companion.STATE_PLAYING
+import com.practicum.playlistmaker.data.mediaplayer.MusicPlayerRepositoryImpl.Companion.STATE_PREPARED
 import com.practicum.playlistmaker.domain.models.Track
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 class MusicPlayerActivity : AppCompatActivity() {
-    private lateinit var pushbackbutton: ImageButton
+    private lateinit var pushBackButton: ImageButton
     private lateinit var playTrackButton: ImageView
     private lateinit var playedTimeDisplay: TextView
     private var mediaPlayer = Creator.getMediaPlayer()
@@ -80,15 +80,15 @@ class MusicPlayerActivity : AppCompatActivity() {
         val trackReleaseYear = findViewById<TextView>(R.id.track_release_year)
 
         playTrackButton = findViewById(R.id.playTrack_button)
-        playedTimeDisplay =findViewById<TextView>(R.id.current_played_Time)
-        pushbackbutton=findViewById(R.id.back_from_player_button)
+        playedTimeDisplay =findViewById(R.id.current_played_Time)
+        pushBackButton=findViewById(R.id.back_from_player_button)
 
         playedTimeDisplay.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(0.0)
 
         val intent = intent
         val currentTrack: Track? = intent.getSerializableExtra("current_track") as? Track
 
-        pushbackbutton.setOnClickListener {
+        pushBackButton.setOnClickListener {
             finish()
         }
 

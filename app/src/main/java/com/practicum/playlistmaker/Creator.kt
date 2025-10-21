@@ -2,7 +2,7 @@ package com.practicum.playlistmaker
 
 import android.content.Context
 import android.media.MediaPlayer
-import com.practicum.playlistmaker.data.MusicPlayerRepositoryImpl
+import com.practicum.playlistmaker.data.mediaplayer.MusicPlayerRepositoryImpl
 import com.practicum.playlistmaker.data.TracksRepositoryImpl
 import com.practicum.playlistmaker.data.network.RetrofitNetWorkClient
 import com.practicum.playlistmaker.data.sharedpreferences.SearchHistory

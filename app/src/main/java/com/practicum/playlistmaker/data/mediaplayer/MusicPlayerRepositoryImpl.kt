@@ -1,14 +1,14 @@
-package com.practicum.playlistmaker.data
+package com.practicum.playlistmaker.data.mediaplayer
 
 import android.media.MediaPlayer
-import java.text.SimpleDateFormat
-import java.util.Locale
+import com.practicum.playlistmaker.domain.api.MediaPlayerInterface
 
-class MusicPlayerRepositoryImpl(val mediaPlayer : MediaPlayer) {
+
+class MusicPlayerRepositoryImpl  (val mediaPlayer : MediaPlayer): MediaPlayerInterface {
 
     var playerState = STATE_DEFAULT
 
-    fun preparePlayer(url: String?,onCompletion:()->Unit) {
+     override fun preparePlayer(url: String?, onCompletion:()->Unit) {
         if (url!=null) {
             mediaPlayer.setDataSource(url)
             mediaPlayer.prepareAsync()
@@ -24,19 +24,19 @@ class MusicPlayerRepositoryImpl(val mediaPlayer : MediaPlayer) {
         }
     }
 
-    fun startPlayer() {
+    override fun startPlayer() {
         mediaPlayer.start()
         playerState = STATE_PLAYING
     }
 
-    fun getCurrentPlayedTime() = mediaPlayer.currentPosition
+    override fun getCurrentPlayedTime() = mediaPlayer.currentPosition
 
-    fun pausePlayer() {
+    override fun pausePlayer() {
         mediaPlayer.pause()
         playerState = STATE_PAUSED
     }
 
-    fun releasePlayer() {
+    override fun releasePlayer() {
         mediaPlayer.release()
         playerState = STATE_DEFAULT
     }
