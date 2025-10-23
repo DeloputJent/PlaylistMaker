@@ -17,9 +17,9 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker.Creator
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.data.mediaplayer.MusicPlayerRepositoryImpl.Companion.STATE_PAUSED
-import com.practicum.playlistmaker.data.mediaplayer.MusicPlayerRepositoryImpl.Companion.STATE_PLAYING
-import com.practicum.playlistmaker.data.mediaplayer.MusicPlayerRepositoryImpl.Companion.STATE_PREPARED
+import com.practicum.playlistmaker.data.musicplayer.MusicPlayerRepositoryImpl.Companion.STATE_PAUSED
+import com.practicum.playlistmaker.data.musicplayer.MusicPlayerRepositoryImpl.Companion.STATE_PLAYING
+import com.practicum.playlistmaker.data.musicplayer.MusicPlayerRepositoryImpl.Companion.STATE_PREPARED
 import com.practicum.playlistmaker.domain.models.Track
 import java.text.SimpleDateFormat
 import java.util.Locale
