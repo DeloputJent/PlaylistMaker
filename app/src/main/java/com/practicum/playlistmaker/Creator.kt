@@ -1,10 +1,9 @@
 package com.practicum.playlistmaker
 
 import android.content.Context
-import android.content.SharedPreferences
 import android.media.MediaPlayer
+import com.practicum.playlistmaker.data.ThemeInteractorImpl
 import com.practicum.playlistmaker.data.ThemeRepositoryImpl
-
 import com.practicum.playlistmaker.data.TracksRepositoryImpl
 import com.practicum.playlistmaker.data.musicplayer.MusicPlayerRepositoryImpl
 import com.practicum.playlistmaker.data.network.RetrofitNetWorkClient
@@ -40,4 +39,9 @@ object Creator {
     fun getThemeRepositoryImpl(context: Context): ThemeRepositoryImpl {
         return ThemeRepositoryImpl(context)
     }
+
+    fun getThemeInteractorImpl(): ThemeInteractorImpl {
+        return ThemeInteractorImpl()
+    }
+
 }
