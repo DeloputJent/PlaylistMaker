@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/TrackFrame"
+        android:layout_height="61dp"
+        android:layout_width="match_parent">
+    <ImageView
+        android:id="@+id/AlbumCover"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_marginStart="13dp"
+        android:layout_marginTop="8dp"
+        android:src="@drawable/placeholder"
+        android:scaleType="centerCrop"/>
+    <TextView
+        android:id="@+id/SongName"
+        android:layout_gravity="top|start"
+        android:layout_marginTop="14dp"
+        android:layout_marginStart="66dp"
+        android:layout_marginEnd="44dp"
+        android:layout_width="wrap_content"
+        android:layout_height="19dp"
+        style="@style/TextView16sp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:text="Here Comes the sun (Remastered veeeeeersion)!!!"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="13dp"
+        android:layout_marginTop="34dp"
+        android:layout_marginStart="66dp"
+        android:layout_marginEnd="44dp">
+        <TextView
+            android:id="@+id/TheArtist"
+            android:layout_gravity="bottom|start"
+            android:layout_height="13dp"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            style="@style/GreyText11sp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="Big Loud Band that sing aaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaa aaaaaaaaaaa!"/>
+        <ImageView
+            android:layout_width="13dp"
+            android:layout_height="13dp"
+            android:src="@drawable/ic_dot_separator"
+            android:scaleType="centerCrop"/>
+        <TextView
+            android:id="@+id/SongLength"
+            style="@style/GreyText11sp"
+            android:layout_gravity="bottom|start"
+            android:layout_width="wrap_content"
+            android:layout_height="13dp"
+            android:text="0:00"/>
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/addThisSong"
+        android:background="@android:color/transparent"
+        style="@style/InvisibleButton56x40OnSettings"/>
+
+    <ImageView
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_gravity="end|center_vertical"
+        android:layout_marginEnd="12dp"
+        android:src="@drawable/ic_right_angle_bracket_24"/>
+</FrameLayout>
