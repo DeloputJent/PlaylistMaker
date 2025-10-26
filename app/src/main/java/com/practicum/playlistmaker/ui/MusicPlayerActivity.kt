@@ -16,28 +16,32 @@ import androidx.core.view.updatePadding
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker.Creator
+import com.practicum.playlistmaker.Creator.getMusicPlayerRepository
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.data.musicplayer.MusicPlayerRepositoryImpl.Companion.STATE_PAUSED
 import com.practicum.playlistmaker.data.musicplayer.MusicPlayerRepositoryImpl.Companion.STATE_PLAYING
 import com.practicum.playlistmaker.data.musicplayer.MusicPlayerRepositoryImpl.Companion.STATE_PREPARED
+import com.practicum.playlistmaker.domain.api.MusicPlayerInteractor
 import com.practicum.playlistmaker.domain.models.Track
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 class MusicPlayerActivity : AppCompatActivity() {
+
+    private lateinit var musicPlayerInteractor: MusicPlayerInteractor
     private lateinit var pushBackButton: ImageButton
     private lateinit var playTrackButton: ImageView
     private lateinit var playedTimeDisplay: TextView
     private var mediaPlayer = Creator.getMediaPlayer()
     private val mainThreadHandler: Handler? = Handler(Looper.getMainLooper())
     fun startPlayer() {
-        mediaPlayer.startPlayer()
+        musicPlayerInteractor.startPlayer()
         playTrackButton.setImageResource(R.drawable.pause_button)
         timerDebounce()
     }
 
     fun pausePlayer() {
-        mediaPlayer.pausePlayer()
+        musicPlayerInteractor.pausePlayer()
         playTrackButton.setImageResource(R.drawable.ic_start_play_84)
         mainThreadHandler?.removeCallbacks(timerRunnable)
     }
@@ -85,6 +89,8 @@ class MusicPlayerActivity : AppCompatActivity() {
 
         playedTimeDisplay.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(0.0)
 
+        musicPlayerInteractor = getMusicPlayerRepository(mediaPlayer)
+
         val intent = intent
         val currentTrack: Track? = intent.getSerializableExtra("current_track") as? Track
 
@@ -124,7 +130,7 @@ class MusicPlayerActivity : AppCompatActivity() {
         currentTrackCountry.text = currentTrack?.country
 
         playTrackButton.setOnClickListener {
-            when(mediaPlayer.playerState) {
+            when(musicPlayerInteractor.stateOfPlayer()) {
                 STATE_PLAYING -> {
                     pausePlayer()
                 }
@@ -134,7 +140,7 @@ class MusicPlayerActivity : AppCompatActivity() {
             }
         }
 
-        mediaPlayer.preparePlayer(currentTrack?.previewUrl, onCompletion = {
+        musicPlayerInteractor.preparePlayer(currentTrack?.previewUrl, onCompletion = {
             playTrackButton.setImageResource(R.drawable.ic_start_play_84)
             mainThreadHandler?.removeCallbacks(timerRunnable)
             playedTimeDisplay.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(0.0)
@@ -150,7 +156,7 @@ class MusicPlayerActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         mainThreadHandler?.removeCallbacks(timerRunnable)
-        mediaPlayer.releasePlayer()
+        musicPlayerInteractor.releasePlayer()
     }
     companion object{
         private const val TIMER_CHECK_DELAY =300L

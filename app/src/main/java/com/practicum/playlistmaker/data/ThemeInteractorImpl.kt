@@ -15,8 +15,4 @@ class ThemeInteractorImpl: ThemeInteractor {
             }
         )
     }
-
-    override fun switcherPosition(isChecked: Boolean): Boolean {
-       return isChecked
-    }
 }
