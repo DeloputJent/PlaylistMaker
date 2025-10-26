@@ -4,5 +4,4 @@ interface ThemeInteractor {
 
     fun applyTheme(darkThemeEnabled: Boolean)
 
-    fun switcherPosition (isChecked: Boolean): Boolean
 }

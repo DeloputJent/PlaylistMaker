@@ -15,12 +15,12 @@ class App : Application() {
         themeRepository.saveTheme(themeEnabled)
     }
 
-    fun loadTheme(): Boolean = themeInteractorImpl.switcherPosition(themeRepository.loadTheme())
+    fun loadTheme(): Boolean = themeRepository.loadTheme()
 
     override fun onCreate() {
         super.onCreate()
-        themeRepository = Creator.getThemeRepositoryImpl(this)
-        themeInteractorImpl = Creator.getThemeInteractorImpl()
+        themeRepository = Creator.getThemeRepository(this) as ThemeRepositoryImpl
+        themeInteractorImpl = Creator.getThemeInteractor() as ThemeInteractorImpl
         applyTheme(loadTheme())
     }
 }

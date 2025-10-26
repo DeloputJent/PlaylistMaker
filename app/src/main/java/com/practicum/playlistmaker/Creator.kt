@@ -5,9 +5,14 @@ import android.media.MediaPlayer
 import com.practicum.playlistmaker.data.ThemeInteractorImpl
 import com.practicum.playlistmaker.data.ThemeRepositoryImpl
 import com.practicum.playlistmaker.data.TracksRepositoryImpl
+import com.practicum.playlistmaker.data.musicplayer.MusicPlayerInteractorImpl
 import com.practicum.playlistmaker.data.musicplayer.MusicPlayerRepositoryImpl
 import com.practicum.playlistmaker.data.network.RetrofitNetWorkClient
 import com.practicum.playlistmaker.data.sharedpreferences.SearchHistory
+import com.practicum.playlistmaker.domain.api.MusicPlayerInteractor
+import com.practicum.playlistmaker.domain.api.MusicPlayerRepository
+import com.practicum.playlistmaker.domain.api.ThemeInteractor
+import com.practicum.playlistmaker.domain.api.ThemeRepository
 import com.practicum.playlistmaker.domain.api.TrackRepository
 import com.practicum.playlistmaker.domain.api.TracksInteractor
 import com.practicum.playlistmaker.domain.impl.TracksInteractorImpl
@@ -27,7 +32,7 @@ object Creator {
         return SearchHistory(context)
    }
 
-    fun getMediaPlayer(): MusicPlayerRepositoryImpl {
+    fun getMediaPlayer(): MusicPlayerRepository {
         val mediaPlayer = MediaPlayer()
         return MusicPlayerRepositoryImpl(mediaPlayer)
     }
@@ -36,12 +41,16 @@ object Creator {
         return IntentProvider(context)
     }
 
-    fun getThemeRepositoryImpl(context: Context): ThemeRepositoryImpl {
+    fun getThemeRepository(context: Context): ThemeRepository {
         return ThemeRepositoryImpl(context)
     }
 
-    fun getThemeInteractorImpl(): ThemeInteractorImpl {
+    fun getThemeInteractor(): ThemeInteractor {
         return ThemeInteractorImpl()
+    }
+
+    fun getMusicPlayerRepository(mediaPlayer:MusicPlayerRepository): MusicPlayerInteractor {
+        return MusicPlayerInteractorImpl(mediaPlayer)
     }
 
 }

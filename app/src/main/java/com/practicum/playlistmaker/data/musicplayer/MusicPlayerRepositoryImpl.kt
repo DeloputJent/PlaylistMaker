@@ -1,12 +1,12 @@
 package com.practicum.playlistmaker.data.musicplayer
 
 import android.media.MediaPlayer
-import com.practicum.playlistmaker.domain.api.MediaPlayerInterface
+import com.practicum.playlistmaker.domain.api.MusicPlayerRepository
 
 
-class MusicPlayerRepositoryImpl  (val mediaPlayer : MediaPlayer): MediaPlayerInterface {
+class MusicPlayerRepositoryImpl  (val mediaPlayer : MediaPlayer): MusicPlayerRepository {
 
-    var playerState = STATE_DEFAULT
+    private var playerState = STATE_DEFAULT
 
      override fun preparePlayer(url: String?, onCompletion:()->Unit) {
         if (url!=null) {
@@ -39,6 +39,10 @@ class MusicPlayerRepositoryImpl  (val mediaPlayer : MediaPlayer): MediaPlayerInt
     override fun releasePlayer() {
         mediaPlayer.release()
         playerState = STATE_DEFAULT
+    }
+
+    override fun stateOfPlayer():Int {
+        return playerState
     }
 
     companion object {
