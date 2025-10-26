@@ -36,7 +36,10 @@ class TracksRepositoryImpl(private val retrofitNetWorkClient: RetrofitNetWorkCli
         }
     }
 
-    fun getReleaseYear(releaseDate:String) = releaseDate.substring(0, 4)
+    fun getReleaseYear(releaseDate:String?):String {
+        return releaseDate?.substring(0, 4) ?: ""
+    }
+
 
     fun formatTrackTime(millis: String?): String {
         return if (millis.isNullOrEmpty()) "00:00"
