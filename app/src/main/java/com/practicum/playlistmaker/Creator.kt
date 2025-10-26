@@ -5,7 +5,7 @@ import android.media.MediaPlayer
 import com.practicum.playlistmaker.data.ThemeInteractorImpl
 import com.practicum.playlistmaker.data.ThemeRepositoryImpl
 import com.practicum.playlistmaker.data.TracksRepositoryImpl
-import com.practicum.playlistmaker.data.musicplayer.MusicPlayerInteractorImpl
+import com.practicum.playlistmaker.domain.impl.MusicPlayerInteractorImpl
 import com.practicum.playlistmaker.data.musicplayer.MusicPlayerRepositoryImpl
 import com.practicum.playlistmaker.data.network.RetrofitNetWorkClient
 import com.practicum.playlistmaker.data.sharedpreferences.SearchHistory
