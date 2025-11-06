@@ -9,8 +9,8 @@ import com.practicum.playlistmaker.domain.models.Track
 
 class SearchHistory (private val context: Context) {
 
-    val lookedTracks: SharedPreferences=context.getSharedPreferences(HISTORY, MODE_PRIVATE)
-    private val gson= Gson()
+    val lookedTracks: SharedPreferences = context.getSharedPreferences(HISTORY, MODE_PRIVATE)
+    private val gson = Gson()
     fun writeInMemory(scroll:MutableList<Track>) {
         val json = gson.toJson(scroll)
         lookedTracks.edit().putString(TRACKS_KEY, json).apply()

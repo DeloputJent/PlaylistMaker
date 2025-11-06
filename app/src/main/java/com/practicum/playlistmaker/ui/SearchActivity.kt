@@ -212,8 +212,8 @@ class SearchActivity : AppCompatActivity() {
                     trackAdapterHistory.notifyDataSetChanged()
                     historyOfSearchView.visibility = VISIBLE
                 } else {
-                    recyclerView.visibility = VISIBLE
                     historyOfSearchView.visibility = GONE
+                    recyclerView.visibility = VISIBLE
                 }
         }
     }//OnCreate
@@ -231,30 +231,22 @@ class SearchActivity : AppCompatActivity() {
     fun searchThisTrack(songName:String) {
         if(songName.isNotEmpty()) {
             hideProblemMessageAndButton()
-            trackList.clear()
-            trackAdapter.notifyDataSetChanged()
+            recyclerView.visibility=GONE
             progressBar.visibility = VISIBLE
             tracksInteractor.searchTracks(songName, object : TracksInteractor.TracksConsumer {
                 override fun consume(foundTracks: List<Track>?) {
                     handler.post {
                         progressBar.visibility = GONE
-                        trackList.clear()
                         if (foundTracks != null) {
                             if (foundTracks.isNotEmpty()) {
-                                trackList.addAll(foundTracks)
-                            }
-                            if (trackList.isNotEmpty()) {
-                                trackAdapter.notifyDataSetChanged()
-                            } else {
-                                progressBar.visibility = GONE
                                 trackList.clear()
+                                trackList.addAll(foundTracks)
                                 trackAdapter.notifyDataSetChanged()
+                                recyclerView.visibility = VISIBLE
+                            } else {
                                 showNothingFoundMessage()
                             }
                         } else {
-                            progressBar.visibility = GONE
-                            trackList.clear()
-                            trackAdapter.notifyDataSetChanged()
                             showNoNetMessageAndButton()
                         }
                     }
