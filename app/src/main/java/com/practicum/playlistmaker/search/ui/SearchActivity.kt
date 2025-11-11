@@ -50,10 +50,7 @@ class SearchActivity : AppCompatActivity() {
         searchedName = savedInstanceState.getString(MEMMORY, MEMMORY_DEF)
     }
 
-
     private lateinit var trackAdapter : TrackListAdapter
-
-    private lateinit var historyOfSearchView : LinearLayout
 
     private lateinit var recyclerView : RecyclerView
     private lateinit var handler: Handler
@@ -78,8 +75,6 @@ class SearchActivity : AppCompatActivity() {
             view.updatePadding(top = statusBar.top)
             insets
         }
-
-        historyOfSearchView = findViewById(R.id.historyLayout)
 
         val displayPlayerIntent= Intent(this@SearchActivity, MusicPlayerActivity::class.java)
 
@@ -145,7 +140,7 @@ class SearchActivity : AppCompatActivity() {
             historyList.clear()
             trackAdapterHistory.notifyDataSetChanged()
             historyOfSearch.clearMemory()
-            historyOfSearchView.visibility= View.GONE
+            binding.historyLayout.visibility= View.GONE
         }
 
         fun searchDebounce() {
@@ -164,10 +159,10 @@ class SearchActivity : AppCompatActivity() {
                 if (binding.inputSearch.hasFocus() && s?.isEmpty()==true && historyList.isNotEmpty()) {
                     recyclerView.visibility = View.GONE
                     trackAdapterHistory.notifyDataSetChanged()
-                    historyOfSearchView.visibility = View.VISIBLE
+                    binding.historyLayout.visibility = View.VISIBLE
                 } else {
                     recyclerView.visibility = View.VISIBLE
-                    historyOfSearchView.visibility = View.GONE
+                    binding.historyLayout.visibility = View.GONE
                 }
             }
             override fun afterTextChanged(s: Editable?) {
@@ -200,9 +195,9 @@ class SearchActivity : AppCompatActivity() {
             if (hasFocus && binding.inputSearch.text.isEmpty() && historyList.isNotEmpty()) {
                 recyclerView.visibility = View.GONE
                 trackAdapterHistory.notifyDataSetChanged()
-                historyOfSearchView.visibility = View.VISIBLE
+                binding.historyLayout.visibility = View.VISIBLE
             } else {
-                historyOfSearchView.visibility = View.GONE
+                binding.historyLayout.visibility = View.GONE
                 recyclerView.visibility = View.VISIBLE
             }
         }
