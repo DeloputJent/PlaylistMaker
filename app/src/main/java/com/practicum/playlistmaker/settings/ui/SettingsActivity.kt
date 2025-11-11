@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker.ui
+package com.practicum.playlistmaker.settings.ui
 
 import android.os.Bundle
 import android.view.View
@@ -10,12 +10,12 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.practicum.playlistmaker.App
-import com.practicum.playlistmaker.Creator.getIntentProvider
 import com.practicum.playlistmaker.R
+import com.practicum.playlistmaker.creator.Creator
 
 class SettingsActivity : AppCompatActivity() {
 
-    val intentProvider = getIntentProvider(this)
+    val intentProvider = Creator.getIntentProvider(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

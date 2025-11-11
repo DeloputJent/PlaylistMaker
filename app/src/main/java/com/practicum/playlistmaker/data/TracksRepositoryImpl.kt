@@ -4,7 +4,7 @@ import com.practicum.playlistmaker.data.dto.TrackSearchRequest
 import com.practicum.playlistmaker.data.dto.iTunesResponse
 import com.practicum.playlistmaker.data.network.RetrofitNetWorkClient
 import com.practicum.playlistmaker.domain.api.TrackRepository
-import com.practicum.playlistmaker.domain.models.Track
+import com.practicum.playlistmaker.search.domain.Track
 import java.text.SimpleDateFormat
 import java.util.Locale
 

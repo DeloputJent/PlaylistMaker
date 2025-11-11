@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker.ui
+package com.practicum.playlistmaker.main.ui
 
 import android.content.Intent
 import android.os.Bundle
@@ -10,15 +10,21 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.ui.SettingsActivity
+import com.practicum.playlistmaker.databinding.ActivityMainBinding
+import com.practicum.playlistmaker.ui.MediaLibActivity
+import com.practicum.playlistmaker.search.ui.SearchActivity
+import com.practicum.playlistmaker.settings.ui.SettingsActivity
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         val currentView=findViewById<View>(R.id.main)
         ViewCompat.setOnApplyWindowInsetsListener(currentView) { view, insets ->
@@ -30,11 +36,7 @@ class MainActivity : AppCompatActivity() {
         }
 
 
-        val pushsearch = findViewById<Button>(R.id.searchbutton)
-        val pushmedialib = findViewById<Button>(R.id.libbutton)
-        val pushsettings = findViewById<Button>(R.id.setbutton)
-
-        pushsettings.setOnClickListener {
+        binding.setbutton.setOnClickListener {
             val displaySettingsIntent= Intent(this, SettingsActivity::class.java)
             startActivity(displaySettingsIntent)
         }
@@ -46,7 +48,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        pushmedialib.setOnClickListener(buttonClickListener)
+        binding.libbutton.setOnClickListener(buttonClickListener)
 
         val button2ClickListener: View.OnClickListener = object : View.OnClickListener {
             override fun onClick(v: View?) {
@@ -54,7 +56,6 @@ class MainActivity : AppCompatActivity() {
                 startActivity(displaySearchIntent)
             }
         }
-        pushsearch.setOnClickListener(button2ClickListener)
+        binding.searchbutton.setOnClickListener(button2ClickListener)
     }
-
 }

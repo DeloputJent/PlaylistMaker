@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
 import com.google.gson.Gson
-import com.practicum.playlistmaker.domain.models.Track
+import com.practicum.playlistmaker.search.domain.Track
 
 
 class SearchHistory (private val context: Context) {
@@ -18,7 +18,6 @@ class SearchHistory (private val context: Context) {
 
     fun readFromMemory(): MutableList<Track> {
         val json = lookedTracks.getString(TRACKS_KEY, null)
-
         return if (json == null) {
             mutableListOf()
         } else {

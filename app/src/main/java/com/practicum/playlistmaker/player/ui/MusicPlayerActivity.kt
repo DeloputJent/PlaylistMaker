@@ -1,8 +1,6 @@
-package com.practicum.playlistmaker.ui
+package com.practicum.playlistmaker.player.ui
 
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.View
 import android.widget.ImageButton
 import android.widget.ImageView
@@ -13,48 +11,22 @@ import androidx.core.util.TypedValueCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
+import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.practicum.playlistmaker.Creator
-import com.practicum.playlistmaker.Creator.getMusicPlayerRepository
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.data.musicplayer.MusicPlayerRepositoryImpl.Companion.STATE_PAUSED
-import com.practicum.playlistmaker.data.musicplayer.MusicPlayerRepositoryImpl.Companion.STATE_PLAYING
-import com.practicum.playlistmaker.data.musicplayer.MusicPlayerRepositoryImpl.Companion.STATE_PREPARED
-import com.practicum.playlistmaker.domain.api.MusicPlayerInteractor
-import com.practicum.playlistmaker.domain.models.Track
-import java.text.SimpleDateFormat
-import java.util.Locale
+import com.practicum.playlistmaker.search.domain.Track
 
 class MusicPlayerActivity : AppCompatActivity() {
 
-    private lateinit var musicPlayerInteractor: MusicPlayerInteractor
     private lateinit var pushBackButton: ImageButton
     private lateinit var playTrackButton: ImageView
     private lateinit var playedTimeDisplay: TextView
-    private var mediaPlayer = Creator.getMediaPlayer()
-    private val mainThreadHandler: Handler? = Handler(Looper.getMainLooper())
-    fun startPlayer() {
-        musicPlayerInteractor.startPlayer()
-        playTrackButton.setImageResource(R.drawable.pause_button)
-        timerDebounce()
-    }
+    private lateinit var viewModel: PlayerViewModel
 
-    fun pausePlayer() {
-        musicPlayerInteractor.pausePlayer()
-        playTrackButton.setImageResource(R.drawable.ic_start_play_84)
-        mainThreadHandler?.removeCallbacks(timerRunnable)
-    }
-
-    fun timerCounter(): String? = SimpleDateFormat("mm:ss", Locale.getDefault()).format(mediaPlayer.getCurrentPlayedTime())
-
-    private val timerRunnable = Runnable {
-        playedTimeDisplay.text = timerCounter()
-        timerDebounce()
-    }
-
-    private fun timerDebounce() {
-        mainThreadHandler?.postDelayed(timerRunnable, TIMER_CHECK_DELAY)
+    private fun changeButton(isPlaying: Boolean) {
+        if (isPlaying) playTrackButton.setImageResource(R.drawable.pause_button)
+        else playTrackButton.setImageResource(R.drawable.ic_start_play_84)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -87,12 +59,23 @@ class MusicPlayerActivity : AppCompatActivity() {
         playedTimeDisplay =findViewById(R.id.current_played_Time)
         pushBackButton=findViewById(R.id.back_from_player_button)
 
-        playedTimeDisplay.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(0.0)
-
-        musicPlayerInteractor = getMusicPlayerRepository(mediaPlayer)
-
         val intent = intent
         val currentTrack: Track? = intent.getSerializableExtra("current_track") as? Track
+
+        val url:String = if (currentTrack?.previewUrl==null) "" else currentTrack.previewUrl
+
+        viewModel = ViewModelProvider(this,PlayerViewModel.getFactory(url))
+            .get(PlayerViewModel::class.java)
+
+        //playedTimeDisplay.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(0.0)
+
+        viewModel.observeProgressTime().observe(this) {
+            playedTimeDisplay.text = it
+        }
+
+        viewModel.observePlayerState().observe(this) {
+            changeButton(it != PlayerViewModel.STATE_PLAYING)
+        }
 
         pushBackButton.setOnClickListener {
             finish()
@@ -130,35 +113,16 @@ class MusicPlayerActivity : AppCompatActivity() {
         currentTrackCountry.text = currentTrack?.country
 
         playTrackButton.setOnClickListener {
-            when(musicPlayerInteractor.stateOfPlayer()) {
-                STATE_PLAYING -> {
-                    pausePlayer()
-                }
-                STATE_PREPARED, STATE_PAUSED -> {
-                    startPlayer()
-                }
-            }
+            viewModel.onPlayButtonClicked()
         }
-
-        musicPlayerInteractor.preparePlayer(currentTrack?.previewUrl, onCompletion = {
-            playTrackButton.setImageResource(R.drawable.ic_start_play_84)
-            mainThreadHandler?.removeCallbacks(timerRunnable)
-            playedTimeDisplay.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(0.0)
-        })
     }
 
     override fun onPause() {
         super.onPause()
-        pausePlayer()
-        mainThreadHandler?.removeCallbacks(timerRunnable)
+        viewModel.onPause()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        mainThreadHandler?.removeCallbacks(timerRunnable)
-        musicPlayerInteractor.releasePlayer()
-    }
-    companion object{
-        private const val TIMER_CHECK_DELAY =300L
     }
 }

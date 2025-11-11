@@ -1,13 +1,14 @@
-package com.practicum.playlistmaker.ui
+package com.practicum.playlistmaker.settings.data
 
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.domain.api.IntentProvider
 import androidx.core.net.toUri
+import com.practicum.playlistmaker.R
+import com.practicum.playlistmaker.settings.domain.IntentProvider
+import com.practicum.playlistmaker.settings.domain.SharingInteractor
 
-class IntentProvider (private val context: Context) : IntentProvider {
+class ExternalNavigator (private val context: Context) : IntentProvider {
 
     override fun shareText() {
             val shareIntent = Intent(Intent.ACTION_SEND)

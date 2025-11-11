@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker.domain.api
+package com.practicum.playlistmaker.settings.domain
 
 interface IntentProvider {
     fun shareText()
