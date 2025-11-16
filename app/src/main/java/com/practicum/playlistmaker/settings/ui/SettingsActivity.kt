@@ -1,29 +1,28 @@
 package com.practicum.playlistmaker.settings.ui
 
 import android.os.Bundle
-import android.view.View
-import android.widget.Button
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
-import com.google.android.material.switchmaterial.SwitchMaterial
 import com.practicum.playlistmaker.App
-import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.creator.Creator
+import com.practicum.playlistmaker.databinding.ActivitySettingsBinding
 
 class SettingsActivity : AppCompatActivity() {
 
+    private lateinit var binding: ActivitySettingsBinding
     val intentProvider = Creator.getIntentProvider(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_settings)
 
-        val currentView = findViewById<View>(R.id.settings)
-        ViewCompat.setOnApplyWindowInsetsListener(currentView) { view, insets ->
+        binding = ActivitySettingsBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, insets ->
             val statusBar = insets.getInsets(WindowInsetsCompat.Type.statusBars())
             val navigationBar = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
             view.updatePadding(bottom = navigationBar.bottom)
@@ -31,31 +30,24 @@ class SettingsActivity : AppCompatActivity() {
             insets
         }
 
-        val pushbackbutton = findViewById<Button>(R.id.backtoMain)
-        val pushshare = findViewById<Button>(R.id.sharingButton)
-        val pushsupport = findViewById<Button>(R.id.callSupportButton)
-        val pushagreement = findViewById<Button>(R.id.userAgreementButton)
-
-        pushbackbutton.setOnClickListener {
+        binding.backtoMain.setOnClickListener {
             finish()
         }
 
-        val themeSwitcher = findViewById<SwitchMaterial>(R.id.switchDayNight)
+        binding.switchDayNight.setChecked((applicationContext as App).loadTheme())
 
-        themeSwitcher.setChecked((applicationContext as App).loadTheme())
-
-        themeSwitcher.setOnCheckedChangeListener { switcher, checked ->
+        binding.switchDayNight.setOnCheckedChangeListener { switcher, checked ->
             (applicationContext as App).applyTheme(checked) }
 
-        pushshare.setOnClickListener{
+        binding.sharingButton.setOnClickListener{
             intentProvider.shareText()
         }
 
-        pushsupport.setOnClickListener{
+        binding.callSupportButton.setOnClickListener{
             intentProvider.sendEmail()
         }
 
-        pushagreement.setOnClickListener{
+        binding.userAgreementButton.setOnClickListener{
             intentProvider.visitUrl()
         }
     }

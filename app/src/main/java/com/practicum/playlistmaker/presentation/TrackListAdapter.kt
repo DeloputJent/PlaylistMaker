@@ -20,6 +20,12 @@ class TrackListAdapter (
         }
     }
 
+    fun setTrackList(tracks: List<Track>) {
+        this.tracks.clear()
+        this.tracks.addAll(tracks)
+        notifyDataSetChanged()
+    }
+
     override fun getItemCount(): Int {
         return tracks.size
     }

@@ -15,8 +15,6 @@ import java.util.Locale
 
 class PlayerViewModel(private val url: String) : ViewModel() {
 
-
-
     private val playerStateLiveData = MutableLiveData(STATE_DEFAULT)
     fun observePlayerState(): LiveData<Int> = playerStateLiveData
     private val progressTimeLiveData = MutableLiveData("00:00")
