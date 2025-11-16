@@ -52,6 +52,8 @@ class SearchActivity : AppCompatActivity() {
 
     private lateinit var recyclerView : RecyclerView
 
+    lateinit var displayPlayerIntent : Intent
+
     //private var historyList:MutableList<Track> = mutableListOf()
 
 
@@ -84,14 +86,13 @@ class SearchActivity : AppCompatActivity() {
             finish()
         }
 
-        viewModel = ViewModelProvider(this, SearchViewModel.getFactory())
-            .get(SearchViewModel::class.java)
+        viewModel = ViewModelProvider(this, SearchViewModel.getFactory()).get(SearchViewModel::class.java)
 
         viewModel?.observeState()?.observe(this) {
             render(it)
         }
 
-        val displayPlayerIntent= Intent(this@SearchActivity, MusicPlayerActivity::class.java)
+        displayPlayerIntent = Intent(this@SearchActivity, MusicPlayerActivity::class.java)
 
         binding.inputSearch.setText(searchedName)
 
@@ -99,7 +100,6 @@ class SearchActivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
 
         trackAdapter = TrackListAdapter(
-            trackList, historyList,
             clickListener = { track ->
                 if (clickDebounce()) {
                     viewModel?.addToHistoryList(track)
@@ -114,12 +114,13 @@ class SearchActivity : AppCompatActivity() {
         val recyclerViewHistory = findViewById<RecyclerView>(R.id.TracksSearchHistory)
         recyclerViewHistory.layoutManager = LinearLayoutManager(this)
 
-       trackAdapterHistory = TrackListAdapter(viewModel?.getHistoryOfSearch()!!, clickListener = { track ->
+       /*trackAdapterHistory = TrackListAdapter(viewModel?.getHistoryOfSearch()!!, clickListener = { track ->
             displayPlayerIntent.putExtra("current_track", track)
             startActivity(displayPlayerIntent)
-       })
+       })*/
 
-        recyclerViewHistory.adapter = trackAdapterHistory
+        recyclerViewHistory.adapter = trackAdapter
+                //trackAdapterHistory
 
         binding.clearSearchSign.setOnClickListener {
             binding.inputSearch.setText("")
@@ -131,7 +132,8 @@ class SearchActivity : AppCompatActivity() {
 
         binding.clearHistoryButton.setOnClickListener{
             viewModel?.clearHistory()
-            trackAdapterHistory.setTrackList(viewModel?.getHistoryOfSearch()?.toList()!!)
+            //viewModel?.showHistory()
+            //trackAdapterHistory.setTrackList(viewModel?.getHistoryOfSearch()?.toList()!!)
             binding.historyLayout.visibility= View.GONE
         }
 
@@ -139,17 +141,17 @@ class SearchActivity : AppCompatActivity() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 binding.clearSearchSign.isVisible = !s.isNullOrEmpty()
-                    viewModel?.searchDebounce(
-                        changedText = s?.toString() ?: "")
+                    viewModel?.searchDebounce(changedText = s?.toString() ?: "")
 
-                if (binding.inputSearch.hasFocus() && s?.isEmpty()==true && historyList.isNotEmpty()) {
+                if (binding.inputSearch.hasFocus() && s?.isEmpty()==true ) {
                     recyclerView.visibility = View.GONE
-                    trackAdapterHistory.notifyDataSetChanged()
+                    viewModel?.showHistory()
+                    //trackAdapterHistory.notifyDataSetChanged()
                     binding.historyLayout.visibility = View.VISIBLE
-                } else {
+                } /*else {
                     recyclerView.visibility = View.VISIBLE
                     binding.historyLayout.visibility = View.GONE
-                }
+                }*/
             }
             override fun afterTextChanged(s: Editable?) {
                 searchedName=s.toString()
@@ -178,7 +180,7 @@ class SearchActivity : AppCompatActivity() {
         }
 
         binding.inputSearch.setOnFocusChangeListener { view, hasFocus ->
-            if (hasFocus && binding.inputSearch.text.isEmpty() && historyList.isNotEmpty()) {
+            if (hasFocus && binding.inputSearch.text.isEmpty() ) {
                 recyclerView.visibility = View.GONE
                 trackAdapterHistory.notifyDataSetChanged()
                 binding.historyLayout.visibility = View.VISIBLE
@@ -225,6 +227,7 @@ class SearchActivity : AppCompatActivity() {
 
     fun showContent(tracks: List<Track>) {
         hideProblemMessageAndButton()
+
         trackAdapter.setTrackList(tracks)
     }
 

@@ -34,6 +34,10 @@ class SearchViewModel(private val context: Context): ViewModel() {
     private val stateLiveData = MutableLiveData<SearchTrackState>()
     val historyOfSearch = Creator.getHistoryOfSearch(context)
     var historyList = mutableListOf<Track>()
+    private var latestSearchSong: String? = null
+    private var handler: Handler = Handler(Looper.getMainLooper())
+
+    private val trackList:MutableList<Track> = mutableListOf()
 
     fun readFromMemory(): MutableList<Track> {
         historyList = historyOfSearch.readFromMemory()
@@ -54,16 +58,10 @@ class SearchViewModel(private val context: Context): ViewModel() {
 
     fun observeState(): LiveData<SearchTrackState> = stateLiveData
 
-    private var latestSearchSong: String? = null
-    private var handler: Handler = Handler(Looper.getMainLooper())
-
-    private val trackList:MutableList<Track> = mutableListOf()
-
     fun searchDebounce(changedText: String) {
         if (latestSearchSong == changedText) {
             return
         }
-
         this.latestSearchSong = changedText
         handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
 
@@ -77,10 +75,14 @@ class SearchViewModel(private val context: Context): ViewModel() {
         )
     }
 
-    fun addToHistoryList(track: Track){
-    historyList.removeIf { it.trackId == track.trackId }
-    if (historyList.size == 10) historyList.removeAt(9)
-    historyList.add(0, track)
+    fun addToHistoryList(track: Track) {
+        historyList.removeIf { it.trackId == track.trackId }
+        if (historyList.size == 10) historyList.removeAt(9)
+        historyList.add(0, track)
+    }
+
+    fun showHistory() {
+        renderState(SearchTrackState.Content(historyList))
     }
 
     fun searchThisTrack(songName:String) {
