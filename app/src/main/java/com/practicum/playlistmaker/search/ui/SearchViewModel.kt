@@ -81,10 +81,6 @@ class SearchViewModel(private val context: Context): ViewModel() {
         historyList.add(0, track)
     }
 
-    fun showHistory() {
-        renderState(SearchTrackState.Content(historyList))
-    }
-
     fun searchThisTrack(songName:String) {
         if(songName.isNotEmpty()) {
             renderState(SearchTrackState.Loading)
@@ -110,6 +106,10 @@ class SearchViewModel(private val context: Context): ViewModel() {
 
     private fun renderState(state: SearchTrackState) {
         stateLiveData.postValue(state)
+    }
+
+    fun showHistory() {
+        renderState(SearchTrackState.ShowHistory(historyList))
     }
 
     override fun onCleared() {
