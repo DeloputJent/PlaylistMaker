@@ -33,6 +33,16 @@ class SearchActivity : AppCompatActivity() {
         private const val CLICK_DEBOUNCE_DELAY = 1000L
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString(MEMMORY, searchedName)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        searchedName = savedInstanceState.getString(MEMMORY, MEMMORY_DEF)
+    }
+
     private lateinit var binding: ActivitySearchBinding
     private var viewModel: SearchViewModel? = null
     private var textInputControl: TextWatcher? = null
@@ -42,7 +52,6 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var trackAdapter : TrackListAdapter
     private lateinit var trackAdapterHistory : TrackListAdapter
     private lateinit var recyclerView : RecyclerView
-
     private lateinit var recyclerViewHistory : RecyclerView
     lateinit var displayPlayerIntent : Intent
 
@@ -65,7 +74,8 @@ class SearchActivity : AppCompatActivity() {
             finish()
         }
 
-        viewModel = ViewModelProvider(this, SearchViewModel.getFactory()).get(SearchViewModel::class.java)
+        viewModel = ViewModelProvider(this, SearchViewModel.getFactory())
+            .get(SearchViewModel::class.java)
 
         viewModel?.observeState()?.observe(this) {
             render(it)
@@ -103,7 +113,6 @@ class SearchActivity : AppCompatActivity() {
         binding.clearSearchSign.setOnClickListener {
             binding.inputSearch.setText("")
             hideProblemMessageAndButton()
-            trackAdapter.notifyDataSetChanged()
             val inputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
             inputMethodManager?.hideSoftInputFromWindow(binding.inputSearch.windowToken, 0)
         }
@@ -203,6 +212,7 @@ class SearchActivity : AppCompatActivity() {
         binding.progressBar.visibility = View.GONE
         hideProblemMessageAndButton()
         trackAdapter.setTrackList(tracks)
+        recyclerView.visibility= View.VISIBLE
     }
 
     fun showHistory(tracks: List<Track>) {
