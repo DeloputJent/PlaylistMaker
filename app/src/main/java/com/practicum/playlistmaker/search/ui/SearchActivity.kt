@@ -22,7 +22,7 @@ import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.ActivitySearchBinding
 import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.player.ui.MusicPlayerActivity
-import com.practicum.playlistmaker.presentation.TrackListAdapter
+import com.practicum.playlistmaker.search.ui.presentation.TrackListAdapter
 import com.practicum.playlistmaker.search.domain.SearchTrackState
 
 class SearchActivity : AppCompatActivity() {
@@ -81,6 +81,8 @@ class SearchActivity : AppCompatActivity() {
             render(it)
         }
 
+        viewModel?.readFromMemory()
+
         displayPlayerIntent = Intent(this@SearchActivity, MusicPlayerActivity::class.java)
 
         binding.inputSearch.setText(searchedName)
@@ -112,6 +114,7 @@ class SearchActivity : AppCompatActivity() {
 
         binding.clearSearchSign.setOnClickListener {
             binding.inputSearch.setText("")
+            recyclerView.visibility= View.GONE
             hideProblemMessageAndButton()
             val inputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
             inputMethodManager?.hideSoftInputFromWindow(binding.inputSearch.windowToken, 0)
@@ -122,35 +125,27 @@ class SearchActivity : AppCompatActivity() {
             binding.historyLayout.visibility= View.GONE
         }
 
+        binding.refreshThisSearchButton.setOnClickListener{
+            viewModel?.searchDebounce("")
+            viewModel?.searchDebounce(binding.inputSearch.text.toString())
+        }
+
         textInputControl = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 binding.clearSearchSign.isVisible = !s.isNullOrEmpty()
                 viewModel?.searchDebounce(changedText = s?.toString() ?: "")
                 if (binding.inputSearch.hasFocus() && s?.isEmpty()==true) {
-                    recyclerView.visibility = View.GONE
                     viewModel?.showHistory()
-                    binding.historyLayout.visibility = View.VISIBLE
                 } else {
-                    recyclerView.visibility = View.VISIBLE
                     binding.historyLayout.visibility = View.GONE
                 }
             }
-            override fun afterTextChanged(s: Editable?) {
-                searchedName=s.toString()
-                if (s != null) {
-                    if (s.isEmpty()) {
-                        hideProblemMessageAndButton()
-                    }
-                }
-            }
+
+            override fun afterTextChanged(s: Editable?) { }
         }
 
         binding.inputSearch.addTextChangedListener(textInputControl)
-
-        binding.refreshThisSearchButton.setOnClickListener{
-            viewModel?.searchDebounce(binding.inputSearch.text.toString())
-        }
 
         binding.inputSearch.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
@@ -163,11 +158,10 @@ class SearchActivity : AppCompatActivity() {
         }
 
         binding.inputSearch.setOnFocusChangeListener { view, hasFocus ->
-            if (hasFocus && binding.inputSearch.text.isEmpty() ) {
+            if (hasFocus && binding.inputSearch.text.isEmpty()) {
                 viewModel?.showHistory()
             } else {
                 binding.historyLayout.visibility = View.GONE
-                recyclerView.visibility = View.VISIBLE
             }
         }
     }//OnCreate
@@ -209,44 +203,46 @@ class SearchActivity : AppCompatActivity() {
     }
 
     fun showContent(tracks: List<Track>) {
-        binding.progressBar.visibility = View.GONE
         hideProblemMessageAndButton()
+        binding.progressBar.visibility = View.GONE
+        binding.historyLayout.visibility= View.GONE
         trackAdapter.setTrackList(tracks)
         recyclerView.visibility= View.VISIBLE
     }
 
     fun showHistory(tracks: List<Track>) {
         if (tracks.isNotEmpty()) {
-            binding.progressBar.visibility = View.GONE
             hideProblemMessageAndButton()
+            binding.progressBar.visibility = View.GONE
+            recyclerView.visibility= View.GONE
             trackAdapterHistory.setTrackList(tracks)
+            binding.historyLayout.visibility= View.VISIBLE
         } else binding.historyLayout.visibility= View.GONE
     }
 
     fun showNothingFoundMessage() {
         binding.apply {
             binding.progressBar.visibility = View.GONE
-            errorSign.setImageResource(R.drawable.ic_nothing_found_120)
             errorSign.visibility = View.VISIBLE
-            searchProblemMessage.setText(R.string.nothing_found)
             searchProblemMessage.visibility = View.VISIBLE
+            errorSign.setImageResource(R.drawable.ic_nothing_found_120)
+            searchProblemMessage.setText(R.string.nothing_found)
         }
     }
 
     fun showNoNetMessageAndButton() {
         binding.apply {
             binding.progressBar.visibility = View.GONE
-            errorSign.setImageResource(R.drawable.ic_no_connection_120)
-            errorSign.visibility = View.VISIBLE
-            searchProblemMessage.setText(R.string.problem_with_connection)
             searchProblemMessage.visibility = View.VISIBLE
             refreshThisSearchButton.visibility = View.VISIBLE
+            errorSign.visibility = View.VISIBLE
+            errorSign.setImageResource(R.drawable.ic_no_connection_120)
+            searchProblemMessage.setText(R.string.problem_with_connection)
         }
     }
 
     fun hideProblemMessageAndButton() {
         binding.apply {
-            binding.progressBar.visibility = View.GONE
             errorSign.visibility = View.GONE
             searchProblemMessage.visibility = View.GONE
             refreshThisSearchButton.visibility = View.GONE

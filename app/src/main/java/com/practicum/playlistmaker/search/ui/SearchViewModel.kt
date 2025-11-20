@@ -4,8 +4,6 @@ import android.app.Application
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
-import android.os.SystemClock
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -14,7 +12,7 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.AP
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.practicum.playlistmaker.creator.Creator
-import com.practicum.playlistmaker.domain.api.TracksInteractor
+import com.practicum.playlistmaker.search.domain.TracksInteractor
 import com.practicum.playlistmaker.search.domain.SearchTrackState
 import com.practicum.playlistmaker.search.domain.Track
 
@@ -28,8 +26,6 @@ class SearchViewModel(private val context: Context): ViewModel() {
     private var latestSearchSong: String = ""
     private var handler: Handler = Handler(Looper.getMainLooper())
 
-    private val trackList:MutableList<Track> = mutableListOf()
-
     fun readFromMemory(): MutableList<Track> {
         historyList = historyOfSearch.readFromMemory()
         return historyList
@@ -41,6 +37,7 @@ class SearchViewModel(private val context: Context): ViewModel() {
 
     fun clearHistory() {
         historyOfSearch.clearMemory()
+        historyList.clear()
     }
 
     fun getHistoryOfSearch() : MutableList<Track> {
@@ -51,8 +48,7 @@ class SearchViewModel(private val context: Context): ViewModel() {
 
     fun searchDebounce(changedText: String) {
         if (latestSearchSong == changedText) {
-           Log.d("ResultsText",changedText+"="+latestSearchSong)
-            return
+           return
         }
         this.latestSearchSong = changedText
         handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
@@ -73,8 +69,6 @@ class SearchViewModel(private val context: Context): ViewModel() {
                             if (foundTracks.isNotEmpty()) {
                                 trackList.clear()
                                 trackList.addAll(foundTracks)
-                                Log.d("ResultsSong=", songName)
-                                Log.d("Results=", trackList.size.toString())
                                 renderState(SearchTrackState.Content(trackList))
                             } else {
                                 renderState(SearchTrackState.NothingFound)
