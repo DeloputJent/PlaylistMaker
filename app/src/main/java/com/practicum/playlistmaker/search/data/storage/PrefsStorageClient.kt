@@ -1,11 +1,11 @@
-package com.practicum.playlistmaker.search.data.sharedpreferences
+package com.practicum.playlistmaker.search.data.storage
 
 import android.content.Context
-import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
-import com.google.gson.Gson
-import java.lang.reflect.Type
 import androidx.core.content.edit
+import com.google.gson.Gson
+import com.practicum.playlistmaker.search.data.StorageClient
+import java.lang.reflect.Type
 
 class PrefsStorageClient<T>(
     private val context: Context,
@@ -13,7 +13,9 @@ class PrefsStorageClient<T>(
     private val type: Type
 ) : StorageClient<T> {
 
-    val lookedTracks: SharedPreferences = context.getSharedPreferences(HISTORY, MODE_PRIVATE)
+    val lookedTracks: SharedPreferences = context.getSharedPreferences(HISTORY,
+        Context.MODE_PRIVATE
+    )
 
     private val gson = Gson()
 
@@ -31,7 +33,7 @@ class PrefsStorageClient<T>(
         }
     }
 
-    fun clearMemory () {
+    override fun clearData () {
         lookedTracks.edit().clear().apply()
     }
 

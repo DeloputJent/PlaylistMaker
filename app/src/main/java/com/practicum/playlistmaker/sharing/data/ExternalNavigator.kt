@@ -1,12 +1,11 @@
-package com.practicum.playlistmaker.settings.data
+package com.practicum.playlistmaker.sharing.data
 
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.core.net.toUri
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.settings.domain.IntentProvider
-import com.practicum.playlistmaker.settings.domain.SharingInteractor
+import com.practicum.playlistmaker.sharing.domain.api.IntentProvider
 
 class ExternalNavigator (private val context: Context) : IntentProvider {
 

@@ -168,7 +168,6 @@ class SearchActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-        viewModel?.writeInMemory()
     }
 
     override fun onDestroy() {

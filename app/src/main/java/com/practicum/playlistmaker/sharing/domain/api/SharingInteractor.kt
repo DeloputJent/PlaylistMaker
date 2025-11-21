@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker.settings.domain
+package com.practicum.playlistmaker.sharing.domain.api
 
 interface SharingInteractor {
     fun shareApp()

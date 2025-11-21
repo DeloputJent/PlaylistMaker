@@ -2,7 +2,7 @@ package com.practicum.playlistmaker.settings.ui
 
 import androidx.lifecycle.ViewModel
 import com.practicum.playlistmaker.settings.domain.SettingsInteractor
-import com.practicum.playlistmaker.settings.domain.SharingInteractor
+import com.practicum.playlistmaker.sharing.domain.api.SharingInteractor
 
 
 class SettingsViewModel(

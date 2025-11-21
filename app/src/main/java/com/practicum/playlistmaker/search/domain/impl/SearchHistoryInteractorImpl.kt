@@ -12,7 +12,11 @@ class SearchHistoryInteractorImpl(
         consumer.consume(repository.getHistory().data)
     }
 
-    override fun saveToHistory(m: Track) {
-        repository.saveToHistory(m)
+    override fun saveToHistory(t: Track) {
+        repository.saveToHistory(t)
+    }
+
+    override fun clearHistory() {
+        repository.clearHistory()
     }
 }

@@ -15,28 +15,33 @@ import com.practicum.playlistmaker.creator.Creator
 import com.practicum.playlistmaker.search.domain.TracksInteractor
 import com.practicum.playlistmaker.search.domain.SearchTrackState
 import com.practicum.playlistmaker.search.domain.Track
+import com.practicum.playlistmaker.search.domain.api.SearchHistoryInteractor
 
 class SearchViewModel(private val context: Context): ViewModel() {
 
     private val tracksInteractor = Creator.provideTracksInteractor()
     private val stateLiveData = MutableLiveData<SearchTrackState>()
-    val historyOfSearch = Creator.getHistoryOfSearch(context)
+    val historyOfSearch = Creator.provideSearchHistoryInteractor(context)
 
     var historyList = mutableListOf<Track>()
     private var latestSearchSong: String = ""
     private var handler: Handler = Handler(Looper.getMainLooper())
 
     fun readFromMemory(): MutableList<Track> {
-        historyList = historyOfSearch.readFromMemory()
+        historyOfSearch.getHistory(object : SearchHistoryInteractor.HistoryConsumer {
+            override fun consume(searchHistory: List<Track>?) {
+                historyList = (searchHistory ?: mutableListOf()).toMutableList()
+            }
+        })
         return historyList
     }
 
-    fun writeInMemory() {
-        historyOfSearch.writeInMemory(historyList)
-    }
+    /*fun writeInMemory() {
+        historyOfSearch.saveToHistory(historyList)
+    }*/
 
     fun clearHistory() {
-        historyOfSearch.clearMemory()
+        historyOfSearch.clearHistory()
         historyList.clear()
     }
 
@@ -83,21 +88,19 @@ class SearchViewModel(private val context: Context): ViewModel() {
     } //fun searchThisTrack()
 
     fun addToHistoryList(track: Track) {
-        historyList.removeIf { it.trackId == track.trackId }
-        if (historyList.size == 10) historyList.removeAt(9)
-        historyList.add(0, track)
+        historyOfSearch.saveToHistory(track)
     }
     private fun renderState(state: SearchTrackState) {
         stateLiveData.postValue(state)
     }
 
     fun showHistory() {
+        readFromMemory()
         renderState(SearchTrackState.ShowHistory(historyList))
     }
 
     override fun onCleared() {
         super.onCleared()
-        writeInMemory()
         handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
     }
 

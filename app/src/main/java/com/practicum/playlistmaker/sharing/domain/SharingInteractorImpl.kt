@@ -1,6 +1,7 @@
-package com.practicum.playlistmaker.settings.domain
+package com.practicum.playlistmaker.sharing.domain
 
-import com.practicum.playlistmaker.settings.data.ExternalNavigator
+import com.practicum.playlistmaker.sharing.domain.api.IntentProvider
+import com.practicum.playlistmaker.sharing.domain.api.SharingInteractor
 
 class SharingInteractorImpl(
     private val externalNavigator: IntentProvider,
