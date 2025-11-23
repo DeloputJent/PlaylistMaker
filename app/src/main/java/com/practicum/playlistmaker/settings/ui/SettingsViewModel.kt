@@ -1,37 +1,66 @@
 package com.practicum.playlistmaker.settings.ui
 
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import com.practicum.playlistmaker.player.ui.PlayerViewModel
-import com.practicum.playlistmaker.settings.domain.SettingsInteractor
+import com.practicum.playlistmaker.settings.data.SettingsRepository
 import com.practicum.playlistmaker.settings.domain.ThemeSettings
 import com.practicum.playlistmaker.sharing.domain.api.SharingInteractor
 
-
 class SettingsViewModel(
     private val sharingInteractor: SharingInteractor,
-    private val settingsInteractor: SettingsInteractor,
+    private val settingsRepository: SettingsRepository,
 ) : ViewModel() {
-    val settingsState: MutableLiveData<ThemeSettings> = MutableLiveData()
+    val settingsState: MutableLiveData<ThemeSettings> = MutableLiveData(defaultSettings)
 
-    fun observeThemeState(): MutableLiveData<ThemeSettings> = settingsState
-
+    fun observeThemeState(): LiveData<ThemeSettings> {
+        settingsState.value = settingsRepository.getThemeSettings()
+        return settingsState
+    }
     fun updateSettings(newSettings: ThemeSettings) {
-
-        settingsInteractor.updateThemeSetting(newSettings)
-
+        settingsRepository.updateThemeSetting(newSettings)
         settingsState.value = newSettings
+        settingsState.postValue(newSettings)
+        switchNightMode(newSettings.darkThemeEnabled)
     }
 
-    fun getFactory(sharingInteractor: SharingInteractor,
-                  settingsInteractor: SettingsInteractor,): ViewModelProvider.Factory = viewModelFactory {
-        initializer {
-            SettingsViewModel(sharingInteractor, settingsInteractor)
+    private fun switchNightMode (darkThemeEnabled: Boolean) {
+        AppCompatDelegate.setDefaultNightMode(
+            if (darkThemeEnabled) {
+                AppCompatDelegate.MODE_NIGHT_YES
+            } else {
+                AppCompatDelegate.MODE_NIGHT_NO
+            }
+        )
+    }
+
+    fun shareApp() {
+        sharingInteractor.shareApp()
+    }
+
+    fun openSupport() {
+        sharingInteractor.openSupport()
+    }
+
+    fun openTerms() {
+        sharingInteractor.openTerms()
+    }
+
+    companion object {
+
+        val defaultSettings = ThemeSettings(false)
+
+        fun getFactory(
+            sharingInteractor: SharingInteractor,
+            settingsRepository: SettingsRepository,
+        ): ViewModelProvider.Factory = viewModelFactory {
+            initializer {
+                SettingsViewModel(sharingInteractor, settingsRepository,)
+            }
         }
     }
-
 }
