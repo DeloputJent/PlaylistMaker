@@ -28,7 +28,7 @@ class SettingsViewModel(
         switchNightMode(newSettings.darkThemeEnabled)
     }
 
-    private fun switchNightMode (darkThemeEnabled: Boolean) {
+    fun switchNightMode (darkThemeEnabled: Boolean) {
         AppCompatDelegate.setDefaultNightMode(
             if (darkThemeEnabled) {
                 AppCompatDelegate.MODE_NIGHT_YES

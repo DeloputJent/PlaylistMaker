@@ -31,6 +31,12 @@ class SettingsActivity : AppCompatActivity() {
             sharingInteractor, settingsRepository))
             .get(SettingsViewModel::class.java)
 
+        viewModel.observeThemeState()
+
+        viewModel.settingsState.observe(this) { themeSettings ->
+            viewModel.switchNightMode(themeSettings.darkThemeEnabled)
+        }
+
         binding = ActivitySettingsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
