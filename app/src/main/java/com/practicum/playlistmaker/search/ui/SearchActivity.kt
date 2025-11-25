@@ -27,12 +27,6 @@ import com.practicum.playlistmaker.search.domain.SearchTrackState
 
 class SearchActivity : AppCompatActivity() {
 
-    companion object {
-        const val MEMMORY = ""
-        const val MEMMORY_DEF = ""
-        private const val CLICK_DEBOUNCE_DELAY = 1000L
-    }
-
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString(MEMMORY, searchedName)
@@ -246,5 +240,11 @@ class SearchActivity : AppCompatActivity() {
             searchProblemMessage.visibility = View.GONE
             refreshThisSearchButton.visibility = View.GONE
         }
+    }
+
+    companion object {
+        const val MEMMORY = ""
+        const val MEMMORY_DEF = ""
+        private const val CLICK_DEBOUNCE_DELAY = 1000L
     }
 }

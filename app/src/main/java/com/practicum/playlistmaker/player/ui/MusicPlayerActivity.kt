@@ -42,11 +42,11 @@ class MusicPlayerActivity : AppCompatActivity() {
         }
 
         val intent = intent
-        val currentTrack: Track? = intent.getSerializableExtra("current_track") as? Track
+        var currentTrack = intent.getParcelableExtra<Track>("current_track")
 
-        val url:String = if (currentTrack?.previewUrl==null) "" else currentTrack.previewUrl
+        if (currentTrack==null) currentTrack=Track()
 
-        viewModel = ViewModelProvider(this,PlayerViewModel.getFactory(url))
+        viewModel = ViewModelProvider(this,PlayerViewModel.getFactory(currentTrack))
             .get(PlayerViewModel::class.java)
 
         viewModel.observeProgressTime().observe(this) {
@@ -61,38 +61,37 @@ class MusicPlayerActivity : AppCompatActivity() {
             finish()
         }
 
-        if (currentTrack != null) {
-            Glide.with(this)
-                .load(currentTrack.coverArtworkUrl)
-                .centerCrop()
-                .transform(
-                    RoundedCorners(
-                        TypedValueCompat.dpToPx(8f, this.resources.displayMetrics).toInt()
-                    )
+        Glide.with(this)
+            .load(currentTrack.coverArtworkUrl)
+            .centerCrop()
+            .transform(
+                RoundedCorners(
+                    TypedValueCompat.dpToPx(8f, this.resources.displayMetrics).toInt()
                 )
-                .placeholder(R.drawable.img_placeholder_312)
-                .into(binding.TrackArtwork)
-        }
+            )
+            .placeholder(R.drawable.img_placeholder_312)
+            .into(binding.TrackArtwork)
+
         binding.apply {
-        currentPlayedTrack.text = currentTrack?.trackName
-        currentArtist.text = currentTrack?.artistName
-        currentTrackTime.text = currentTrack?.trackTimeMillis
+        currentPlayedTrack.text = currentTrack.trackName
+        currentArtist.text = currentTrack.artistName
+        currentTrackTime.text = currentTrack.trackTimeMillis
         }
-        if (currentTrack?.collectionName.isNullOrEmpty()) {
+        if (currentTrack.collectionName.isEmpty()) {
             binding.currentCollectionName.visibility = View.GONE
             binding.collection.visibility = View.GONE
         } else {
             binding.currentCollectionName.text = currentTrack.collectionName
         }
 
-        if (currentTrack?.releaseDate.isNullOrEmpty()) {
+        if (currentTrack.releaseDate.isEmpty()) {
             binding.currentTrackReleaseYear.visibility = View.GONE
             binding.trackReleaseYear.visibility = View.GONE
         } else {
             binding.currentTrackReleaseYear.text = currentTrack.releaseDate
         }
-        binding.currentTrackGenre.text = currentTrack?.primaryGenreName
-        binding.currentTrackCountry.text = currentTrack?.country
+        binding.currentTrackGenre.text = currentTrack.primaryGenreName
+        binding.currentTrackCountry.text = currentTrack.country
 
         binding.playTrackButton.setOnClickListener {
             viewModel.onPlayButtonClicked()

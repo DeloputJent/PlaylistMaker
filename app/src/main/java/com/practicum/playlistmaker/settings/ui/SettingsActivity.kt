@@ -9,8 +9,6 @@ import androidx.core.view.updatePadding
 import androidx.lifecycle.ViewModelProvider
 import com.practicum.playlistmaker.creator.Creator
 import com.practicum.playlistmaker.databinding.ActivitySettingsBinding
-import com.practicum.playlistmaker.settings.data.SettingsRepository
-import com.practicum.playlistmaker.settings.data.SettingsRepositoryImpl
 import com.practicum.playlistmaker.settings.domain.ThemeSettings
 
 class SettingsActivity : AppCompatActivity() {
@@ -19,16 +17,15 @@ class SettingsActivity : AppCompatActivity() {
 
     private lateinit var viewModel: SettingsViewModel
 
-    private lateinit var settingsRepository: SettingsRepository
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         val sharingInteractor = Creator.getSharingInteractor(this)
-        settingsRepository = SettingsRepositoryImpl(this)
+
+        val settingsInteractor = Creator.getSettingsInteractor(this)
 
         viewModel = ViewModelProvider(this, SettingsViewModel.getFactory(
-            sharingInteractor, settingsRepository))
+            sharingInteractor, settingsInteractor))
             .get(SettingsViewModel::class.java)
 
         viewModel.observeThemeState()

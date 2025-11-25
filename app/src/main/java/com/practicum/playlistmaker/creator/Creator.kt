@@ -13,6 +13,9 @@ import com.practicum.playlistmaker.search.domain.api.SearchHistoryInteractor
 import com.practicum.playlistmaker.search.domain.api.SearchHistoryRepository
 import com.practicum.playlistmaker.search.domain.impl.SearchHistoryInteractorImpl
 import com.practicum.playlistmaker.search.domain.impl.TracksInteractorImpl
+import com.practicum.playlistmaker.settings.data.SettingsRepositoryImpl
+import com.practicum.playlistmaker.settings.domain.api.SettingsInteractor
+import com.practicum.playlistmaker.settings.domain.impl.SettingsInteractorImpl
 import com.practicum.playlistmaker.sharing.data.ExternalNavigator
 import com.practicum.playlistmaker.sharing.domain.SharingInteractorImpl
 import com.practicum.playlistmaker.sharing.domain.api.SharingInteractor
@@ -30,6 +33,11 @@ object Creator {
     fun getSharingInteractor(context: Context): SharingInteractor {
         val externalNavigator = ExternalNavigator(context)
         return SharingInteractorImpl(externalNavigator)
+    }
+
+    fun getSettingsInteractor(context: Context): SettingsInteractor {
+        val settingsRepository = SettingsRepositoryImpl(context)
+        return SettingsInteractorImpl(settingsRepository)
     }
 
     private fun getSearchHistoryRepository(context: Context): SearchHistoryRepository {

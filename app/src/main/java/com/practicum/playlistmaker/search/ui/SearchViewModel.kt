@@ -17,11 +17,10 @@ import com.practicum.playlistmaker.search.domain.SearchTrackState
 import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.search.domain.api.SearchHistoryInteractor
 
-class SearchViewModel(private val context: Context): ViewModel() {
+class SearchViewModel(private val context: Context, private val tracksInteractor: TracksInteractor): ViewModel() {
 
-    private val tracksInteractor = Creator.provideTracksInteractor()
     private val stateLiveData = MutableLiveData<SearchTrackState>()
-    val historyOfSearch = Creator.provideSearchHistoryInteractor(context)
+    private val historyOfSearch = Creator.provideSearchHistoryInteractor(context)
 
     var historyList = mutableListOf<Track>()
     private var latestSearchSong: String = ""
@@ -36,17 +35,9 @@ class SearchViewModel(private val context: Context): ViewModel() {
         return historyList
     }
 
-    /*fun writeInMemory() {
-        historyOfSearch.saveToHistory(historyList)
-    }*/
-
     fun clearHistory() {
         historyOfSearch.clearHistory()
         historyList.clear()
-    }
-
-    fun getHistoryOfSearch() : MutableList<Track> {
-        return historyList
     }
 
     fun observeState(): LiveData<SearchTrackState> = stateLiveData
@@ -85,7 +76,7 @@ class SearchViewModel(private val context: Context): ViewModel() {
                 }
             })
         }
-    } //fun searchThisTrack()
+    }
 
     fun addToHistoryList(track: Track) {
         historyOfSearch.saveToHistory(track)
@@ -111,7 +102,10 @@ class SearchViewModel(private val context: Context): ViewModel() {
         fun getFactory(): ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val app = (this[APPLICATION_KEY]) as Application
-                SearchViewModel(app)
+                val tracksInteractor = Creator.provideTracksInteractor()
+                SearchViewModel(
+                    app, tracksInteractor
+                )
             }
         }
     }

@@ -9,18 +9,19 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.practicum.playlistmaker.search.domain.Track
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 
-class PlayerViewModel(private val url: String) : ViewModel() {
+class PlayerViewModel(private val track: Track) : ViewModel() {
 
     private val playerStateLiveData = MutableLiveData(STATE_DEFAULT)
     fun observePlayerState(): LiveData<Int> = playerStateLiveData
-    private val progressTimeLiveData = MutableLiveData("00:00")
+    private val progressTimeLiveData = MutableLiveData(SimpleDateFormat("mm:ss",
+        Locale.getDefault()).format(0.0))
     fun observeProgressTime(): LiveData<String> = progressTimeLiveData
     private val mediaPlayer = MediaPlayer()
-
 
     private val handler = Handler(Looper.getMainLooper())
 
@@ -52,7 +53,7 @@ class PlayerViewModel(private val url: String) : ViewModel() {
     }
 
     private fun preparePlayer() {
-        mediaPlayer.setDataSource(url)
+        mediaPlayer.setDataSource(track.previewUrl)
         mediaPlayer.prepareAsync()
         mediaPlayer.setOnPreparedListener {
             playerStateLiveData.postValue(STATE_PREPARED)
@@ -76,8 +77,9 @@ class PlayerViewModel(private val url: String) : ViewModel() {
     }
 
     private fun startTimerUpdate() {
-        progressTimeLiveData.postValue(SimpleDateFormat("mm:ss", Locale.getDefault()).format(mediaPlayer.currentPosition))
-        handler.postDelayed(timerRunnable, 200)
+        progressTimeLiveData.postValue(SimpleDateFormat("mm:ss",
+            Locale.getDefault()).format(mediaPlayer.currentPosition))
+        handler.postDelayed(timerRunnable, CHECK_TIMER)
     }
 
     private fun pauseTimer() {
@@ -86,7 +88,8 @@ class PlayerViewModel(private val url: String) : ViewModel() {
 
     private fun resetTimer() {
         handler.removeCallbacks(timerRunnable)
-        progressTimeLiveData.postValue("00:00")
+        progressTimeLiveData.postValue(SimpleDateFormat("mm:ss",
+            Locale.getDefault()).format(0.0))
     }
     companion object {
         const val STATE_DEFAULT = 0
@@ -94,9 +97,11 @@ class PlayerViewModel(private val url: String) : ViewModel() {
         const val STATE_PLAYING = 2
         const val STATE_PAUSED = 3
 
-        fun getFactory(trackUrl: String): ViewModelProvider.Factory = viewModelFactory {
+        const val CHECK_TIMER = 200L
+
+        fun getFactory(track: Track): ViewModelProvider.Factory = viewModelFactory {
             initializer {
-                PlayerViewModel(trackUrl)
+                PlayerViewModel(track)
             }
         }
     }
