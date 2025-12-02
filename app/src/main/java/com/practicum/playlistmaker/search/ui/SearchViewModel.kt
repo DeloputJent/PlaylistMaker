@@ -17,10 +17,13 @@ import com.practicum.playlistmaker.search.domain.SearchTrackState
 import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.search.domain.api.SearchHistoryInteractor
 
-class SearchViewModel(private val context: Context, private val tracksInteractor: TracksInteractor): ViewModel() {
+class SearchViewModel(private val context: Context,
+                      private val tracksInteractor: TracksInteractor,
+                      private val historyOfSearch:SearchHistoryInteractor
+): ViewModel() {
 
     private val stateLiveData = MutableLiveData<SearchTrackState>()
-    private val historyOfSearch = Creator.provideSearchHistoryInteractor(context)
+    //private val historyOfSearch = Creator.provideSearchHistoryInteractor(context)
 
     var historyList = mutableListOf<Track>()
     private var latestSearchSong: String = ""

@@ -22,7 +22,7 @@ import com.practicum.playlistmaker.sharing.domain.api.SharingInteractor
 
 object Creator {
 
-    private fun getTracksRepository(): TrackRepository {
+    /*private fun getTracksRepository(): TrackRepository {
         return TracksRepositoryImpl(RetrofitNetWorkClient())
     }
 
@@ -52,5 +52,5 @@ object Creator {
 
     fun provideSearchHistoryInteractor(context: Context): SearchHistoryInteractor {
         return SearchHistoryInteractorImpl(getSearchHistoryRepository(context))
-    }
+    }*/
 }

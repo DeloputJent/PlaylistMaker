@@ -9,23 +9,22 @@ import java.lang.reflect.Type
 
 class PrefsStorageClient<T>(
     private val context: Context,
-    private val dataKey: String,
-    private val type: Type
+    private val gson:Gson,
+    private val type: Type,
 ) : StorageClient<T> {
-
     val lookedTracks: SharedPreferences = context.getSharedPreferences(HISTORY,
         Context.MODE_PRIVATE
     )
 
-    private val gson = Gson()
+    //private val gson = Gson()
 
     override fun storeData(data: T) {
-        val json = gson.toJson(data)
-        lookedTracks.edit { putString(dataKey, gson.toJson(data, type)) }
+        //val json = gson.toJson(data)
+        lookedTracks.edit { putString(DATAKEY, gson.toJson(data, type)) }
     }
 
     override fun getData(): T? {
-        val dataJson = lookedTracks.getString(dataKey, null)
+        val dataJson = lookedTracks.getString(DATAKEY, null)
         if (dataJson == null) {
             return null
         } else {
@@ -38,6 +37,7 @@ class PrefsStorageClient<T>(
     }
 
     companion object{
-        const val HISTORY ="History_of_search"
+        const val DATAKEY: String = "HISTORY"
+        const val HISTORY = "History_of_search"
     }
 }

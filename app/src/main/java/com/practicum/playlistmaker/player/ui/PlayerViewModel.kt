@@ -14,14 +14,14 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 
-class PlayerViewModel(private val track: Track) : ViewModel() {
+class PlayerViewModel(private val track: Track, private val mediaPlayer:MediaPlayer) : ViewModel() {
 
     private val playerStateLiveData = MutableLiveData(STATE_DEFAULT)
     fun observePlayerState(): LiveData<Int> = playerStateLiveData
     private val progressTimeLiveData = MutableLiveData(SimpleDateFormat("mm:ss",
         Locale.getDefault()).format(0.0))
     fun observeProgressTime(): LiveData<String> = progressTimeLiveData
-    private val mediaPlayer = MediaPlayer()
+    //private val mediaPlayer = MediaPlayer()
 
     private val handler = Handler(Looper.getMainLooper())
 
@@ -99,9 +99,9 @@ class PlayerViewModel(private val track: Track) : ViewModel() {
 
         const val CHECK_TIMER = 200L
 
-        fun getFactory(track: Track): ViewModelProvider.Factory = viewModelFactory {
+        fun getFactory(track: Track, mediaPlayer:MediaPlayer): ViewModelProvider.Factory = viewModelFactory {
             initializer {
-                PlayerViewModel(track)
+                PlayerViewModel(track, mediaPlayer)
             }
         }
     }

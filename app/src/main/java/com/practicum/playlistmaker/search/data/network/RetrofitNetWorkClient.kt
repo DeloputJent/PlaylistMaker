@@ -6,14 +6,14 @@ import com.practicum.playlistmaker.search.data.network.TrackSearchRequest
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class RetrofitNetWorkClient(): NetworkClient {
-    private val baseURL:String = "https://itunes.apple.com"
-    val retrofit = Retrofit.Builder()
+class RetrofitNetWorkClient(private val iTunesService:iTunesSearchAPI): NetworkClient {
+    //private val baseURL:String = "https://itunes.apple.com"
+    /*val retrofit = Retrofit.Builder()
         .baseUrl(baseURL)
         .addConverterFactory(GsonConverterFactory.create())
-        .build()
+        .build()*/
 
-    val iTunesService = retrofit.create(iTunesSearchAPI::class.java)
+    //val iTunesService = retrofit.create(iTunesSearchAPI::class.java)
 
     override fun doRequest(dto: Any): Response {
         if (dto is TrackSearchRequest) {
