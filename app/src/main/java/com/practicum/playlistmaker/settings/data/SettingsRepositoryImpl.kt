@@ -1,6 +1,6 @@
 package com.practicum.playlistmaker.settings.data
 
-import android.content.Context
+
 import android.content.SharedPreferences
 import com.google.gson.Gson
 import com.practicum.playlistmaker.settings.domain.ThemeSettings

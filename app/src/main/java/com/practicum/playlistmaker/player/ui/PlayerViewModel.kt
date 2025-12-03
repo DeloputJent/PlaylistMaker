@@ -6,22 +6,20 @@ import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
 import com.practicum.playlistmaker.search.domain.Track
+import org.koin.core.component.KoinComponent
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 
-class PlayerViewModel(private val track: Track, private val mediaPlayer:MediaPlayer) : ViewModel() {
+class PlayerViewModel(private val track: Track,
+                      private val mediaPlayer:MediaPlayer) : ViewModel(), KoinComponent {
 
     private val playerStateLiveData = MutableLiveData(STATE_DEFAULT)
     fun observePlayerState(): LiveData<Int> = playerStateLiveData
     private val progressTimeLiveData = MutableLiveData(SimpleDateFormat("mm:ss",
         Locale.getDefault()).format(0.0))
     fun observeProgressTime(): LiveData<String> = progressTimeLiveData
-    //private val mediaPlayer = MediaPlayer()
 
     private val handler = Handler(Looper.getMainLooper())
 
@@ -96,13 +94,6 @@ class PlayerViewModel(private val track: Track, private val mediaPlayer:MediaPla
         const val STATE_PREPARED = 1
         const val STATE_PLAYING = 2
         const val STATE_PAUSED = 3
-
         const val CHECK_TIMER = 200L
-
-        fun getFactory(track: Track, mediaPlayer:MediaPlayer): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                PlayerViewModel(track, mediaPlayer)
-            }
-        }
     }
 }

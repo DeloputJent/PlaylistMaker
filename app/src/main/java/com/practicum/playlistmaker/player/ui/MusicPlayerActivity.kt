@@ -8,19 +8,18 @@ import androidx.core.util.TypedValueCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
-import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.ActivityPlayerScreenBinding
 import com.practicum.playlistmaker.search.domain.Track
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
+import org.koin.core.qualifier.Qualifier
+
 
 class MusicPlayerActivity : AppCompatActivity() {
-
     private lateinit var binding: ActivityPlayerScreenBinding
-
-    private lateinit var viewModel: PlayerViewModel
-
     private fun changeButton(isPlaying: Boolean) {
         if (isPlaying) binding.playTrackButton.setImageResource(R.drawable.pause_button)
         else binding.playTrackButton.setImageResource(R.drawable.ic_start_play_84)
@@ -43,11 +42,11 @@ class MusicPlayerActivity : AppCompatActivity() {
 
         val intent = intent
         var currentTrack = intent.getParcelableExtra<Track>("current_track")
-
         if (currentTrack==null) currentTrack=Track()
 
-        viewModel = ViewModelProvider(this,PlayerViewModel.getFactory(currentTrack))
-            .get(PlayerViewModel::class.java)
+        val viewModel: PlayerViewModel by viewModel(parametersOf(currentTrack) as Qualifier?)
+
+        //viewModel = ViewModelProvider(this,PlayerViewModel.getFactory(currentTrack)).get(PlayerViewModel::class.java)
 
         viewModel.observeProgressTime().observe(this) {
             binding.currentPlayedTime.text = it
@@ -62,7 +61,7 @@ class MusicPlayerActivity : AppCompatActivity() {
         }
 
         Glide.with(this)
-            .load(currentTrack.coverArtworkUrl)
+            .load(currentTrack?.coverArtworkUrl)
             .centerCrop()
             .transform(
                 RoundedCorners(
@@ -73,25 +72,25 @@ class MusicPlayerActivity : AppCompatActivity() {
             .into(binding.TrackArtwork)
 
         binding.apply {
-        currentPlayedTrack.text = currentTrack.trackName
-        currentArtist.text = currentTrack.artistName
-        currentTrackTime.text = currentTrack.trackTimeMillis
+        currentPlayedTrack.text = currentTrack?.trackName
+        currentArtist.text = currentTrack?.artistName
+        currentTrackTime.text = currentTrack?.trackTimeMillis
         }
-        if (currentTrack.collectionName.isEmpty()) {
+        if (currentTrack?.collectionName?.isEmpty()==true) {
             binding.currentCollectionName.visibility = View.GONE
             binding.collection.visibility = View.GONE
         } else {
-            binding.currentCollectionName.text = currentTrack.collectionName
+            binding.currentCollectionName.text = currentTrack?.collectionName
         }
 
-        if (currentTrack.releaseDate.isEmpty()) {
+        if (currentTrack?.releaseDate?.isEmpty() == true) {
             binding.currentTrackReleaseYear.visibility = View.GONE
             binding.trackReleaseYear.visibility = View.GONE
         } else {
-            binding.currentTrackReleaseYear.text = currentTrack.releaseDate
+            binding.currentTrackReleaseYear.text = currentTrack?.releaseDate
         }
-        binding.currentTrackGenre.text = currentTrack.primaryGenreName
-        binding.currentTrackCountry.text = currentTrack.country
+        binding.currentTrackGenre.text = currentTrack?.primaryGenreName
+        binding.currentTrackCountry.text = currentTrack?.country
 
         binding.playTrackButton.setOnClickListener {
             viewModel.onPlayButtonClicked()
@@ -100,7 +99,7 @@ class MusicPlayerActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-        viewModel.onPause()
+        //viewModel.onPause()
     }
 
     override fun onDestroy() {

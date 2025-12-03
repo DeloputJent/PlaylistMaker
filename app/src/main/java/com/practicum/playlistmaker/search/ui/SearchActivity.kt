@@ -24,6 +24,7 @@ import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.player.ui.MusicPlayerActivity
 import com.practicum.playlistmaker.search.ui.presentation.TrackListAdapter
 import com.practicum.playlistmaker.search.domain.SearchTrackState
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchActivity : AppCompatActivity() {
 
@@ -38,7 +39,8 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private lateinit var binding: ActivitySearchBinding
-    private var viewModel: SearchViewModel? = null
+    val viewModel by viewModel<SearchViewModel>()
+    //private var viewModel: SearchViewModel? = null
     private var textInputControl: TextWatcher? = null
     private var isClickAllowed = true
     private val handler = Handler(Looper.getMainLooper())
@@ -68,14 +70,11 @@ class SearchActivity : AppCompatActivity() {
             finish()
         }
 
-        viewModel = ViewModelProvider(this, SearchViewModel.getFactory())
-            .get(SearchViewModel::class.java)
-
-        viewModel?.observeState()?.observe(this) {
+        viewModel.observeState().observe(this) {
             render(it)
         }
 
-        viewModel?.readFromMemory()
+        viewModel.readFromMemory()
 
         displayPlayerIntent = Intent(this@SearchActivity, MusicPlayerActivity::class.java)
 

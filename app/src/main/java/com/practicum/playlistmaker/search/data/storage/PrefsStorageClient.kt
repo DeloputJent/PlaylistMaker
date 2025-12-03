@@ -16,10 +16,7 @@ class PrefsStorageClient<T>(
         Context.MODE_PRIVATE
     )
 
-    //private val gson = Gson()
-
     override fun storeData(data: T) {
-        //val json = gson.toJson(data)
         lookedTracks.edit { putString(DATAKEY, gson.toJson(data, type)) }
     }
 
