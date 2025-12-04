@@ -7,11 +7,9 @@ import com.practicum.playlistmaker.settings.domain.ThemeSettings
 import androidx.core.content.edit
 
 class SettingsRepositoryImpl(private val settingsStorage: SharedPreferences,
-                             private val gson:Gson
+                            private val gson:Gson
 ) : SettingsRepository
 {
-    //private val gson = Gson()
-    //val settingsStorage: SharedPreferences = context.getSharedPreferences(APP_SETTINGS, Context.MODE_PRIVATE)
     override fun getThemeSettings(): ThemeSettings {
         val json = settingsStorage.getString(APP_SETTINGS, null)
         if (json == null) {

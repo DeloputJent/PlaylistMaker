@@ -6,6 +6,6 @@ import org.koin.dsl.module
 
 val SharingInteractorModule = module {
 
-    single { SharingInteractorImpl(get())}
+    single<SharingInteractor> { SharingInteractorImpl(get())}
 
 }

@@ -9,7 +9,7 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 
 val SettingsRepositoryModule = module {
-    single { SettingsRepositoryImpl(get(), get()) }
-    factory { Gson() }
+    single<SettingsRepository> { SettingsRepositoryImpl(get(), get()) }
     single<SharedPreferences> { androidContext().getSharedPreferences(SettingsRepositoryImpl.APP_SETTINGS,Context.MODE_PRIVATE) }
+    factory { Gson() }
 }

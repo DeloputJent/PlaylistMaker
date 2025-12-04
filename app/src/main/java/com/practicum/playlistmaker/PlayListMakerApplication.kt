@@ -7,7 +7,7 @@ import com.practicum.playlistmaker.search.di.SearchDataModule
 import com.practicum.playlistmaker.search.di.SearchInteractorModule
 import com.practicum.playlistmaker.search.di.SearchRepositoryModule
 import com.practicum.playlistmaker.search.di.SearchViewModelModule
-import com.practicum.playlistmaker.settings.data.SettingsRepositoryImpl
+import com.practicum.playlistmaker.settings.data.SettingsRepository
 import com.practicum.playlistmaker.settings.di.SettingsInteractorModule
 import com.practicum.playlistmaker.settings.di.SettingsRepositoryModule
 import com.practicum.playlistmaker.settings.di.SettingsViewModelModule
@@ -15,7 +15,6 @@ import com.practicum.playlistmaker.sharing.di.SharingDataModule
 import com.practicum.playlistmaker.sharing.di.SharingInteractorModule
 import org.koin.android.ext.android.get
 import org.koin.android.ext.koin.androidContext
-import org.koin.core.context.GlobalContext.get
 import org.koin.core.context.startKoin
 
 class PlayListMakerApplication():Application() {
@@ -37,7 +36,7 @@ class PlayListMakerApplication():Application() {
             )
         }
 
-        val settingsRepository = get<SettingsRepositoryImpl>()
+        val settingsRepository = get<SettingsRepository>()
 
         val themeSettings = settingsRepository.getThemeSettings()
 
