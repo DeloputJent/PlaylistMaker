@@ -14,7 +14,6 @@ class ExternalNavigator (private val context: Context) : IntentProvider {
         shareIntent.type="text/plain"
         shareIntent.putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.this_app_made_with_course))
         shareIntent.putExtra(Intent.EXTRA_TEXT, context.getString(R.string.link_to_yandex_course))
-        //shareIntent.flags=(Intent.FLAG_ACTIVITY_NEW_TASK)
         context.startActivity(Intent.createChooser(shareIntent,context.getString(R.string.share_with_help))
             .apply {flags= Intent.FLAG_ACTIVITY_NEW_TASK })
     }

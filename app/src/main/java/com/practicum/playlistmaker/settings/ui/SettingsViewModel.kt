@@ -49,16 +49,6 @@ class SettingsViewModel(
     }
 
     companion object {
-
         val defaultSettings = ThemeSettings(false)
-
-        /*fun getFactory(
-            sharingInteractor: SharingInteractor,
-            settingsInteractor: SettingsInteractor,
-        ): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                SettingsViewModel(sharingInteractor, settingsInteractor)
-            }
-        }*/
     }
 }

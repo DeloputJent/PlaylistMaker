@@ -1,6 +1,5 @@
 package com.practicum.playlistmaker.search.data.network
 
-import com.practicum.playlistmaker.search.data.network.Response
 
 interface NetworkClient {
     fun doRequest(dto:Any): Response
