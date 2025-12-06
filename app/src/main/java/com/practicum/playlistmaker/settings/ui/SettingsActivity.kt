@@ -6,27 +6,19 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
-import androidx.lifecycle.ViewModelProvider
-import com.practicum.playlistmaker.creator.Creator
 import com.practicum.playlistmaker.databinding.ActivitySettingsBinding
 import com.practicum.playlistmaker.settings.domain.ThemeSettings
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SettingsActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySettingsBinding
 
-    private lateinit var viewModel: SettingsViewModel
+    private val viewModel: SettingsViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        val sharingInteractor = Creator.getSharingInteractor(this)
-
-        val settingsInteractor = Creator.getSettingsInteractor(this)
-
-        viewModel = ViewModelProvider(this, SettingsViewModel.getFactory(
-            sharingInteractor, settingsInteractor))
-            .get(SettingsViewModel::class.java)
 
         viewModel.observeThemeState()
 

@@ -8,17 +8,16 @@ import androidx.core.util.TypedValueCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
-import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.ActivityPlayerScreenBinding
 import com.practicum.playlistmaker.search.domain.Track
+import org.koin.androidx.viewmodel.ext.android.getViewModel
+import org.koin.core.parameter.parametersOf
 
 class MusicPlayerActivity : AppCompatActivity() {
-
     private lateinit var binding: ActivityPlayerScreenBinding
-
     private lateinit var viewModel: PlayerViewModel
 
     private fun changeButton(isPlaying: Boolean) {
@@ -43,11 +42,9 @@ class MusicPlayerActivity : AppCompatActivity() {
 
         val intent = intent
         var currentTrack = intent.getParcelableExtra<Track>("current_track")
-
         if (currentTrack==null) currentTrack=Track()
 
-        viewModel = ViewModelProvider(this,PlayerViewModel.getFactory(currentTrack))
-            .get(PlayerViewModel::class.java)
+        viewModel=getViewModel(parameters = { parametersOf(currentTrack) })
 
         viewModel.observeProgressTime().observe(this) {
             binding.currentPlayedTime.text = it

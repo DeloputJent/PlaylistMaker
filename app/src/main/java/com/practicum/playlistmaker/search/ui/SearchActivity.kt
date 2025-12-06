@@ -15,7 +15,6 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker.R
@@ -24,6 +23,7 @@ import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.player.ui.MusicPlayerActivity
 import com.practicum.playlistmaker.search.ui.presentation.TrackListAdapter
 import com.practicum.playlistmaker.search.domain.SearchTrackState
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchActivity : AppCompatActivity() {
 
@@ -38,7 +38,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private lateinit var binding: ActivitySearchBinding
-    private var viewModel: SearchViewModel? = null
+    private val viewModel:SearchViewModel by viewModel()
     private var textInputControl: TextWatcher? = null
     private var isClickAllowed = true
     private val handler = Handler(Looper.getMainLooper())
@@ -68,14 +68,11 @@ class SearchActivity : AppCompatActivity() {
             finish()
         }
 
-        viewModel = ViewModelProvider(this, SearchViewModel.getFactory())
-            .get(SearchViewModel::class.java)
-
-        viewModel?.observeState()?.observe(this) {
+        viewModel.observeState().observe(this) {
             render(it)
         }
 
-        viewModel?.readFromMemory()
+        viewModel.readFromMemory()
 
         displayPlayerIntent = Intent(this@SearchActivity, MusicPlayerActivity::class.java)
 
@@ -87,7 +84,7 @@ class SearchActivity : AppCompatActivity() {
         trackAdapter = TrackListAdapter(
             clickListener = { track ->
                 if (clickDebounce()) {
-                    viewModel?.addToHistoryList(track)
+                    viewModel.addToHistoryList(track)
                     displayPlayerIntent.putExtra("current_track", track)
                     startActivity(displayPlayerIntent)
                 }
@@ -115,22 +112,22 @@ class SearchActivity : AppCompatActivity() {
         }
 
         binding.clearHistoryButton.setOnClickListener{
-            viewModel?.clearHistory()
+            viewModel.clearHistory()
             binding.historyLayout.visibility= View.GONE
         }
 
         binding.refreshThisSearchButton.setOnClickListener{
-            viewModel?.searchDebounce("")
-            viewModel?.searchDebounce(binding.inputSearch.text.toString())
+            viewModel.searchDebounce("")
+            viewModel.searchDebounce(binding.inputSearch.text.toString())
         }
 
         textInputControl = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 binding.clearSearchSign.isVisible = !s.isNullOrEmpty()
-                viewModel?.searchDebounce(changedText = s?.toString() ?: "")
+                viewModel.searchDebounce(changedText = s?.toString() ?: "")
                 if (binding.inputSearch.hasFocus() && s?.isEmpty()==true) {
-                    viewModel?.showHistory()
+                    viewModel.showHistory()
                 } else {
                     binding.historyLayout.visibility = View.GONE
                 }
@@ -144,7 +141,7 @@ class SearchActivity : AppCompatActivity() {
         binding.inputSearch.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 if (binding.inputSearch.text.isNotEmpty()) {
-                    viewModel?.searchDebounce(binding.inputSearch.text.toString())
+                    viewModel.searchDebounce(binding.inputSearch.text.toString())
                 }
                 true
             }
@@ -153,7 +150,7 @@ class SearchActivity : AppCompatActivity() {
 
         binding.inputSearch.setOnFocusChangeListener { view, hasFocus ->
             if (hasFocus && binding.inputSearch.text.isEmpty()) {
-                viewModel?.showHistory()
+                viewModel.showHistory()
             } else {
                 binding.historyLayout.visibility = View.GONE
             }
