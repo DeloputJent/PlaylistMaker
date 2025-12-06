@@ -9,11 +9,10 @@ import com.practicum.playlistmaker.search.domain.TracksInteractor
 import com.practicum.playlistmaker.search.domain.SearchTrackState
 import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.search.domain.api.SearchHistoryInteractor
-import org.koin.core.component.KoinComponent
 
 class SearchViewModel(private val tracksInteractor:TracksInteractor,
                       private val historyOfSearch:SearchHistoryInteractor
-): ViewModel(), KoinComponent {
+): ViewModel() {
 
     private val stateLiveData = MutableLiveData<SearchTrackState>()
 

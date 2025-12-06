@@ -9,11 +9,11 @@ import org.koin.dsl.module
 
 val SearchInteractorModule = module{
 
-    single<TracksInteractor>{
+    factory<TracksInteractor>{
         TracksInteractorImpl(get())
     }
 
-    single<SearchHistoryInteractor>{
+    factory<SearchHistoryInteractor>{
         SearchHistoryInteractorImpl(get())
     }
 }

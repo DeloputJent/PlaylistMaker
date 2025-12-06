@@ -5,7 +5,7 @@ import com.practicum.playlistmaker.settings.domain.impl.SettingsInteractorImpl
 import org.koin.dsl.module
 
 val SettingsInteractorModule = module {
-    single<SettingsInteractor> {
+    factory<SettingsInteractor> {
         SettingsInteractorImpl(get())
     }
 }

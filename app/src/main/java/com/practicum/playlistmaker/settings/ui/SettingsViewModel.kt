@@ -7,12 +7,11 @@ import androidx.lifecycle.ViewModel
 import com.practicum.playlistmaker.settings.domain.ThemeSettings
 import com.practicum.playlistmaker.settings.domain.api.SettingsInteractor
 import com.practicum.playlistmaker.sharing.domain.api.SharingInteractor
-import org.koin.core.component.KoinComponent
 
 class SettingsViewModel(
     private val sharingInteractor: SharingInteractor,
     private val settingsInteractor: SettingsInteractor,
-) : ViewModel(), KoinComponent {
+) : ViewModel() {
     val settingsState: MutableLiveData<ThemeSettings> = MutableLiveData(defaultSettings)
 
     fun observeThemeState(): LiveData<ThemeSettings> {

@@ -7,13 +7,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.practicum.playlistmaker.search.domain.Track
-import org.koin.core.component.KoinComponent
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 
 class PlayerViewModel(private val track: Track,
-                      private val mediaPlayer:MediaPlayer) : ViewModel(), KoinComponent {
+                      private val mediaPlayer:MediaPlayer) : ViewModel() {
 
     private val playerStateLiveData = MutableLiveData(STATE_DEFAULT)
     fun observePlayerState(): LiveData<Int> = playerStateLiveData
