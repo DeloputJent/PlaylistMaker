@@ -7,9 +7,17 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
+import com.google.android.material.tabs.TabLayoutMediator
 import com.practicum.playlistmaker.R
+import com.practicum.playlistmaker.databinding.ActivityMainBinding
+import com.practicum.playlistmaker.databinding.ActivityMediaLibBinding
 
 class MediaLibActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityMediaLibBinding
+
+    private lateinit var tabMediator: TabLayoutMediator
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
