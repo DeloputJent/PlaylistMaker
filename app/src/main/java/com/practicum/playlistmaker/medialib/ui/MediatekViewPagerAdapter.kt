@@ -9,10 +9,14 @@ class MediaLibViewPagerAdapter(fragmentManager: FragmentManager, lifecycle: Life
     : FragmentStateAdapter(fragmentManager, lifecycle) {
 
     override fun getItemCount(): Int {
-        return 3
+        return 2
     }
 
     override fun createFragment(position: Int): Fragment {
-        return NumberFragment.newInstance(position + 1)
+        return when(position) {
+            0 -> FavoriteTracksFragment()
+            1 -> PlayListsFragment()
+            else -> FavoriteTracksFragment()
+        }
     }
 }

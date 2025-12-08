@@ -25,7 +25,7 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/fromSearchBackToMain"
+                android:id="@+id/fromMediatekBackToMain"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:layout_gravity="start"
@@ -51,15 +51,20 @@
                 android:textColor="?attr/colorOnSecondary"
                 android:textSize="22sp" />
         </LinearLayout>
+
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tabLayout"
             android:layout_width="match_parent"
             android:layout_height="48dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
             android:background="?attr/colorSecondary"
             app:tabTextColor="?attr/colorOnSecondary"
             app:tabMode="fixed"
+            app:tabTextAppearance="@style/Black_White_Text14sp_medium"
             app:tabIndicatorColor="?attr/colorOnSecondary"
-            app:tabIndicatorFullWidth="false"/>
+            app:tabIndicatorHeight="2dp"
+            app:tabIndicatorFullWidth="true"/>
 
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/viewPager"

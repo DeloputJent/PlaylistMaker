@@ -20,8 +20,9 @@ class MediaLibActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ActivityMediaLibBinding.inflate(layoutInflater)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_media_lib)
+        setContentView(binding.root)
 
         val currentView=findViewById<View>(R.id.media_lib)
         ViewCompat.setOnApplyWindowInsetsListener(currentView) { view, insets ->
@@ -32,6 +33,22 @@ class MediaLibActivity : AppCompatActivity() {
             insets
         }
 
+        binding.fromMediatekBackToMain.setOnClickListener {
+            finish()
+        }
 
+        binding.viewPager.adapter = MediaLibViewPagerAdapter(supportFragmentManager, lifecycle)
+        tabMediator = TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
+            when(position) {
+                0 -> tab.text = getString(R.string.Prefered_tracks)
+                1 -> tab.text = getString(R.string.Playlists)
+            }
+        }
+        tabMediator.attach()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        tabMediator.detach()
     }
 }
