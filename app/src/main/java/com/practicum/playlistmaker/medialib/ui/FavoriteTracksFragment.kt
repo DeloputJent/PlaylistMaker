@@ -21,4 +21,13 @@ class FavoriteTracksFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
     }
+
+    companion object{
+        fun newInstace(): FavoriteTracksFragment{
+            val fragment= FavoriteTracksFragment()
+            val bundle=Bundle()
+            fragment.arguments=bundle
+            return fragment
+        }
+    }
 }
