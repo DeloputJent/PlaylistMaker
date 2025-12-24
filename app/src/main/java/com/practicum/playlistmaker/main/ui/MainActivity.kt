@@ -11,7 +11,7 @@ import androidx.core.view.updatePadding
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.ActivityMainBinding
 import com.practicum.playlistmaker.medialib.ui.MediaLibActivity
-import com.practicum.playlistmaker.search.ui.SearchActivity
+
 import com.practicum.playlistmaker.settings.ui.SettingsActivity
 
 class MainActivity : AppCompatActivity() {
@@ -51,8 +51,8 @@ class MainActivity : AppCompatActivity() {
 
         val button2ClickListener: View.OnClickListener = object : View.OnClickListener {
             override fun onClick(v: View?) {
-                val displaySearchIntent= Intent(this@MainActivity, SearchActivity::class.java)
-                startActivity(displaySearchIntent)
+                //val displaySearchIntent= Intent(this@MainActivity, SearchActivity::class.java)
+                //startActivity(displaySearchIntent)
             }
         }
         binding.searchbutton.setOnClickListener(button2ClickListener)

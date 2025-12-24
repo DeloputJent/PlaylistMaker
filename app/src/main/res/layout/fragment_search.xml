@@ -17,37 +17,22 @@
         android:orientation="vertical">
 
         <LinearLayout
-            android:layout_width="304dp"
+            android:layout_width="match_parent"
             android:layout_height="48dp"
             android:layout_marginStart="@dimen/margin_small"
             android:layout_marginTop="@dimen/margin_small"
             android:background="?attr/colorSecondary"
             android:orientation="horizontal">
 
-            <Button
-                android:id="@+id/fromSearchBackToMain"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_gravity="start"
-                android:background="@android:color/transparent"
-                android:backgroundTint="?attr/colorSecondary"
-                android:text=""
-                android:visibility="visible"
-                app:icon="@drawable/ic_back_arrow_24"
-                app:iconGravity="textStart"
-                app:iconPadding="0dp"
-                app:iconTint="?attr/colorOnSecondary"
-                tools:visibility="visible" />
-
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="48dp"
                 android:layout_gravity="start|center_vertical"
                 android:fontFamily="@font/ys_display_medium"
-                android:gravity="center_vertical"
                 android:letterSpacing="0"
                 android:paddingStart="12dp"
-                android:text="@string/search_here"
+                android:gravity="center_vertical"
+                android:text="@string/button_search"
                 android:textColor="?attr/colorOnSecondary"
                 android:textSize="22sp" />
         </LinearLayout>
