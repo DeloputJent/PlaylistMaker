@@ -10,7 +10,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.ActivityMainBinding
-import com.practicum.playlistmaker.medialib.ui.MediaLibActivity
+
 
 import com.practicum.playlistmaker.settings.ui.SettingsActivity
 
@@ -42,8 +42,8 @@ class MainActivity : AppCompatActivity() {
 
         val buttonClickListener: View.OnClickListener = object : View.OnClickListener {
             override fun onClick(v: View?) {
-                val displayLibIntent= Intent(this@MainActivity, MediaLibActivity::class.java)
-                startActivity(displayLibIntent)
+                //val displayLibIntent= Intent(this@MainActivity, MediaLibActivity::class.java)
+                //startActivity(displayLibIntent)
             }
         }
 

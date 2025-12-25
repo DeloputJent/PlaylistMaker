@@ -28,15 +28,12 @@ import com.practicum.playlistmaker.search.ui.presentation.TrackListAdapter
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.getValue
 
-
 class SearchFragment : Fragment() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString(MEMMORY, searchedName)
     }
-
-
 
     private val viewModel:SearchViewModel by viewModel()
     private var textInputControl: TextWatcher? = null
@@ -52,7 +49,7 @@ class SearchFragment : Fragment() {
     private lateinit var binding: FragmentSearchBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val binding = FragmentSearchBinding.inflate(inflater, container, false)
+        binding = FragmentSearchBinding.inflate(inflater, container, false)
         return binding.root
     }
 

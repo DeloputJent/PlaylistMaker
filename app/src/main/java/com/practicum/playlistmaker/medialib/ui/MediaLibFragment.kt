@@ -1,31 +1,36 @@
 package com.practicum.playlistmaker.medialib.ui
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
-import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
+import android.view.ViewGroup
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
+import androidx.fragment.app.Fragment
 import com.google.android.material.tabs.TabLayoutMediator
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.databinding.ActivityMainBinding
-import com.practicum.playlistmaker.databinding.ActivityMediaLibBinding
+import com.practicum.playlistmaker.databinding.FragmentMediaLibBinding
 
-class MediaLibActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityMediaLibBinding
+class MediaLibFragment : Fragment() {
+
+    private lateinit var binding: FragmentMediaLibBinding
 
     private lateinit var tabMediator: TabLayoutMediator
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityMediaLibBinding.inflate(layoutInflater)
-        enableEdgeToEdge()
-        setContentView(binding.root)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        binding = FragmentMediaLibBinding.inflate(layoutInflater)
+        return binding.root
+    }
 
-        val currentView=findViewById<View>(R.id.media_lib)
-        ViewCompat.setOnApplyWindowInsetsListener(currentView) { view, insets ->
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, insets ->
             val statusBar = insets.getInsets(WindowInsetsCompat.Type.statusBars())
             val navigationBar = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
             view.updatePadding(bottom = navigationBar.bottom)
@@ -33,11 +38,11 @@ class MediaLibActivity : AppCompatActivity() {
             insets
         }
 
-        binding.fromMediatekBackToMain.setOnClickListener {
-            finish()
-        }
+        binding.viewPager.adapter = MediaLibViewPagerAdapter(
+            fragmentManager = childFragmentManager,
+            lifecycle = lifecycle,
+        )
 
-        binding.viewPager.adapter = MediaLibViewPagerAdapter(supportFragmentManager, lifecycle)
         tabMediator = TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             when(position) {
                 0 -> tab.text = getString(R.string.Prefered_tracks)
@@ -47,8 +52,8 @@ class MediaLibActivity : AppCompatActivity() {
         tabMediator.attach()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         tabMediator.detach()
     }
 }

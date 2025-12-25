@@ -1,6 +1,7 @@
 package com.practicum.playlistmaker.root
 
 import android.os.Bundle
+import androidx.activity.enableEdgeToEdge
 
 
 import androidx.appcompat.app.AppCompatActivity
@@ -19,6 +20,7 @@ class RootActivity: AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityRootBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        enableEdgeToEdge()
 
         if (savedInstanceState == null) {
             // Добавляем фрагмент в контейнер
