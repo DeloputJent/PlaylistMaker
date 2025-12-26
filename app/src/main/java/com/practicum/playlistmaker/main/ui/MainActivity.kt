@@ -12,7 +12,7 @@ import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.ActivityMainBinding
 
 
-import com.practicum.playlistmaker.settings.ui.SettingsActivity
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -36,8 +36,8 @@ class MainActivity : AppCompatActivity() {
 
 
         binding.setbutton.setOnClickListener {
-            val displaySettingsIntent= Intent(this, SettingsActivity::class.java)
-            startActivity(displaySettingsIntent)
+            //val displaySettingsIntent= Intent(this, SettingsActivity::class.java)
+            //startActivity(displaySettingsIntent)
         }
 
         val buttonClickListener: View.OnClickListener = object : View.OnClickListener {

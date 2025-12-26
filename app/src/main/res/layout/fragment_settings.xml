@@ -7,6 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:visibility="visible"
+    tools:context=".settings.ui.SettingsFragment"
     tools:visibility="visible"
     android:background="?attr/colorSecondary"
     android:orientation="vertical">

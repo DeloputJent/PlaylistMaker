@@ -5,6 +5,9 @@ import androidx.activity.enableEdgeToEdge
 
 
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.fragment.app.commit
 import com.practicum.playlistmaker.R
 
@@ -21,13 +24,18 @@ class RootActivity: AppCompatActivity() {
         binding = ActivityRootBinding.inflate(layoutInflater)
         setContentView(binding.root)
         enableEdgeToEdge()
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, insets ->
+            val statusBar = insets.getInsets(WindowInsetsCompat.Type.statusBars())
+            val navigationBar = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
+            view.updatePadding(bottom = navigationBar.bottom)
+            view.updatePadding(top = statusBar.top)
+            insets
+        }
 
         if (savedInstanceState == null) {
-            // Добавляем фрагмент в контейнер
             supportFragmentManager.commit {
                 this.add(R.id.rootFragmentContainerView, SearchFragment())
             }
         }
-
     }
 }

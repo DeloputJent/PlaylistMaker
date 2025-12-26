@@ -47,6 +47,8 @@ dependencies {
     implementation(libs.lifecycle.livedata.ktx)
     implementation(libs.material)
     implementation(libs.glide)
+    implementation(libs.androidx.navigation.fragment.ktx)
+    implementation(libs.androidx.navigation.ui.ktx)
     annotationProcessor(libs.glide.compiler)
     implementation(libs.retrofit)
     implementation(libs.gson)
