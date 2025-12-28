@@ -12,10 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
-import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -29,11 +26,6 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.getValue
 
 class SearchFragment : Fragment() {
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putString(MEMMORY, searchedName)
-    }
 
     private val viewModel:SearchViewModel by viewModel()
     private var textInputControl: TextWatcher? = null
@@ -228,8 +220,6 @@ class SearchFragment : Fragment() {
     }
 
     companion object {
-        const val MEMMORY = ""
-        const val MEMMORY_DEF = ""
         private const val CLICK_DEBOUNCE_DELAY = 1000L
     }
 }

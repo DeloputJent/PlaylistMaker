@@ -9,6 +9,9 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import androidx.fragment.app.commit
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.setupWithNavController
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.practicum.playlistmaker.R
 
 import com.practicum.playlistmaker.databinding.ActivityRootBinding
@@ -24,17 +27,16 @@ class RootActivity: AppCompatActivity() {
         binding = ActivityRootBinding.inflate(layoutInflater)
         setContentView(binding.root)
         enableEdgeToEdge()
-        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, insets ->
-            val statusBar = insets.getInsets(WindowInsetsCompat.Type.statusBars())
-            val navigationBar = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
-            view.updatePadding(bottom = navigationBar.bottom)
-            view.updatePadding(top = statusBar.top)
-            insets
-        }
+
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.rootContainerView) as NavHostFragment
+        val navController = navHostFragment.navController
+
+        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
+        bottomNavigationView.setupWithNavController(navController)
 
         if (savedInstanceState == null) {
             supportFragmentManager.commit {
-                this.add(R.id.rootFragmentContainerView, SearchFragment())
+                this.add(R.id.rootContainerView, SearchFragment())
             }
         }
     }
