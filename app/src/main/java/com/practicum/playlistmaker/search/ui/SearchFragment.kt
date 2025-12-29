@@ -14,11 +14,12 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.FragmentSearchBinding
-import com.practicum.playlistmaker.player.ui.MusicPlayerActivity
+import com.practicum.playlistmaker.player.ui.MusicPlayerFragment
 import com.practicum.playlistmaker.search.domain.SearchTrackState
 import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.search.ui.presentation.TrackListAdapter
@@ -36,7 +37,6 @@ class SearchFragment : Fragment() {
     private lateinit var trackAdapterHistory : TrackListAdapter
     private lateinit var recyclerView : RecyclerView
     private lateinit var recyclerViewHistory : RecyclerView
-    lateinit var displayPlayerIntent : Intent
 
     private lateinit var binding: FragmentSearchBinding
 
@@ -55,7 +55,7 @@ class SearchFragment : Fragment() {
 
         viewModel.readFromMemory()
 
-        displayPlayerIntent = Intent(requireContext(), MusicPlayerActivity::class.java)
+        val bundle = Bundle()
 
         binding.inputSearch.setText(searchedName)
 
@@ -67,8 +67,9 @@ class SearchFragment : Fragment() {
             clickListener = { track ->
                 if (clickDebounce()) {
                     viewModel.addToHistoryList(track)
-                    displayPlayerIntent.putExtra("current_track", track)
-                    startActivity(displayPlayerIntent)
+                    bundle.putParcelable("current_track", track)
+                    val fragment = MusicPlayerFragment()
+                    fragment.arguments = bundle
                 }
             }
         )
@@ -79,8 +80,10 @@ class SearchFragment : Fragment() {
         recyclerViewHistory.layoutManager = LinearLayoutManager(requireContext())
 
         trackAdapterHistory = TrackListAdapter(clickListener = { track ->
-            displayPlayerIntent.putExtra("current_track", track)
-            startActivity(displayPlayerIntent)
+            bundle.putParcelable("current_track", track)
+            val fragment = MusicPlayerFragment()
+            fragment.arguments = bundle
+            findNavController().navigate(R.id.action_searchFragment_to_musicPlayerFragment)
         })
 
         recyclerViewHistory.adapter = trackAdapterHistory
