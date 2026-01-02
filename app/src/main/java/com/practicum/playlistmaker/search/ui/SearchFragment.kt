@@ -1,7 +1,6 @@
 package com.practicum.playlistmaker.search.ui
 
 import android.content.Context.INPUT_METHOD_SERVICE
-import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -67,9 +66,10 @@ class SearchFragment : Fragment() {
             clickListener = { track ->
                 if (clickDebounce()) {
                     viewModel.addToHistoryList(track)
-                    bundle.putParcelable("current_track", track)
+                    bundle.putParcelable(CURRENT_TRACK, track)
                     val fragment = MusicPlayerFragment()
                     fragment.arguments = bundle
+                    findNavController().navigate(R.id.action_searchFragment_to_musicPlayerFragment,MusicPlayerFragment.createArgs(track))
                 }
             }
         )
@@ -80,10 +80,10 @@ class SearchFragment : Fragment() {
         recyclerViewHistory.layoutManager = LinearLayoutManager(requireContext())
 
         trackAdapterHistory = TrackListAdapter(clickListener = { track ->
-            bundle.putParcelable("current_track", track)
+            bundle.putParcelable(CURRENT_TRACK, track)
             val fragment = MusicPlayerFragment()
             fragment.arguments = bundle
-            findNavController().navigate(R.id.action_searchFragment_to_musicPlayerFragment)
+            findNavController().navigate(R.id.action_searchFragment_to_musicPlayerFragment, MusicPlayerFragment.createArgs(track))
         })
 
         recyclerViewHistory.adapter = trackAdapterHistory
@@ -223,6 +223,8 @@ class SearchFragment : Fragment() {
     }
 
     companion object {
+
+        private const val CURRENT_TRACK = "current_track"
         private const val CLICK_DEBOUNCE_DELAY = 1000L
     }
 }

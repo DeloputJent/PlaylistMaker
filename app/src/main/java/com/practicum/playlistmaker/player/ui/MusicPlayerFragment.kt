@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.core.util.TypedValueCompat
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker.R
@@ -50,7 +51,7 @@ class MusicPlayerFragment: Fragment() {
         }
 
         binding.backFromPlayerButton.setOnClickListener {
-            //finish()
+            findNavController().navigateUp()
         }
 
         Glide.with(this)
@@ -104,9 +105,8 @@ class MusicPlayerFragment: Fragment() {
     companion object{
         private const val TRACK_KEY = "current_track"
 
-
-        fun createArgs(TRACK_KEY: String, posterUrl: String): Bundle =
-            bundleOf(TRACK_KEY to Track(),
+        fun createArgs(track: Track): Bundle =
+            bundleOf(TRACK_KEY to track,
                )
     }
 }
