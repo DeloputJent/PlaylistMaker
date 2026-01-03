@@ -14,5 +14,4 @@
         android:id="@+id/settingsFragment"
         android:icon="@drawable/ic_gear_24"
         android:title="@string/button_settings" />
-
 </menu>

@@ -19,6 +19,12 @@ import com.practicum.playlistmaker.databinding.ActivityRootBinding
 class RootActivity: AppCompatActivity() {
 
     private lateinit var binding: ActivityRootBinding
+    private lateinit var bottomNavigationView: BottomNavigationView
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putInt("selectedTab", bottomNavigationView.selectedItemId)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,8 +35,15 @@ class RootActivity: AppCompatActivity() {
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.rootContainerView) as NavHostFragment
         val navController = navHostFragment.navController
 
-        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
+        bottomNavigationView = findViewById(R.id.bottomNavigationView)
         bottomNavigationView.setupWithNavController(navController)
+        bottomNavigationView.selectedItemId=R.id.mediaLibFragment
+
+        if (savedInstanceState != null) {
+            val selectedTab = savedInstanceState.getInt("selectedTab")
+            bottomNavigationView.selectedItemId = selectedTab
+        }
+
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
                 R.id.musicPlayerFragment -> {
