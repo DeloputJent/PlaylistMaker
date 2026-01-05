@@ -1,23 +1,24 @@
 package com.practicum.playlistmaker.player.ui
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
-import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
+import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.core.util.TypedValueCompat
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.updatePadding
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.databinding.ActivityPlayerScreenBinding
+import com.practicum.playlistmaker.databinding.FragmentPlayerScreenBinding
 import com.practicum.playlistmaker.search.domain.Track
 import org.koin.androidx.viewmodel.ext.android.getViewModel
 import org.koin.core.parameter.parametersOf
 
-class MusicPlayerActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityPlayerScreenBinding
+class MusicPlayerFragment: Fragment() {
+
+    private lateinit var binding: FragmentPlayerScreenBinding
     private lateinit var viewModel: PlayerViewModel
 
     private fun changeButton(isPlaying: Boolean) {
@@ -25,37 +26,32 @@ class MusicPlayerActivity : AppCompatActivity() {
         else binding.playTrackButton.setImageResource(R.drawable.ic_start_play_84)
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        binding = FragmentPlayerScreenBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-        binding = ActivityPlayerScreenBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
-        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, insets ->
-            val statusBar = insets.getInsets(WindowInsetsCompat.Type.statusBars())
-            val navigationBar = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
-            view.updatePadding(bottom = navigationBar.bottom)
-            view.updatePadding(top = statusBar.top)
-            insets
-        }
-
-        val intent = intent
-        var currentTrack = intent.getParcelableExtra<Track>("current_track")
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        var currentTrack = requireArguments().getParcelable<Track>(TRACK_KEY)
         if (currentTrack==null) currentTrack=Track()
 
         viewModel=getViewModel(parameters = { parametersOf(currentTrack) })
 
-        viewModel.observeProgressTime().observe(this) {
+        viewModel.observeProgressTime().observe(viewLifecycleOwner) {
             binding.currentPlayedTime.text = it
         }
 
-        viewModel.observePlayerState().observe(this) {
+        viewModel.observePlayerState().observe(viewLifecycleOwner) {
             changeButton(it == PlayerViewModel.STATE_PLAYING)
         }
 
         binding.backFromPlayerButton.setOnClickListener {
-            finish()
+            findNavController().navigateUp()
         }
 
         Glide.with(this)
@@ -70,10 +66,11 @@ class MusicPlayerActivity : AppCompatActivity() {
             .into(binding.TrackArtwork)
 
         binding.apply {
-        currentPlayedTrack.text = currentTrack.trackName
-        currentArtist.text = currentTrack.artistName
-        currentTrackTime.text = currentTrack.trackTimeMillis
+            currentPlayedTrack.text = currentTrack.trackName
+            currentArtist.text = currentTrack.artistName
+            currentTrackTime.text = currentTrack.trackTimeMillis
         }
+
         if (currentTrack.collectionName.isEmpty()) {
             binding.currentCollectionName.visibility = View.GONE
             binding.collection.visibility = View.GONE
@@ -87,6 +84,7 @@ class MusicPlayerActivity : AppCompatActivity() {
         } else {
             binding.currentTrackReleaseYear.text = currentTrack.releaseDate
         }
+
         binding.currentTrackGenre.text = currentTrack.primaryGenreName
         binding.currentTrackCountry.text = currentTrack.country
 
@@ -100,7 +98,15 @@ class MusicPlayerActivity : AppCompatActivity() {
         viewModel.onPause()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
+    }
+
+    companion object{
+        private const val TRACK_KEY = "current_track"
+
+        fun createArgs(track: Track): Bundle =
+            bundleOf(TRACK_KEY to track,
+               )
     }
 }

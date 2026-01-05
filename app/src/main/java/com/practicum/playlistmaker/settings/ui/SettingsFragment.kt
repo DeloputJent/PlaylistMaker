@@ -1,34 +1,35 @@
 package com.practicum.playlistmaker.settings.ui
 
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
-import com.practicum.playlistmaker.databinding.ActivitySettingsBinding
+import androidx.fragment.app.Fragment
+import com.practicum.playlistmaker.databinding.FragmentSettingsBinding
 import com.practicum.playlistmaker.settings.domain.ThemeSettings
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import kotlin.getValue
 
-class SettingsActivity : AppCompatActivity() {
+class SettingsFragment : Fragment() {
 
-    private lateinit var binding: ActivitySettingsBinding
+    private lateinit var binding: FragmentSettingsBinding
 
     private val viewModel: SettingsViewModel by viewModel()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        binding = FragmentSettingsBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-        viewModel.observeThemeState()
-
-        viewModel.settingsState.observe(this) { themeSettings ->
-            viewModel.switchNightMode(themeSettings.darkThemeEnabled)
-        }
-
-        binding = ActivitySettingsBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, insets ->
             val statusBar = insets.getInsets(WindowInsetsCompat.Type.statusBars())
             val navigationBar = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
@@ -37,11 +38,13 @@ class SettingsActivity : AppCompatActivity() {
             insets
         }
 
-        binding.backtoMain.setOnClickListener {
-            finish()
+        viewModel.observeThemeState()
+
+        viewModel.settingsState.observe(viewLifecycleOwner) { themeSettings ->
+            viewModel.switchNightMode(themeSettings.darkThemeEnabled)
         }
 
-        viewModel.observeThemeState().observe(this) {
+        viewModel.observeThemeState().observe(viewLifecycleOwner) {
             binding.switchDayNight.setChecked(it.darkThemeEnabled)
         }
 
@@ -62,5 +65,9 @@ class SettingsActivity : AppCompatActivity() {
         binding.userAgreementButton.setOnClickListener{
             viewModel.openTerms()
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
     }
 }

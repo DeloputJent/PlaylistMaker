@@ -1,0 +1,4 @@
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_selected="true" android:color="@color/YP_Blue" /> <!-- Цвет при нажатии -->
+    <item android:color="?attr/colorOnSecondary" /> <!-- Стандартный цвет -->
+</selector>

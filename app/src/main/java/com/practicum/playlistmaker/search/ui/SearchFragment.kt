@@ -1,43 +1,32 @@
 package com.practicum.playlistmaker.search.ui
 
-import android.content.Intent
+import android.content.Context.INPUT_METHOD_SERVICE
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
-import androidx.core.view.updatePadding
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.databinding.ActivitySearchBinding
-import com.practicum.playlistmaker.search.domain.Track
-import com.practicum.playlistmaker.player.ui.MusicPlayerActivity
-import com.practicum.playlistmaker.search.ui.presentation.TrackListAdapter
+import com.practicum.playlistmaker.databinding.FragmentSearchBinding
+import com.practicum.playlistmaker.player.ui.MusicPlayerFragment
 import com.practicum.playlistmaker.search.domain.SearchTrackState
+import com.practicum.playlistmaker.search.domain.Track
+import com.practicum.playlistmaker.search.ui.presentation.TrackListAdapter
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import kotlin.getValue
 
-class SearchActivity : AppCompatActivity() {
+class SearchFragment : Fragment() {
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putString(MEMMORY, searchedName)
-    }
-
-    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        super.onRestoreInstanceState(savedInstanceState)
-        searchedName = savedInstanceState.getString(MEMMORY, MEMMORY_DEF)
-    }
-
-    private lateinit var binding: ActivitySearchBinding
     private val viewModel:SearchViewModel by viewModel()
     private var textInputControl: TextWatcher? = null
     private var isClickAllowed = true
@@ -47,59 +36,55 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var trackAdapterHistory : TrackListAdapter
     private lateinit var recyclerView : RecyclerView
     private lateinit var recyclerViewHistory : RecyclerView
-    lateinit var displayPlayerIntent : Intent
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+    private lateinit var binding: FragmentSearchBinding
 
-        binding = ActivitySearchBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        binding = FragmentSearchBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, insets ->
-            val statusBar = insets.getInsets(WindowInsetsCompat.Type.statusBars())
-            val navigationBar = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
-            view.updatePadding(bottom = navigationBar.bottom)
-            view.updatePadding(top = statusBar.top)
-            insets
-        }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        binding.fromSearchBackToMain.setOnClickListener {
-            finish()
-        }
 
-        viewModel.observeState().observe(this) {
+        viewModel.observeState().observe(viewLifecycleOwner) {
             render(it)
         }
 
         viewModel.readFromMemory()
 
-        displayPlayerIntent = Intent(this@SearchActivity, MusicPlayerActivity::class.java)
+        val bundle = Bundle()
 
         binding.inputSearch.setText(searchedName)
 
-        recyclerView = findViewById(R.id.foundedTracksList)
-        recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView = binding.foundedTracksList
+
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
         trackAdapter = TrackListAdapter(
             clickListener = { track ->
                 if (clickDebounce()) {
                     viewModel.addToHistoryList(track)
-                    displayPlayerIntent.putExtra("current_track", track)
-                    startActivity(displayPlayerIntent)
+                    bundle.putParcelable(CURRENT_TRACK, track)
+                    val fragment = MusicPlayerFragment()
+                    fragment.arguments = bundle
+                    findNavController().navigate(R.id.action_searchFragment_to_musicPlayerFragment,MusicPlayerFragment.createArgs(track))
                 }
             }
         )
 
         recyclerView.adapter = trackAdapter
 
-        recyclerViewHistory = findViewById<RecyclerView>(R.id.TracksSearchHistory)
-        recyclerViewHistory.layoutManager = LinearLayoutManager(this)
+        recyclerViewHistory = binding.TracksSearchHistory
+        recyclerViewHistory.layoutManager = LinearLayoutManager(requireContext())
 
-       trackAdapterHistory = TrackListAdapter(clickListener = { track ->
-            displayPlayerIntent.putExtra("current_track", track)
-            startActivity(displayPlayerIntent)
-       })
+        trackAdapterHistory = TrackListAdapter(clickListener = { track ->
+            bundle.putParcelable(CURRENT_TRACK, track)
+            val fragment = MusicPlayerFragment()
+            fragment.arguments = bundle
+            findNavController().navigate(R.id.action_searchFragment_to_musicPlayerFragment, MusicPlayerFragment.createArgs(track))
+        })
 
         recyclerViewHistory.adapter = trackAdapterHistory
 
@@ -107,7 +92,7 @@ class SearchActivity : AppCompatActivity() {
             binding.inputSearch.setText("")
             recyclerView.visibility= View.GONE
             hideProblemMessageAndButton()
-            val inputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
+            val inputMethodManager = requireContext().getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
             inputMethodManager?.hideSoftInputFromWindow(binding.inputSearch.windowToken, 0)
         }
 
@@ -155,16 +140,14 @@ class SearchActivity : AppCompatActivity() {
                 binding.historyLayout.visibility = View.GONE
             }
         }
-    }//OnCreate
 
-    override fun onPause() {
-        super.onPause()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         textInputControl?.let { binding.inputSearch.removeTextChangedListener(it) }
     }
+
 
     fun clickDebounce() : Boolean {
         val current = isClickAllowed
@@ -240,8 +223,8 @@ class SearchActivity : AppCompatActivity() {
     }
 
     companion object {
-        const val MEMMORY = ""
-        const val MEMMORY_DEF = ""
+
+        private const val CURRENT_TRACK = "current_track"
         private const val CLICK_DEBOUNCE_DELAY = 1000L
     }
 }
