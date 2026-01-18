@@ -41,7 +41,7 @@ android {
 }
 
 dependencies {
-
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2")
     implementation("androidx.navigation:navigation-fragment-ktx")
     implementation("com.google.android.material:material:1.8.0")
     implementation(libs.navigation.ui.ktx)

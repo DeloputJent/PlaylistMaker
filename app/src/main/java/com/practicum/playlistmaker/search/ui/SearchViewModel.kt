@@ -2,13 +2,20 @@ package com.practicum.playlistmaker.search.ui
 
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewModelScope
 import com.practicum.playlistmaker.search.domain.TracksInteractor
 import com.practicum.playlistmaker.search.domain.SearchTrackState
 import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.search.domain.api.SearchHistoryInteractor
+
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class SearchViewModel(private val tracksInteractor:TracksInteractor,
                       private val historyOfSearch:SearchHistoryInteractor
@@ -19,6 +26,11 @@ class SearchViewModel(private val tracksInteractor:TracksInteractor,
     var historyList = mutableListOf<Track>()
     private var latestSearchSong: String = ""
     private var handler: Handler = Handler(Looper.getMainLooper())
+
+
+
+
+    private var searchJob: Job? = null
 
     fun readFromMemory(): MutableList<Track> {
         historyOfSearch.getHistory(object : SearchHistoryInteractor.HistoryConsumer {
@@ -41,9 +53,11 @@ class SearchViewModel(private val tracksInteractor:TracksInteractor,
            return
         }
         this.latestSearchSong = changedText
-        handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
-        val searchRunnable = Runnable {searchThisTrack(changedText) }
-        handler.postDelayed(searchRunnable, SEARCH_REQUEST_TOKEN, SEARCH_DEBOUNCE_DELAY,)
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch {
+            delay(SEARCH_DEBOUNCE_DELAY)
+            searchThisTrack(changedText)
+        }
     }
 
     fun searchThisTrack(songName:String) {
