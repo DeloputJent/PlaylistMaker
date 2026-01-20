@@ -47,7 +47,7 @@ class MusicPlayerFragment: Fragment() {
         }
 
         viewModel.observePlayerState().observe(viewLifecycleOwner) {
-            changeButton(it == PlayerViewModel.STATE_PLAYING)
+            changeButton(it.isPlaying)
         }
 
         binding.backFromPlayerButton.setOnClickListener {

@@ -3,6 +3,7 @@ package com.practicum.playlistmaker.player.ui
 import android.media.MediaPlayer
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -14,8 +15,10 @@ import java.util.Locale
 class PlayerViewModel(private val track: Track,
                       private val mediaPlayer:MediaPlayer) : ViewModel() {
 
-    private val playerStateLiveData = MutableLiveData(STATE_DEFAULT)
-    fun observePlayerState(): LiveData<Int> = playerStateLiveData
+    private val playerStateLiveData = MutableLiveData<PlayerState>(PlayerState.Default())
+
+    fun observePlayerState(): LiveData<PlayerState> = playerStateLiveData
+
     private val progressTimeLiveData = MutableLiveData(SimpleDateFormat("mm:ss",
         Locale.getDefault()).format(0.0))
     fun observeProgressTime(): LiveData<String> = progressTimeLiveData
@@ -23,7 +26,8 @@ class PlayerViewModel(private val track: Track,
     private val handler = Handler(Looper.getMainLooper())
 
     private val timerRunnable = Runnable {
-        if (playerStateLiveData.value == STATE_PLAYING) {
+        if (playerStateLiveData.value == PlayerState.Playing()) {
+            Log.d("timer","timer start")
             startTimerUpdate()
         }
     }
@@ -44,8 +48,9 @@ class PlayerViewModel(private val track: Track,
 
     fun onPlayButtonClicked() {
         when(playerStateLiveData.value) {
-            STATE_PLAYING -> pausePlayer()
-            STATE_PREPARED, STATE_PAUSED -> startPlayer()
+            is PlayerState.Playing -> pausePlayer()
+            is PlayerState.Prepared, is PlayerState.Paused -> startPlayer()
+            else -> {}
         }
     }
 
@@ -53,24 +58,24 @@ class PlayerViewModel(private val track: Track,
         mediaPlayer.setDataSource(track.previewUrl)
         mediaPlayer.prepareAsync()
         mediaPlayer.setOnPreparedListener {
-            playerStateLiveData.postValue(STATE_PREPARED)
+            playerStateLiveData.postValue(PlayerState.Prepared())
         }
         mediaPlayer.setOnCompletionListener {
-            playerStateLiveData.postValue(STATE_PREPARED)
+            playerStateLiveData.postValue(PlayerState.Prepared())
             resetTimer()
         }
     }
 
     private fun startPlayer() {
         mediaPlayer.start()
-        playerStateLiveData.postValue(STATE_PLAYING)
+        playerStateLiveData.postValue(PlayerState.Playing())
         startTimerUpdate()
     }
 
     private fun pausePlayer() {
         pauseTimer()
         mediaPlayer.pause()
-        playerStateLiveData.postValue(STATE_PAUSED)
+        playerStateLiveData.postValue(PlayerState.Paused())
     }
 
     private fun startTimerUpdate() {
@@ -89,10 +94,7 @@ class PlayerViewModel(private val track: Track,
             Locale.getDefault()).format(0.0))
     }
     companion object {
-        const val STATE_DEFAULT = 0
-        const val STATE_PREPARED = 1
-        const val STATE_PLAYING = 2
-        const val STATE_PAUSED = 3
+
         const val CHECK_TIMER = 200L
     }
 }

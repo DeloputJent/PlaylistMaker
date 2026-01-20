@@ -4,7 +4,6 @@ import android.content.Context.INPUT_METHOD_SERVICE
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,7 +11,6 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -34,7 +32,6 @@ class SearchFragment : Fragment() {
 
     private val viewModel:SearchViewModel by viewModel()
     private var textInputControl: TextWatcher? = null
-
     var searchedName:String?=""
     private lateinit var trackAdapter : TrackListAdapter
     private lateinit var trackAdapterHistory : TrackListAdapter
@@ -68,7 +65,6 @@ class SearchFragment : Fragment() {
         trackAdapter = TrackListAdapter(
             clickListener = { track ->
                     if (clickDebounce()) {
-                    Log.w("Push", "нажатие есть")
                     viewModel.addToHistoryList(track)
                     bundle.putParcelable(CURRENT_TRACK, track)
                     val fragment = MusicPlayerFragment()
@@ -152,9 +148,6 @@ class SearchFragment : Fragment() {
         textInputControl?.let { binding.inputSearch.removeTextChangedListener(it) }
     }
 
-
-
-
     fun render(state: SearchTrackState) {
         when (state) {
             is SearchTrackState.Loading -> showLoading()
@@ -234,7 +227,6 @@ class SearchFragment : Fragment() {
         }
         return current
     }
-
 
     companion object {
         private const val CURRENT_TRACK = "current_track"
