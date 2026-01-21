@@ -1,12 +1,12 @@
 package com.practicum.playlistmaker.player.ui
 
-sealed class PlayerState(val isPlaying: Boolean, val buttonText: String) {
+sealed class PlayerState(val isPlaying: Boolean, val progress: String) {
 
-    class Default : PlayerState(false, "PLAY")
+    class Default : PlayerState(false, "00:00" )
 
-    class Prepared : PlayerState(false, "PLAY")
+    class Prepared : PlayerState(false, "00:00" )
 
-    class Playing : PlayerState(true, "PAUSE")
+    class Playing(progress: String) : PlayerState(true, progress )
 
-    class Paused : PlayerState(false, "PLAY")
+    class Paused(progress: String) : PlayerState(false, progress )
 }
