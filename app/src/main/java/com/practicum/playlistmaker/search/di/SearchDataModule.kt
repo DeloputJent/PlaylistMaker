@@ -4,6 +4,7 @@ import com.google.gson.Gson
 import com.practicum.playlistmaker.search.data.network.NetworkClient
 import com.practicum.playlistmaker.search.data.network.RetrofitNetWorkClient
 import com.practicum.playlistmaker.search.data.network.iTunesSearchAPI
+import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -19,7 +20,10 @@ val SearchDataModule = module {
     }
 
     single<NetworkClient>{
-        RetrofitNetWorkClient(get())
+        RetrofitNetWorkClient(
+            get(),
+            androidContext()
+        )
     }
 
     factory { Gson() }

@@ -2,17 +2,14 @@ package com.practicum.playlistmaker.search.ui
 
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
 import com.practicum.playlistmaker.search.domain.TracksInteractor
 import com.practicum.playlistmaker.search.domain.SearchTrackState
 import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.search.domain.api.SearchHistoryInteractor
-
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -26,10 +23,6 @@ class SearchViewModel(private val tracksInteractor:TracksInteractor,
     var historyList = mutableListOf<Track>()
     private var latestSearchSong: String = ""
     private var handler: Handler = Handler(Looper.getMainLooper())
-
-
-
-
     private var searchJob: Job? = null
 
     fun readFromMemory(): MutableList<Track> {
@@ -63,7 +56,19 @@ class SearchViewModel(private val tracksInteractor:TracksInteractor,
     fun searchThisTrack(songName:String) {
         if(songName.isNotEmpty()) {
             renderState(SearchTrackState.Loading)
-            viewModelScope.launch {  }
+            viewModelScope.launch {
+                tracksInteractor.searchTracks(songName).collect { foundTracks ->
+                    val tracks=mutableListOf<Track>()
+                    if (foundTracks != null) {
+                        tracks.addAll(foundTracks)
+                    }
+                    when {
+                        tracks.isEmpty()->renderState(SearchTrackState.NothingFound)
+                        tracks==null->renderState(SearchTrackState.NoNetFound)
+                        else->renderState(SearchTrackState.Content(tracks))
+                    }
+                }
+            }
 
         }
     }

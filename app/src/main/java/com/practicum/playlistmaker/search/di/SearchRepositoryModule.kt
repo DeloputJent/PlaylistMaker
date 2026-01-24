@@ -14,7 +14,10 @@ import org.koin.dsl.module
 
 val SearchRepositoryModule = module {
     single<TrackRepository> {
-        TracksRepositoryImpl(RetrofitNetWorkClient(get()))
+        TracksRepositoryImpl(RetrofitNetWorkClient(
+            get(),
+            androidContext()
+        ))
     }
 
     single<SearchHistoryRepository> {
