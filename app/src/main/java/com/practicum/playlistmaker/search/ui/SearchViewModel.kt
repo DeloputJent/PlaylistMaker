@@ -63,24 +63,8 @@ class SearchViewModel(private val tracksInteractor:TracksInteractor,
     fun searchThisTrack(songName:String) {
         if(songName.isNotEmpty()) {
             renderState(SearchTrackState.Loading)
-            tracksInteractor.searchTracks(songName, object : TracksInteractor.TracksConsumer {
-                override fun consume(foundTracks: List<Track>?) {
-                    handler.post {
-                        val trackList = mutableListOf<Track>()
-                        if (foundTracks != null) {
-                            if (foundTracks.isNotEmpty()) {
-                                trackList.clear()
-                                trackList.addAll(foundTracks)
-                                renderState(SearchTrackState.Content(trackList))
-                            } else {
-                                renderState(SearchTrackState.NothingFound)
-                            }
-                        } else {
-                            renderState(SearchTrackState.NoNetFound)
-                        }
-                    }
-                }
-            })
+            viewModelScope.launch {  }
+
         }
     }
 
