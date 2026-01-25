@@ -61,11 +61,12 @@ class SearchViewModel(private val tracksInteractor:TracksInteractor,
                     val tracks=mutableListOf<Track>()
                     if (foundTracks != null) {
                         tracks.addAll(foundTracks)
-                    }
-                    when {
-                        tracks.isEmpty()->renderState(SearchTrackState.NothingFound)
-                        tracks==null->renderState(SearchTrackState.NoNetFound)
-                        else->renderState(SearchTrackState.Content(tracks))
+                        when {
+                            tracks.isEmpty()->renderState(SearchTrackState.NothingFound)
+                            else->renderState(SearchTrackState.Content(tracks))
+                        }
+                    } else {
+                        renderState(SearchTrackState.NoNetFound)
                     }
                 }
             }
