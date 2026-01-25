@@ -1,6 +1,6 @@
 package com.practicum.playlistmaker.search.data
 
-import com.practicum.playlistmaker.search.data.sharedpreferences.Resource
+import com.practicum.playlistmaker.search.data.util.Resource
 import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.search.domain.api.SearchHistoryRepository
 

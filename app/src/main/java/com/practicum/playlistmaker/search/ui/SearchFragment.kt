@@ -2,8 +2,6 @@ package com.practicum.playlistmaker.search.ui
 
 import android.content.Context.INPUT_METHOD_SERVICE
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -22,6 +20,11 @@ import com.practicum.playlistmaker.player.ui.MusicPlayerFragment
 import com.practicum.playlistmaker.search.domain.SearchTrackState
 import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.search.ui.presentation.TrackListAdapter
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.getValue
 
@@ -29,8 +32,6 @@ class SearchFragment : Fragment() {
 
     private val viewModel:SearchViewModel by viewModel()
     private var textInputControl: TextWatcher? = null
-    private var isClickAllowed = true
-    private val handler = Handler(Looper.getMainLooper())
     var searchedName:String?=""
     private lateinit var trackAdapter : TrackListAdapter
     private lateinit var trackAdapterHistory : TrackListAdapter
@@ -46,7 +47,6 @@ class SearchFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
 
         viewModel.observeState().observe(viewLifecycleOwner) {
             render(it)
@@ -64,7 +64,7 @@ class SearchFragment : Fragment() {
 
         trackAdapter = TrackListAdapter(
             clickListener = { track ->
-                if (clickDebounce()) {
+                    if (clickDebounce()) {
                     viewModel.addToHistoryList(track)
                     bundle.putParcelable(CURRENT_TRACK, track)
                     val fragment = MusicPlayerFragment()
@@ -80,10 +80,12 @@ class SearchFragment : Fragment() {
         recyclerViewHistory.layoutManager = LinearLayoutManager(requireContext())
 
         trackAdapterHistory = TrackListAdapter(clickListener = { track ->
+            if (isClickAllowed) {
             bundle.putParcelable(CURRENT_TRACK, track)
             val fragment = MusicPlayerFragment()
             fragment.arguments = bundle
             findNavController().navigate(R.id.action_searchFragment_to_musicPlayerFragment, MusicPlayerFragment.createArgs(track))
+            }
         })
 
         recyclerViewHistory.adapter = trackAdapterHistory
@@ -96,7 +98,7 @@ class SearchFragment : Fragment() {
             inputMethodManager?.hideSoftInputFromWindow(binding.inputSearch.windowToken, 0)
         }
 
-        binding.clearHistoryButton.setOnClickListener{
+        binding.clearHistoryButton.setOnClickListener {
             viewModel.clearHistory()
             binding.historyLayout.visibility= View.GONE
         }
@@ -117,7 +119,6 @@ class SearchFragment : Fragment() {
                     binding.historyLayout.visibility = View.GONE
                 }
             }
-
             override fun afterTextChanged(s: Editable?) { }
         }
 
@@ -140,22 +141,11 @@ class SearchFragment : Fragment() {
                 binding.historyLayout.visibility = View.GONE
             }
         }
-
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         textInputControl?.let { binding.inputSearch.removeTextChangedListener(it) }
-    }
-
-
-    fun clickDebounce() : Boolean {
-        val current = isClickAllowed
-        if (isClickAllowed) {
-            isClickAllowed = false
-            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
-        }
-        return current
     }
 
     fun render(state: SearchTrackState) {
@@ -222,8 +212,23 @@ class SearchFragment : Fragment() {
         }
     }
 
-    companion object {
+    private val debounceJob = SupervisorJob()
+    private val scope = CoroutineScope(Dispatchers.Main + debounceJob)
 
+    var isClickAllowed = true
+    fun clickDebounce(): Boolean {
+        val current = isClickAllowed
+        if (isClickAllowed) {
+            isClickAllowed = false
+            scope.launch {
+                delay(CLICK_DEBOUNCE_DELAY)
+                isClickAllowed = true
+            }
+        }
+        return current
+    }
+
+    companion object {
         private const val CURRENT_TRACK = "current_track"
         private const val CLICK_DEBOUNCE_DELAY = 1000L
     }

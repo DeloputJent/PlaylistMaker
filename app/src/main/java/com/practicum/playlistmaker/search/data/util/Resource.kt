@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker.search.data.sharedpreferences
+package com.practicum.playlistmaker.search.data.util
 
 sealed class Resource<T>(val data: T? = null) {
     class Success<T>(data: T): Resource<T>(data)

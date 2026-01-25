@@ -1,11 +1,14 @@
 package com.practicum.playlistmaker.root
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.activity.enableEdgeToEdge
 
 
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
+
 
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
@@ -13,7 +16,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.practicum.playlistmaker.R
 
 import com.practicum.playlistmaker.databinding.ActivityRootBinding
-
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 
 class RootActivity: AppCompatActivity() {

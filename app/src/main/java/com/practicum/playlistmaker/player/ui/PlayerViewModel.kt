@@ -1,12 +1,14 @@
 package com.practicum.playlistmaker.player.ui
 
 import android.media.MediaPlayer
-import android.os.Handler
-import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.practicum.playlistmaker.search.domain.Track
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -14,19 +16,11 @@ import java.util.Locale
 class PlayerViewModel(private val track: Track,
                       private val mediaPlayer:MediaPlayer) : ViewModel() {
 
-    private val playerStateLiveData = MutableLiveData(STATE_DEFAULT)
-    fun observePlayerState(): LiveData<Int> = playerStateLiveData
-    private val progressTimeLiveData = MutableLiveData(SimpleDateFormat("mm:ss",
-        Locale.getDefault()).format(0.0))
-    fun observeProgressTime(): LiveData<String> = progressTimeLiveData
+    private val playerStateLiveData = MutableLiveData<PlayerState>(PlayerState.Default())
 
-    private val handler = Handler(Looper.getMainLooper())
+    fun observePlayerState(): LiveData<PlayerState> = playerStateLiveData
 
-    private val timerRunnable = Runnable {
-        if (playerStateLiveData.value == STATE_PLAYING) {
-            startTimerUpdate()
-        }
-    }
+    private var timerJob: Job? = null
 
     init {
         preparePlayer()
@@ -44,8 +38,9 @@ class PlayerViewModel(private val track: Track,
 
     fun onPlayButtonClicked() {
         when(playerStateLiveData.value) {
-            STATE_PLAYING -> pausePlayer()
-            STATE_PREPARED, STATE_PAUSED -> startPlayer()
+            is PlayerState.Playing -> pausePlayer()
+            is PlayerState.Prepared, is PlayerState.Paused -> startPlayer()
+            else -> {}
         }
     }
 
@@ -53,46 +48,44 @@ class PlayerViewModel(private val track: Track,
         mediaPlayer.setDataSource(track.previewUrl)
         mediaPlayer.prepareAsync()
         mediaPlayer.setOnPreparedListener {
-            playerStateLiveData.postValue(STATE_PREPARED)
+            playerStateLiveData.postValue(PlayerState.Prepared())
         }
         mediaPlayer.setOnCompletionListener {
-            playerStateLiveData.postValue(STATE_PREPARED)
+            playerStateLiveData.postValue(PlayerState.Prepared())
             resetTimer()
         }
     }
 
     private fun startPlayer() {
         mediaPlayer.start()
-        playerStateLiveData.postValue(STATE_PLAYING)
-        startTimerUpdate()
+        playerStateLiveData.postValue(PlayerState.Playing(getCurrentPosition()))
+        timerJob = viewModelScope.launch {
+            while (mediaPlayer.isPlaying) {
+            delay(300L)
+            playerStateLiveData.postValue(PlayerState.Playing(getCurrentPosition()))
+            }
+        }
     }
 
     private fun pausePlayer() {
         pauseTimer()
         mediaPlayer.pause()
-        playerStateLiveData.postValue(STATE_PAUSED)
+        playerStateLiveData.postValue(
+            PlayerState.Paused(SimpleDateFormat("mm:ss",
+                Locale.getDefault()).format(mediaPlayer.currentPosition)
+            )
+        )
     }
 
-    private fun startTimerUpdate() {
-        progressTimeLiveData.postValue(SimpleDateFormat("mm:ss",
-            Locale.getDefault()).format(mediaPlayer.currentPosition))
-        handler.postDelayed(timerRunnable, CHECK_TIMER)
-    }
+    private fun getCurrentPosition():String =SimpleDateFormat("mm:ss",
+            Locale.getDefault()).format(mediaPlayer.currentPosition)
 
     private fun pauseTimer() {
-        handler.removeCallbacks(timerRunnable)
+        timerJob?.cancel()
     }
 
     private fun resetTimer() {
-        handler.removeCallbacks(timerRunnable)
-        progressTimeLiveData.postValue(SimpleDateFormat("mm:ss",
-            Locale.getDefault()).format(0.0))
-    }
-    companion object {
-        const val STATE_DEFAULT = 0
-        const val STATE_PREPARED = 1
-        const val STATE_PLAYING = 2
-        const val STATE_PAUSED = 3
-        const val CHECK_TIMER = 200L
+        timerJob?.cancel()
+        playerStateLiveData.postValue(PlayerState.Default())
     }
 }

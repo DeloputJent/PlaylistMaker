@@ -42,12 +42,9 @@ class MusicPlayerFragment: Fragment() {
 
         viewModel=getViewModel(parameters = { parametersOf(currentTrack) })
 
-        viewModel.observeProgressTime().observe(viewLifecycleOwner) {
-            binding.currentPlayedTime.text = it
-        }
-
         viewModel.observePlayerState().observe(viewLifecycleOwner) {
-            changeButton(it == PlayerViewModel.STATE_PLAYING)
+            changeButton(it.isPlaying)
+            binding.currentPlayedTime.text = it.progress
         }
 
         binding.backFromPlayerButton.setOnClickListener {
