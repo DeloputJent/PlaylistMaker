@@ -1,6 +1,6 @@
-package com.practicum.playlistmaker.db.converters
+package com.practicum.playlistmaker.db.data.converters
 
-import com.practicum.playlistmaker.db.entity.TrackEntity
+import com.practicum.playlistmaker.db.data.entity.TrackEntity
 import com.practicum.playlistmaker.search.domain.Track
 
 class TrackDbConvertor {

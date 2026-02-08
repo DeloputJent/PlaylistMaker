@@ -14,5 +14,6 @@ data class Track (val trackName: String="", // Название композиц
                   val primaryGenreName: String="", // Жанр трека
                   val country: String="", // Страна исполнителя
                   val previewUrl: String="", // Отрывок трека
-                  val coverArtworkUrl: String="" // Ссылка на большую обложку
+                  val coverArtworkUrl: String="", // Ссылка на большую обложку
+                  var isFavorite: Boolean = false, // Трек добавлен в избранное
 ): Parcelable { }
