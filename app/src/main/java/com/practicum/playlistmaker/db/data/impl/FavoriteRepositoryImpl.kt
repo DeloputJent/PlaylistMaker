@@ -18,11 +18,11 @@ class FavoriteRepositoryImpl(
         emit(convertFromTrackEntity(favoriteTracks).reversed())
     }
 
-    override suspend fun addToFavorite(track: Track) {
+    override fun addToFavorite(track: Track) {
         trackBase.getTrackDao().insertFavorite(convertFromTrack(track))
     }
 
-    override suspend fun deleteFromFavorites(track: Track) {
+    override fun deleteFromFavorites(track: Track) {
         trackBase.getTrackDao().dropOut(convertFromTrack(track))
     }
 

@@ -16,5 +16,5 @@ data class TrackEntity(
     val primaryGenreName: String="", // Жанр трека
     val country: String="", // Страна исполнителя
     val previewUrl: String="", // Отрывок трека
-    val coverArtworkUrl: String="" // Ссылка на большую обложку
+    val coverArtworkUrl: String="", // Ссылка на большую обложку
 )

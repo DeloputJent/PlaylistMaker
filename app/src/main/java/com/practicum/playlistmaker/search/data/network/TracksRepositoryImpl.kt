@@ -1,16 +1,16 @@
 package com.practicum.playlistmaker.search.data.network
 
+import com.practicum.playlistmaker.db.TrackDatabase
 import com.practicum.playlistmaker.search.data.util.Resource
 import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.search.domain.TrackRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import java.text.SimpleDateFormat
-import java.util.Locale
 
-class TracksRepositoryImpl(private val retrofitNetWorkClient: NetworkClient):
+
+class TracksRepositoryImpl(private val retrofitNetWorkClient: NetworkClient,
+                           private val trackBase: TrackDatabase,):
     TrackRepository {
-
     override fun searchTracks(expression: String): Flow<Resource<List<Track>>> = flow {
         val response = retrofitNetWorkClient.doRequest(TrackSearchRequest(expression))
         when (response.resultCode) {
@@ -32,6 +32,12 @@ class TracksRepositoryImpl(private val retrofitNetWorkClient: NetworkClient):
                             it.getCoverArtwork()
                         )
                     }
+                    val favoriteIds = trackBase.getTrackDao().getTracksId()
+                    for (track in data) {
+                            if (favoriteIds.contains(track.trackId)) {
+                                track.isFavorite = true
+                            }
+                        }
                     emit(Resource.Success(data))
                 }
             }

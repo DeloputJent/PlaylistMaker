@@ -10,7 +10,7 @@ class TrackDto (val trackName: String, // Название композиции
                 val artworkUrl100: String, // Ссылка на изображение обложки
                 val trackId: String, // идентификатор iTunes
                 val collectionName: String, // Название альбома
-                val releaseDate: String?, // Год релиза трека
+                val releaseDate: String, // Год релиза трека
                 val primaryGenreName: String, // Жанр трека
                 val country: String, // Страна исполнителя
                 val previewUrl: String // Отрывок трека
@@ -19,6 +19,6 @@ class TrackDto (val trackName: String, // Название композиции
     fun formatTrackTime():String = SimpleDateFormat("mm:ss", Locale.getDefault())
         .format(trackTimeMillis.toLong())
     fun getReleaseYear():String {
-        return releaseDate?.substring(0, 4) ?: ""
+        return releaseDate.substring(0, 4)
     }
 }
