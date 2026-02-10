@@ -4,6 +4,8 @@ import com.practicum.playlistmaker.db.TrackDatabase
 import com.practicum.playlistmaker.search.data.util.Resource
 import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.search.domain.api.SearchHistoryRepository
+import kotlinx.coroutines.coroutineScope
+
 
 class SearchHistoryRepositoryImpl(
     private val storage: StorageClient<ArrayList<Track>>,
@@ -18,9 +20,9 @@ class SearchHistoryRepositoryImpl(
         storage.storeData(tracks)
     }
 
-    override fun getHistory(): Resource<List<Track>> {
+    override suspend fun getHistory(): Resource<List<Track>> {
         val tracks = storage.getData() ?: listOf()
-        val favoriteIds = trackBase.getTrackDao().getTracksId()
+        val favoriteIds = coroutineScope { trackBase.getTrackDao().getTracksId()}
         for (track in tracks) {
             if (favoriteIds.contains(track.trackId)) {
                 track.isFavorite = true

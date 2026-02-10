@@ -10,14 +10,14 @@ import com.practicum.playlistmaker.db.data.entity.TrackEntity
 @Dao
 interface TrackDao {
    @Insert(entity = TrackEntity::class,onConflict = OnConflictStrategy.REPLACE)
-   fun insertFavorite(favoriteTrack: TrackEntity)
+   suspend fun insertFavorite(favoriteTrack: TrackEntity)
 
    @Query("SELECT * FROM favoriteTrack_table")
    suspend fun getFavorites(): List<TrackEntity>
 
     @Query("SELECT trackId FROM favoriteTrack_table")
-    fun getTracksId():List<String>
+    suspend fun getTracksId():List<String>
 
     @Delete (entity = TrackEntity::class)
-    fun dropOut(trackEntity: TrackEntity)
+    suspend fun dropOut(trackEntity: TrackEntity)
 }

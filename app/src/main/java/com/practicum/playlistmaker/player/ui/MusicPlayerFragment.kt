@@ -26,6 +26,11 @@ class MusicPlayerFragment: Fragment() {
         else binding.playTrackButton.setImageResource(R.drawable.ic_start_play_84)
     }
 
+    private fun setFavoriteButton(isTrackFavorite: Boolean) {
+        if (isTrackFavorite) binding.ToFavoriteButton.setImageResource(R.drawable.ic_to_favorite_pressed_51)
+        else binding.ToFavoriteButton.setImageResource(R.drawable.ic_to_favorite_51)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -44,6 +49,7 @@ class MusicPlayerFragment: Fragment() {
 
         viewModel.observePlayerState().observe(viewLifecycleOwner) {
             changeButton(it.isPlaying)
+            setFavoriteButton(it.isFavorite)
             binding.currentPlayedTime.text = it.progress
         }
 

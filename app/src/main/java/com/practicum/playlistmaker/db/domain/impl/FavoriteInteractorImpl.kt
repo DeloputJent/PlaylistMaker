@@ -12,11 +12,11 @@ class FavoriteInteractorImpl(
        return favoriteRepository.getFavorites()
     }
 
-    override fun addToFavorite(track: Track) {
+    override suspend fun addToFavorite(track: Track) {
         favoriteRepository.addToFavorite(track)
     }
 
-    override fun deleteFromFavorites(track: Track) {
+    override suspend fun deleteFromFavorites(track: Track) {
         favoriteRepository.deleteFromFavorites(track)
     }
 }

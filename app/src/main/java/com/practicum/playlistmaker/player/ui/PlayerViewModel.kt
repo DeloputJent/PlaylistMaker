@@ -20,6 +20,8 @@ class PlayerViewModel(private val track: Track,
 
     private val playerStateLiveData = MutableLiveData<PlayerState>(PlayerState.Default())
 
+    private var isTrackFavorite: Boolean=track.isFavorite
+
     fun observePlayerState(): LiveData<PlayerState> = playerStateLiveData
 
     private var timerJob: Job? = null
@@ -48,33 +50,42 @@ class PlayerViewModel(private val track: Track,
 
     fun onFavoriteClicked() {
         if (track.isFavorite) {
-            favoriteInteractor.deleteFromFavorites(track)
+            isTrackFavorite=false
+            track.isFavorite=false
+            viewModelScope.launch {
+                favoriteInteractor.deleteFromFavorites(track)
+            }
         } else {
-            favoriteInteractor.addToFavorite(track)
+            isTrackFavorite=true
+            track.isFavorite=true
+            viewModelScope.launch {
+                favoriteInteractor.addToFavorite(track)
+            }
         }
-
-
     }
 
     private fun preparePlayer() {
         mediaPlayer.setDataSource(track.previewUrl)
         mediaPlayer.prepareAsync()
         mediaPlayer.setOnPreparedListener {
-            playerStateLiveData.postValue(PlayerState.Prepared())
+            playerStateLiveData.postValue(PlayerState.Prepared(isTrackFavorite))
         }
         mediaPlayer.setOnCompletionListener {
-            playerStateLiveData.postValue(PlayerState.Prepared())
+            playerStateLiveData.postValue(PlayerState.Prepared(isTrackFavorite))
             resetTimer()
         }
     }
 
     private fun startPlayer() {
         mediaPlayer.start()
-        playerStateLiveData.postValue(PlayerState.Playing(getCurrentPosition()))
+        playerStateLiveData.postValue(
+            PlayerState.Playing(getCurrentPosition(),isTrackFavorite)
+        )
         timerJob = viewModelScope.launch {
             while (mediaPlayer.isPlaying) {
             delay(300L)
-            playerStateLiveData.postValue(PlayerState.Playing(getCurrentPosition()))
+            playerStateLiveData.postValue(PlayerState.Playing(getCurrentPosition(),
+                isTrackFavorite))
             }
         }
     }
@@ -83,8 +94,10 @@ class PlayerViewModel(private val track: Track,
         pauseTimer()
         mediaPlayer.pause()
         playerStateLiveData.postValue(
-            PlayerState.Paused(SimpleDateFormat("mm:ss",
-                Locale.getDefault()).format(mediaPlayer.currentPosition)
+            PlayerState.Paused(
+                SimpleDateFormat("mm:ss",
+                    Locale.getDefault()).format(mediaPlayer.currentPosition),
+                isTrackFavorite
             )
         )
     }
