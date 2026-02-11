@@ -17,11 +17,17 @@ import java.util.Locale
 class PlayerViewModel(private val track: Track,
                       private val mediaPlayer:MediaPlayer,
                       private val favoriteInteractor: FavoriteInteractor) : ViewModel() {
-
-    private val playerStateLiveData = MutableLiveData<PlayerState>(PlayerState.Default())
-
     private var isTrackFavorite: Boolean=track.isFavorite
 
+    private val playerStateLiveData = MutableLiveData<PlayerState>(
+        PlayerState.Default(isTrackFavorite)
+    )
+
+    private val isTrackFavoriteLiveData = MutableLiveData<Boolean>(
+        isTrackFavorite
+    )
+
+    fun observeFavoriteState(): LiveData<Boolean> = isTrackFavoriteLiveData
     fun observePlayerState(): LiveData<PlayerState> = playerStateLiveData
 
     private var timerJob: Job? = null
@@ -50,13 +56,13 @@ class PlayerViewModel(private val track: Track,
 
     fun onFavoriteClicked() {
         if (track.isFavorite) {
-            isTrackFavorite=false
+            isTrackFavoriteLiveData.value=false
             track.isFavorite=false
             viewModelScope.launch {
                 favoriteInteractor.deleteFromFavorites(track)
             }
         } else {
-            isTrackFavorite=true
+            isTrackFavoriteLiveData.value=true
             track.isFavorite=true
             viewModelScope.launch {
                 favoriteInteractor.addToFavorite(track)
@@ -111,6 +117,6 @@ class PlayerViewModel(private val track: Track,
 
     private fun resetTimer() {
         timerJob?.cancel()
-        playerStateLiveData.postValue(PlayerState.Default())
+        playerStateLiveData.postValue(PlayerState.Default(isTrackFavorite))
     }
 }
