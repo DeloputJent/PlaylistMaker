@@ -17,4 +17,5 @@ data class TrackEntity(
     val country: String="", // Страна исполнителя
     val previewUrl: String="", // Отрывок трека
     val coverArtworkUrl: String="", // Ссылка на большую обложку
+    var isFavorite: Boolean = false, // Трек добавлен в избранное
 )
