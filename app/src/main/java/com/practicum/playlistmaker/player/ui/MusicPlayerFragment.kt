@@ -30,6 +30,7 @@ class MusicPlayerFragment: Fragment() {
     private fun setFavoriteButton(isTrackFavorite: Boolean) {
         if (isTrackFavorite) binding.ToFavoriteButton.setImageResource(R.drawable.ic_to_favorite_pressed_51)
         else binding.ToFavoriteButton.setImageResource(R.drawable.ic_to_favorite_51)
+        Log.d("isFav", "setFavoriteButton SET="+isTrackFavorite.toString())
     }
 
     override fun onCreateView(
@@ -53,8 +54,8 @@ class MusicPlayerFragment: Fragment() {
             binding.currentPlayedTime.text = it.progress
         }
 
-        viewModel.observeFavoriteState().observe(viewLifecycleOwner){
-            setFavoriteButton(it)
+        viewModel.observeFavoriteState().observe(viewLifecycleOwner) { isTrackFavorite ->
+            setFavoriteButton(isTrackFavorite)
         }
 
         binding.backFromPlayerButton.setOnClickListener {
@@ -68,6 +69,8 @@ class MusicPlayerFragment: Fragment() {
         binding.ToFavoriteButton.setOnClickListener {
             viewModel.onFavoriteClicked()
         }
+
+        setFavoriteButton(viewModel.checkIsFavorite())
 
         Glide.with(this)
             .load(currentTrack.coverArtworkUrl)

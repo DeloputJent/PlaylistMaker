@@ -17,8 +17,7 @@ val SearchRepositoryModule = module {
         TracksRepositoryImpl(RetrofitNetWorkClient(
             get(),
             androidContext()
-        ),
-            get()
+        )
         )
     }
 

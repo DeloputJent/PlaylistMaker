@@ -1,6 +1,7 @@
 package com.practicum.playlistmaker.player.ui
 
 import android.media.MediaPlayer
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -17,7 +18,7 @@ import java.util.Locale
 class PlayerViewModel(private val track: Track,
                       private val mediaPlayer:MediaPlayer,
                       private val favoriteInteractor: FavoriteInteractor) : ViewModel() {
-    private var isTrackFavorite: Boolean=track.isFavorite
+    private var isTrackFavorite: Boolean = track.isFavorite
 
     private val playerStateLiveData = MutableLiveData<PlayerState>(
         PlayerState.Default(isTrackFavorite)
@@ -46,6 +47,14 @@ class PlayerViewModel(private val track: Track,
         resetTimer()
     }
 
+    fun checkIsFavorite(): Boolean {
+        viewModelScope.launch {
+            isTrackFavorite = favoriteInteractor.isInFavorites(track)
+            Log.d("isFav", isTrackFavorite.toString())
+        }
+        return isTrackFavorite
+    }
+
     fun onPlayButtonClicked() {
         when(playerStateLiveData.value) {
             is PlayerState.Playing -> pausePlayer()
@@ -55,15 +64,15 @@ class PlayerViewModel(private val track: Track,
     }
 
     fun onFavoriteClicked() {
-        if (track.isFavorite) {
+        if (isTrackFavorite) {
             isTrackFavoriteLiveData.value=false
-            track.isFavorite=false
+            isTrackFavorite = false
             viewModelScope.launch {
                 favoriteInteractor.deleteFromFavorites(track)
             }
         } else {
             isTrackFavoriteLiveData.value=true
-            track.isFavorite=true
+            track.isFavorite = true
             viewModelScope.launch {
                 favoriteInteractor.addToFavorite(track)
             }
@@ -89,7 +98,7 @@ class PlayerViewModel(private val track: Track,
         )
         timerJob = viewModelScope.launch {
             while (mediaPlayer.isPlaying) {
-            delay(300L)
+            delay(CHECK_POSITION_DELAY)
             playerStateLiveData.postValue(PlayerState.Playing(getCurrentPosition(),
                 isTrackFavorite))
             }
@@ -118,5 +127,8 @@ class PlayerViewModel(private val track: Track,
     private fun resetTimer() {
         timerJob?.cancel()
         playerStateLiveData.postValue(PlayerState.Default(isTrackFavorite))
+    }
+    companion object {
+        private const val CHECK_POSITION_DELAY = 300L
     }
 }

@@ -43,11 +43,10 @@ class FavoriteTracksFragment : Fragment() {
 
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        val bundle = Bundle()
-
         favoriteTrackAdapter = FavoriteListAdapter(
             clickListener = { track ->
                 if (clickDebounce()) {
+                    val bundle = Bundle()
                     bundle.putParcelable(CURRENT_TRACK, track)
                     val fragment = MusicPlayerFragment()
                     fragment.arguments = bundle

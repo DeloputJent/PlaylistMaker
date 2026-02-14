@@ -2,30 +2,36 @@ package com.practicum.playlistmaker.db.data.impl
 
 import com.practicum.playlistmaker.db.TrackDatabase
 import com.practicum.playlistmaker.db.data.converters.TrackDbConvertor
+import com.practicum.playlistmaker.db.data.dao.TrackDao
 import com.practicum.playlistmaker.db.data.entity.TrackEntity
 import com.practicum.playlistmaker.db.domain.FavoriteRepository
 import com.practicum.playlistmaker.search.domain.Track
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.launch
 
 class FavoriteRepositoryImpl(
-    private val trackBase: TrackDatabase,
+    private val trackDatabase: TrackDatabase,
     private val converter: TrackDbConvertor
 ): FavoriteRepository {
 
     override fun getFavorites(): Flow<List<Track>> = flow {
-        val favoriteTracks = trackBase.getTrackDao().getFavorites()
+        val favoriteTracks = trackDatabase.getTrackDao().getFavorites()
         emit(convertFromTrackEntity(favoriteTracks).reversed())
     }
 
     override suspend fun addToFavorite(track: Track) {
-        trackBase.getTrackDao().insertFavorite(convertFromTrack(track))
+        trackDatabase.getTrackDao().insertFavorite(convertFromTrack(track))
     }
 
     override suspend fun deleteFromFavorites(track: Track) {
-        trackBase.getTrackDao().dropOut(convertFromTrack(track))
+        trackDatabase.getTrackDao().dropOut(convertFromTrack(track))
     }
+
+    override suspend fun isInFavorites(track: Track): Boolean {
+        val favoriteIds = trackDatabase.getTrackDao().getTracksId()
+           return favoriteIds.contains(track.trackId)
+    }
+
 
     private fun convertFromTrackEntity(favoriteTracks: List<TrackEntity>): List<Track> {
         return favoriteTracks.map { track -> converter.map(track) }
