@@ -7,7 +7,6 @@ import com.practicum.playlistmaker.db.domain.FavoriteRepository
 import com.practicum.playlistmaker.search.domain.Track
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.launch
 
 class FavoriteRepositoryImpl(
     private val trackBase: TrackDatabase,
@@ -21,6 +20,10 @@ class FavoriteRepositoryImpl(
 
     override suspend fun addToFavorite(track: Track) {
         trackBase.getTrackDao().insertFavorite(convertFromTrack(track))
+    }
+
+    override suspend fun getFavoritesId(): List<String> {
+        return trackBase.getTrackDao().getTracksId()
     }
 
     override suspend fun deleteFromFavorites(track: Track) {

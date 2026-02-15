@@ -19,4 +19,8 @@ class FavoriteInteractorImpl(
     override suspend fun deleteFromFavorites(track: Track) {
         favoriteRepository.deleteFromFavorites(track)
     }
+
+    override suspend fun getFavoritesId(): List<String> {
+        return favoriteRepository.getFavoritesId()
+    }
 }

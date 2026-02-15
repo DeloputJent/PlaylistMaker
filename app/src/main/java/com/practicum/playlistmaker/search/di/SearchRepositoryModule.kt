@@ -18,12 +18,11 @@ val SearchRepositoryModule = module {
             get(),
             androidContext()
         ),
-            get()
         )
     }
 
     single<SearchHistoryRepository> {
-        SearchHistoryRepositoryImpl(get(), get())
+        SearchHistoryRepositoryImpl(get(),)
     }
 
     factory<StorageClient<ArrayList<Track>>> {

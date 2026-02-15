@@ -13,14 +13,20 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-
 class PlayerViewModel(private val track: Track,
                       private val mediaPlayer:MediaPlayer,
                       private val favoriteInteractor: FavoriteInteractor) : ViewModel() {
-    private var isTrackFavorite: Boolean=track.isFavorite
+
+    var isTrackFavorite: Boolean=false
+
+    fun checkIsTrackFavorite() {
+        viewModelScope.launch {
+        isTrackFavoriteLiveData.value=favoriteInteractor.getFavoritesId().contains(track.trackId)
+        }
+    }
 
     private val playerStateLiveData = MutableLiveData<PlayerState>(
-        PlayerState.Default(isTrackFavorite)
+        PlayerState.Default()
     )
 
     private val isTrackFavoriteLiveData = MutableLiveData<Boolean>(
@@ -55,15 +61,15 @@ class PlayerViewModel(private val track: Track,
     }
 
     fun onFavoriteClicked() {
-        if (track.isFavorite) {
+        isTrackFavorite = isTrackFavoriteLiveData.value?:false
+        if (isTrackFavorite) {
             isTrackFavoriteLiveData.value=false
-            track.isFavorite=false
             viewModelScope.launch {
                 favoriteInteractor.deleteFromFavorites(track)
             }
         } else {
             isTrackFavoriteLiveData.value=true
-            track.isFavorite=true
+            isTrackFavorite = isTrackFavoriteLiveData.value?:false
             viewModelScope.launch {
                 favoriteInteractor.addToFavorite(track)
             }
@@ -74,10 +80,11 @@ class PlayerViewModel(private val track: Track,
         mediaPlayer.setDataSource(track.previewUrl)
         mediaPlayer.prepareAsync()
         mediaPlayer.setOnPreparedListener {
-            playerStateLiveData.postValue(PlayerState.Prepared(isTrackFavorite))
+            checkIsTrackFavorite()
+            playerStateLiveData.postValue(PlayerState.Prepared())
         }
         mediaPlayer.setOnCompletionListener {
-            playerStateLiveData.postValue(PlayerState.Prepared(isTrackFavorite))
+            playerStateLiveData.postValue(PlayerState.Prepared())
             resetTimer()
         }
     }
@@ -85,13 +92,12 @@ class PlayerViewModel(private val track: Track,
     private fun startPlayer() {
         mediaPlayer.start()
         playerStateLiveData.postValue(
-            PlayerState.Playing(getCurrentPosition(),isTrackFavorite)
+            PlayerState.Playing(getCurrentPosition())
         )
         timerJob = viewModelScope.launch {
             while (mediaPlayer.isPlaying) {
-            delay(300L)
-            playerStateLiveData.postValue(PlayerState.Playing(getCurrentPosition(),
-                isTrackFavorite))
+            delay(CHECK_CURRENT_POSITION)
+            playerStateLiveData.postValue(PlayerState.Playing(getCurrentPosition()))
             }
         }
     }
@@ -103,7 +109,6 @@ class PlayerViewModel(private val track: Track,
             PlayerState.Paused(
                 SimpleDateFormat("mm:ss",
                     Locale.getDefault()).format(mediaPlayer.currentPosition),
-                isTrackFavorite
             )
         )
     }
@@ -117,6 +122,10 @@ class PlayerViewModel(private val track: Track,
 
     private fun resetTimer() {
         timerJob?.cancel()
-        playerStateLiveData.postValue(PlayerState.Default(isTrackFavorite))
+        playerStateLiveData.postValue(PlayerState.Default())
+    }
+
+    companion object{
+        private const val CHECK_CURRENT_POSITION = 300L
     }
 }

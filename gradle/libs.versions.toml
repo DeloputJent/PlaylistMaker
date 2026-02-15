@@ -1,6 +1,6 @@
 [versions]
 activityKtx = "1.11.0"
-agp = "9.0.0"
+agp = "9.0.1"
 compiler = "4.16.0"
 glide = "4.16.0"
 gson = "2.13.1"
