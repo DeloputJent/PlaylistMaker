@@ -17,11 +17,12 @@ val SearchRepositoryModule = module {
         TracksRepositoryImpl(RetrofitNetWorkClient(
             get(),
             androidContext()
-        ))
+        ),
+        )
     }
 
     single<SearchHistoryRepository> {
-        SearchHistoryRepositoryImpl(get())
+        SearchHistoryRepositoryImpl(get(),)
     }
 
     factory<StorageClient<ArrayList<Track>>> {

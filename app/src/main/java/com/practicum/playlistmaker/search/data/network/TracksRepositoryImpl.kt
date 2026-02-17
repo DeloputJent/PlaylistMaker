@@ -5,12 +5,10 @@ import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.search.domain.TrackRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import java.text.SimpleDateFormat
-import java.util.Locale
 
-class TracksRepositoryImpl(private val retrofitNetWorkClient: NetworkClient):
+
+class TracksRepositoryImpl(private val retrofitNetWorkClient: NetworkClient, ):
     TrackRepository {
-
     override fun searchTracks(expression: String): Flow<Resource<List<Track>>> = flow {
         val response = retrofitNetWorkClient.doRequest(TrackSearchRequest(expression))
         when (response.resultCode) {

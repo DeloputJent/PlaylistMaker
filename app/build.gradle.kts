@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     id("org.jetbrains.kotlin.plugin.parcelize")
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -41,6 +42,12 @@ android {
 }
 
 dependencies {
+    val room_version = "2.8.4"
+    implementation("androidx.room:room-runtime:${room_version}")
+// Kotlin Symbol Processing (KSP)
+    ksp("androidx.room:room-compiler:$room_version")
+// Kotlin Extensions для корутин
+    implementation("androidx.room:room-ktx:${room_version}")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2")
     implementation("androidx.navigation:navigation-fragment-ktx")
     implementation("com.google.android.material:material:1.8.0")

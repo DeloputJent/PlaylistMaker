@@ -1,6 +1,7 @@
 package com.practicum.playlistmaker.player.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,6 +27,11 @@ class MusicPlayerFragment: Fragment() {
         else binding.playTrackButton.setImageResource(R.drawable.ic_start_play_84)
     }
 
+    private fun setFavoriteButton(isTrackFavorite: Boolean) {
+        if (isTrackFavorite) binding.ToFavoriteButton.setImageResource(R.drawable.ic_to_favorite_pressed_51)
+        else binding.ToFavoriteButton.setImageResource(R.drawable.ic_to_favorite_51)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -47,8 +53,20 @@ class MusicPlayerFragment: Fragment() {
             binding.currentPlayedTime.text = it.progress
         }
 
+        viewModel.observeFavoriteState().observe(viewLifecycleOwner){
+            setFavoriteButton(it)
+        }
+
         binding.backFromPlayerButton.setOnClickListener {
             findNavController().navigateUp()
+        }
+
+        binding.playTrackButton.setOnClickListener {
+            viewModel.onPlayButtonClicked()
+        }
+
+        binding.ToFavoriteButton.setOnClickListener {
+            viewModel.onFavoriteClicked()
         }
 
         Glide.with(this)
@@ -84,10 +102,6 @@ class MusicPlayerFragment: Fragment() {
 
         binding.currentTrackGenre.text = currentTrack.primaryGenreName
         binding.currentTrackCountry.text = currentTrack.country
-
-        binding.playTrackButton.setOnClickListener {
-            viewModel.onPlayButtonClicked()
-        }
     }
 
     override fun onPause() {
