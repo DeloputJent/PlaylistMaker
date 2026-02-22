@@ -1,7 +1,6 @@
 package com.practicum.playlistmaker.player.ui
 
 import android.media.MediaPlayer
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -14,14 +13,20 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-
 class PlayerViewModel(private val track: Track,
                       private val mediaPlayer:MediaPlayer,
                       private val favoriteInteractor: FavoriteInteractor) : ViewModel() {
-    private var isTrackFavorite: Boolean = track.isFavorite
+
+    var isTrackFavorite: Boolean=false
+
+    fun checkIsTrackFavorite() {
+        viewModelScope.launch {
+        isTrackFavoriteLiveData.value=favoriteInteractor.getFavoritesId().contains(track.trackId)
+        }
+    }
 
     private val playerStateLiveData = MutableLiveData<PlayerState>(
-        PlayerState.Default(isTrackFavorite)
+        PlayerState.Default()
     )
 
     private val isTrackFavoriteLiveData = MutableLiveData<Boolean>(
@@ -47,14 +52,6 @@ class PlayerViewModel(private val track: Track,
         resetTimer()
     }
 
-    fun checkIsFavorite(): Boolean {
-        viewModelScope.launch {
-            isTrackFavorite = favoriteInteractor.isInFavorites(track)
-            Log.d("isFav", isTrackFavorite.toString())
-        }
-        return isTrackFavorite
-    }
-
     fun onPlayButtonClicked() {
         when(playerStateLiveData.value) {
             is PlayerState.Playing -> pausePlayer()
@@ -64,15 +61,15 @@ class PlayerViewModel(private val track: Track,
     }
 
     fun onFavoriteClicked() {
+        isTrackFavorite = isTrackFavoriteLiveData.value?:false
         if (isTrackFavorite) {
             isTrackFavoriteLiveData.value=false
-            isTrackFavorite = false
             viewModelScope.launch {
                 favoriteInteractor.deleteFromFavorites(track)
             }
         } else {
             isTrackFavoriteLiveData.value=true
-            track.isFavorite = true
+            isTrackFavorite = isTrackFavoriteLiveData.value?:false
             viewModelScope.launch {
                 favoriteInteractor.addToFavorite(track)
             }
@@ -83,10 +80,11 @@ class PlayerViewModel(private val track: Track,
         mediaPlayer.setDataSource(track.previewUrl)
         mediaPlayer.prepareAsync()
         mediaPlayer.setOnPreparedListener {
-            playerStateLiveData.postValue(PlayerState.Prepared(isTrackFavorite))
+            checkIsTrackFavorite()
+            playerStateLiveData.postValue(PlayerState.Prepared())
         }
         mediaPlayer.setOnCompletionListener {
-            playerStateLiveData.postValue(PlayerState.Prepared(isTrackFavorite))
+            playerStateLiveData.postValue(PlayerState.Prepared())
             resetTimer()
         }
     }
@@ -94,13 +92,12 @@ class PlayerViewModel(private val track: Track,
     private fun startPlayer() {
         mediaPlayer.start()
         playerStateLiveData.postValue(
-            PlayerState.Playing(getCurrentPosition(),isTrackFavorite)
+            PlayerState.Playing(getCurrentPosition())
         )
         timerJob = viewModelScope.launch {
             while (mediaPlayer.isPlaying) {
-            delay(CHECK_POSITION_DELAY)
-            playerStateLiveData.postValue(PlayerState.Playing(getCurrentPosition(),
-                isTrackFavorite))
+            delay(CHECK_CURRENT_POSITION)
+            playerStateLiveData.postValue(PlayerState.Playing(getCurrentPosition()))
             }
         }
     }
@@ -112,7 +109,6 @@ class PlayerViewModel(private val track: Track,
             PlayerState.Paused(
                 SimpleDateFormat("mm:ss",
                     Locale.getDefault()).format(mediaPlayer.currentPosition),
-                isTrackFavorite
             )
         )
     }
@@ -126,9 +122,10 @@ class PlayerViewModel(private val track: Track,
 
     private fun resetTimer() {
         timerJob?.cancel()
-        playerStateLiveData.postValue(PlayerState.Default(isTrackFavorite))
+        playerStateLiveData.postValue(PlayerState.Default())
     }
-    companion object {
-        private const val CHECK_POSITION_DELAY = 300L
+
+    companion object{
+        private const val CHECK_CURRENT_POSITION = 300L
     }
 }
