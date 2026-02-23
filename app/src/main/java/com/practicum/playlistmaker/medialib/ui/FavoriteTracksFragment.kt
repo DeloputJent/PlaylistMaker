@@ -43,8 +43,6 @@ class FavoriteTracksFragment : Fragment() {
 
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-
-
         favoriteTrackAdapter = FavoriteListAdapter(
             clickListener = { track ->
                 if (clickDebounce()) {

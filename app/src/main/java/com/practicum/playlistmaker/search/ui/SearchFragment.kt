@@ -37,6 +37,7 @@ class SearchFragment : Fragment() {
     private lateinit var trackAdapterHistory : TrackListAdapter
     private lateinit var recyclerView : RecyclerView
     private lateinit var recyclerViewHistory : RecyclerView
+
     private lateinit var binding: FragmentSearchBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

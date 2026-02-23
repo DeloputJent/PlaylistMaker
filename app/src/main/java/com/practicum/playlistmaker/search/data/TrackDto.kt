@@ -4,16 +4,16 @@ import java.io.Serializable
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class TrackDto (val trackName: String,
-                val artistName: String,
-                val trackTimeMillis: String,
-                val artworkUrl100: String,
-                val trackId: String,
-                val collectionName: String,
-                val releaseDate: String,
-                val primaryGenreName: String,
-                val country: String,
-                val previewUrl: String,
+class TrackDto (val trackName: String, // Название композиции
+                val artistName: String, // Имя исполнителя
+                val trackTimeMillis: String, // Продолжительность трека
+                val artworkUrl100: String, // Ссылка на изображение обложки
+                val trackId: String, // идентификатор iTunes
+                val collectionName: String, // Название альбома
+                val releaseDate: String, // Год релиза трека
+                val primaryGenreName: String, // Жанр трека
+                val country: String, // Страна исполнителя
+                val previewUrl: String // Отрывок трека
 ): Serializable {
     fun getCoverArtwork() = artworkUrl100.replaceAfterLast('/',"512x512bb.jpg")
     fun formatTrackTime():String = SimpleDateFormat("mm:ss", Locale.getDefault())

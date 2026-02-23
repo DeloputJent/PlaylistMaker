@@ -17,5 +17,5 @@ data class TrackEntity(
     val country: String="",
     val previewUrl: String="",
     val coverArtworkUrl: String="",
-    val isFavorite: Boolean = false,
+    var isFavorite: Boolean = false,
 )

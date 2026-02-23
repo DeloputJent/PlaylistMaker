@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 
-class TracksRepositoryImpl(private val retrofitNetWorkClient: NetworkClient, ):
+class TracksRepositoryImpl(private val retrofitNetWorkClient: NetworkClient):
     TrackRepository {
     override fun searchTracks(expression: String): Flow<Resource<List<Track>>> = flow {
         val response = retrofitNetWorkClient.doRequest(TrackSearchRequest(expression))
@@ -30,6 +30,7 @@ class TracksRepositoryImpl(private val retrofitNetWorkClient: NetworkClient, ):
                             it.getCoverArtwork()
                         )
                     }
+
                     emit(Resource.Success(data))
                 }
             }

@@ -23,10 +23,6 @@ class FavoriteRepositoryImpl(
         trackDatabase.getTrackDao().insertFavorite(convertFromTrack(track))
     }
 
-    override suspend fun getFavoritesId(): List<String> {
-        return trackBase.getTrackDao().getTracksId()
-    }
-
     override suspend fun deleteFromFavorites(track: Track) {
         trackDatabase.getTrackDao().dropOut(convertFromTrack(track))
     }
