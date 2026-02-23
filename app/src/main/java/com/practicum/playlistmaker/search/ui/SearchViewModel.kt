@@ -26,12 +26,11 @@ class SearchViewModel(private val tracksInteractor:TracksInteractor,
     private var searchJob: Job? = null
 
     fun readFromMemory(): MutableList<Track> {
-        viewModelScope.launch { historyOfSearch.getHistory(object : SearchHistoryInteractor.HistoryConsumer {
+        historyOfSearch.getHistory(object : SearchHistoryInteractor.HistoryConsumer {
             override fun consume(searchHistory: List<Track>?) {
                 historyList = (searchHistory ?: mutableListOf()).toMutableList()
             }
         })
-        }
         return historyList
     }
 
