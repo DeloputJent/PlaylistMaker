@@ -1,11 +1,13 @@
 package com.practicum.playlistmaker.search.data
 
-import com.practicum.playlistmaker.search.data.sharedpreferences.Resource
+import com.practicum.playlistmaker.search.data.util.Resource
 import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.search.domain.api.SearchHistoryRepository
 
+
+
 class SearchHistoryRepositoryImpl(
-    private val storage: StorageClient<ArrayList<Track>>
+    private val storage: StorageClient<ArrayList<Track>>,
 ): SearchHistoryRepository {
 
     override fun saveToHistory(t: Track) {
@@ -16,7 +18,7 @@ class SearchHistoryRepositoryImpl(
         storage.storeData(tracks)
     }
 
-    override fun getHistory(): Resource<List<Track>> {
+    override suspend fun getHistory(): Resource<List<Track>> {
         val tracks = storage.getData() ?: listOf()
         return Resource.Success(tracks)
     }

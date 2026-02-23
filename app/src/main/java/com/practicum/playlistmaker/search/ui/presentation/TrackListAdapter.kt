@@ -6,12 +6,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker.search.domain.Track
 
 class TrackListAdapter (
-
     private val clickListener: (Track) -> Unit={}
 ) : RecyclerView.Adapter<TrackListViewHolder> () {
 
     private val tracks: MutableList<Track> = mutableListOf()
-    //private val searchHistoryList: MutableList<Track> = mutableListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackListViewHolder =
         TrackListViewHolder.from(parent)

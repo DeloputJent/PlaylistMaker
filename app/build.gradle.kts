@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    id("org.jetbrains.kotlin.plugin.parcelize")
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -40,11 +42,24 @@ android {
 }
 
 dependencies {
+    val room_version = "2.8.4"
+    implementation("androidx.room:room-runtime:${room_version}")
+// Kotlin Symbol Processing (KSP)
+    ksp("androidx.room:room-compiler:$room_version")
+// Kotlin Extensions для корутин
+    implementation("androidx.room:room-ktx:${room_version}")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2")
+    implementation("androidx.navigation:navigation-fragment-ktx")
+    implementation("com.google.android.material:material:1.8.0")
+    implementation(libs.navigation.ui.ktx)
+    implementation(libs.koin.android)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.activity.ktx)
     implementation(libs.lifecycle.livedata.ktx)
     implementation(libs.material)
     implementation(libs.glide)
+    implementation(libs.androidx.navigation.fragment.ktx)
+    implementation(libs.androidx.navigation.ui.ktx)
     annotationProcessor(libs.glide.compiler)
     implementation(libs.retrofit)
     implementation(libs.gson)
@@ -55,6 +70,7 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.google.material)
+    implementation("com.google.android.material:material:1.13.0")
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

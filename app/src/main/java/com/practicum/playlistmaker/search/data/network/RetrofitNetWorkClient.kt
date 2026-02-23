@@ -1,32 +1,45 @@
 package com.practicum.playlistmaker.search.data.network
 
-import com.practicum.playlistmaker.search.data.network.NetworkClient
-import com.practicum.playlistmaker.search.data.network.Response
-import com.practicum.playlistmaker.search.data.network.TrackSearchRequest
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
-class RetrofitNetWorkClient(): NetworkClient {
-    private val baseURL:String = "https://itunes.apple.com"
-    val retrofit = Retrofit.Builder()
-        .baseUrl(baseURL)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-
-    val iTunesService = retrofit.create(iTunesSearchAPI::class.java)
-
-    override fun doRequest(dto: Any): Response {
-        if (dto is TrackSearchRequest) {
-            return try {
-                val resp = iTunesService.search(dto.expression).execute()
-                val body = resp.body() ?: Response()
-                body.apply { resultCode = resp.code() }
-            } catch (e: Exception) {
-                Response().apply { resultCode = -1 }
-            }
-        } else {
-            return Response().apply { resultCode=400 }
+class RetrofitNetWorkClient(private val iTunesService:iTunesSearchAPI,
+                            private val context: Context,): NetworkClient {
+    override suspend fun doRequest(dto: Any): Response {
+        if (isConnected() == false) {
+            return Response().apply { resultCode = -1 }
         }
+
+        if (dto !is TrackSearchRequest) {
+            return Response().apply { resultCode = 400 }
+        } else {
+            return withContext(Dispatchers.IO) {
+                try {
+                    val resp = iTunesService.search(dto.expression)
+                    //val body = resp.body() ?: Response()
+                    resp.apply { resultCode = 200 }
+                } catch (e: Exception) {
+                    Response().apply { resultCode = 500 }
+                }
+            }
+        }
+    }
+
+    private fun isConnected(): Boolean {
+        val connectivityManager = context.getSystemService(
+            Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val capabilities = connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
+        if (capabilities != null) {
+            when {
+                capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> return true
+                capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> return true
+                capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> return true
+            }
+        }
+        return false
     }
 }
 

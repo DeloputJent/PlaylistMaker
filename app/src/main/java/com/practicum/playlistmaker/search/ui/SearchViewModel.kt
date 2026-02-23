@@ -1,52 +1,43 @@
 package com.practicum.playlistmaker.search.ui
 
-import android.app.Application
-import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
-import com.practicum.playlistmaker.creator.Creator
+import androidx.lifecycle.viewModelScope
 import com.practicum.playlistmaker.search.domain.TracksInteractor
 import com.practicum.playlistmaker.search.domain.SearchTrackState
 import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.search.domain.api.SearchHistoryInteractor
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
-class SearchViewModel(private val context: Context): ViewModel() {
+class SearchViewModel(private val tracksInteractor:TracksInteractor,
+                      private val historyOfSearch:SearchHistoryInteractor
+): ViewModel() {
 
-    private val tracksInteractor = Creator.provideTracksInteractor()
     private val stateLiveData = MutableLiveData<SearchTrackState>()
-    val historyOfSearch = Creator.provideSearchHistoryInteractor(context)
 
     var historyList = mutableListOf<Track>()
     private var latestSearchSong: String = ""
     private var handler: Handler = Handler(Looper.getMainLooper())
+    private var searchJob: Job? = null
 
     fun readFromMemory(): MutableList<Track> {
-        historyOfSearch.getHistory(object : SearchHistoryInteractor.HistoryConsumer {
+        viewModelScope.launch { historyOfSearch.getHistory(object : SearchHistoryInteractor.HistoryConsumer {
             override fun consume(searchHistory: List<Track>?) {
                 historyList = (searchHistory ?: mutableListOf()).toMutableList()
             }
         })
+        }
         return historyList
     }
-
-    /*fun writeInMemory() {
-        historyOfSearch.saveToHistory(historyList)
-    }*/
 
     fun clearHistory() {
         historyOfSearch.clearHistory()
         historyList.clear()
-    }
-
-    fun getHistoryOfSearch() : MutableList<Track> {
-        return historyList
     }
 
     fun observeState(): LiveData<SearchTrackState> = stateLiveData
@@ -56,36 +47,33 @@ class SearchViewModel(private val context: Context): ViewModel() {
            return
         }
         this.latestSearchSong = changedText
-        handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
-
-        val searchRunnable = Runnable {searchThisTrack(changedText) }
-
-        handler.postDelayed(searchRunnable, SEARCH_REQUEST_TOKEN, SEARCH_DEBOUNCE_DELAY,)
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch {
+            delay(SEARCH_DEBOUNCE_DELAY)
+            searchThisTrack(changedText)
+        }
     }
 
     fun searchThisTrack(songName:String) {
         if(songName.isNotEmpty()) {
             renderState(SearchTrackState.Loading)
-            tracksInteractor.searchTracks(songName, object : TracksInteractor.TracksConsumer {
-                override fun consume(foundTracks: List<Track>?) {
-                    handler.post {
-                        val trackList = mutableListOf<Track>()
-                        if (foundTracks != null) {
-                            if (foundTracks.isNotEmpty()) {
-                                trackList.clear()
-                                trackList.addAll(foundTracks)
-                                renderState(SearchTrackState.Content(trackList))
-                            } else {
-                                renderState(SearchTrackState.NothingFound)
-                            }
-                        } else {
-                            renderState(SearchTrackState.NoNetFound)
+            viewModelScope.launch {
+                tracksInteractor.searchTracks(songName).collect { foundTracks ->
+                    val tracks=mutableListOf<Track>()
+                    if (foundTracks != null) {
+                        tracks.addAll(foundTracks)
+                        when {
+                            tracks.isEmpty()->renderState(SearchTrackState.NothingFound)
+                            else->renderState(SearchTrackState.Content(tracks))
                         }
+                    } else {
+                        renderState(SearchTrackState.NoNetFound)
                     }
                 }
-            })
+            }
+
         }
-    } //fun searchThisTrack()
+    }
 
     fun addToHistoryList(track: Track) {
         historyOfSearch.saveToHistory(track)
@@ -107,12 +95,5 @@ class SearchViewModel(private val context: Context): ViewModel() {
     companion object {
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
         private val SEARCH_REQUEST_TOKEN = Any()
-
-        fun getFactory(): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                val app = (this[APPLICATION_KEY]) as Application
-                SearchViewModel(app)
-            }
-        }
     }
 }
