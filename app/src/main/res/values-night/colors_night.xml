@@ -10,4 +10,6 @@
     <color name="YP_Red">#F56B6C</color>
     <color name="switchthumb_color">#3772E7</color>
     <color name="switchtrack_color">#9FBBF3</color>
+    <color name="gray_white_border">#FFFFFFFF</color>
+    <color name="Black_white_color">#FFFFFFFF</color>
 </resources>
