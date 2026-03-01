@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
 import com.practicum.playlistmaker.db.di.dataModule
 import com.practicum.playlistmaker.medialib.di.FavoriteTracksModule
+import com.practicum.playlistmaker.newplaylist.di.NewPlayListViewModelModule
 import com.practicum.playlistmaker.player.di.PlayerViewModelModule
 import com.practicum.playlistmaker.search.di.SearchDataModule
 import com.practicum.playlistmaker.search.di.SearchInteractorModule
@@ -37,6 +38,7 @@ class PlayListMakerApplication():Application() {
                 SettingsRepositoryModule,
                 SettingsViewModelModule,
                 dataModule,
+                NewPlayListViewModelModule,
             )
         }
 
