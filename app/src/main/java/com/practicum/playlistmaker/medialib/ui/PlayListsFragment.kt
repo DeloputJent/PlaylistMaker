@@ -8,10 +8,11 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.FragmentPlaylistsBinding
-
 class PlayListsFragment : Fragment() {
 
     private lateinit var binding: FragmentPlaylistsBinding
+
+
 
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
