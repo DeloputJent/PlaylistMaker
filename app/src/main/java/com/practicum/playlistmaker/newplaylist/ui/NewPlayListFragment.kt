@@ -1,5 +1,6 @@
 package com.practicum.playlistmaker.newplaylist.ui
 
+import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -9,9 +10,14 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.util.TypedValueCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.FragmentNewPlaylistBinding
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -58,12 +64,25 @@ class NewPlayListFragment: Fragment() {
         binding.inputPlaylistDescription.addTextChangedListener(descriptionInputControl)
 
         binding.backFromNewPlaylistButton.setOnClickListener {
-            findNavController().navigateUp()
+            if (binding.inputPlaylistName.text.isEmpty() and binding.inputPlaylistDescription.text.isEmpty() and (binding.PlaylistArtwork.drawable == null)) findNavController().navigateUp()
+            else onScreenCloseDialog(requireContext()).show()
         }
 
         val pickPicture = registerForActivityResult(ActivityResultContracts
             .PickVisualMedia()) { uri->
-            if(uri!=null) { binding.PlaylistArtwork.setImageURI(uri) }
+            if(uri!=null) {
+                Glide.with(this)
+                    .load(uri)
+                    .centerCrop()
+                    .transform(
+                        RoundedCorners(
+                            TypedValueCompat.dpToPx(8f, this.resources.displayMetrics).toInt()
+                        )
+                    )
+                    .placeholder(R.drawable.img_placeholder_312)
+                    .into( binding.PlaylistArtwork)
+                binding.PlaylistArtwork.setImageURI(uri)
+            }
         }
 
         binding.PlaylistArtwork.setOnClickListener {
@@ -84,6 +103,16 @@ class NewPlayListFragment: Fragment() {
         nameInputControl?.let { binding.inputPlaylistName.removeTextChangedListener(it) }
         descriptionInputControl?.let{binding.inputPlaylistDescription.removeTextChangedListener(it)}
     }
+
+    fun onScreenCloseDialog(context: Context):MaterialAlertDialogBuilder {
+        return MaterialAlertDialogBuilder(context)
+            .setTitle("Завершить создание плейлиста?")
+            .setMessage("Все несохраненные данные будут потеряны")
+            .setNegativeButton("Отмена") {dialog, which ->{}
+            }.setPositiveButton("Завершить"){dialog, which -> {}}
+
+    }
+
 
     companion object{
     }
