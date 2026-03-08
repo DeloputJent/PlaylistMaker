@@ -1,32 +1,41 @@
 package com.practicum.playlistmaker.newplaylist.ui
 
 import android.content.Context
+import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.util.TypedValueCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.FragmentNewPlaylistBinding
+import com.practicum.playlistmaker.newplaylist.domain.Playlist
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.io.File
+import java.net.URI
 
 class NewPlayListFragment: Fragment() {
 
     private lateinit var binding: FragmentNewPlaylistBinding
     private val viewModel: NewPlayListViewModel by viewModel()
-    private lateinit var playListName: String
-    private lateinit var playListDescription: String
+    private var playListName: String = ""
+    private var playListDescription: String = ""
+
+    private var uri: Uri = Uri.EMPTY
 
     private var nameInputControl: TextWatcher? = null
     private var descriptionInputControl: TextWatcher? = null
@@ -43,11 +52,14 @@ class NewPlayListFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val playlistArtwork = binding.PlaylistArtwork
+
         nameInputControl = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 binding.PlaylistNameHint.isVisible = !s.isNullOrEmpty()
                 binding.createPlaylistButton.isEnabled = !s.isNullOrEmpty()
+                playListName=s.toString()
             }
             override fun afterTextChanged(s: Editable?) {}
         }
@@ -56,6 +68,7 @@ class NewPlayListFragment: Fragment() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 binding.PlaylistDescriptionHint.isVisible = !s.isNullOrEmpty()
+                playListDescription=s.toString()
             }
             override fun afterTextChanged(s: Editable?) {}
         }
@@ -64,7 +77,7 @@ class NewPlayListFragment: Fragment() {
         binding.inputPlaylistDescription.addTextChangedListener(descriptionInputControl)
 
         binding.backFromNewPlaylistButton.setOnClickListener {
-            if (binding.inputPlaylistName.text.isEmpty() and binding.inputPlaylistDescription.text.isEmpty() and (binding.PlaylistArtwork.drawable == null)) findNavController().navigateUp()
+            if (playListName.isEmpty() and playListDescription.isEmpty() and (playlistArtwork.drawable==null)) findNavController().navigateUp()
             else onScreenCloseDialog(requireContext()).show()
         }
 
@@ -80,19 +93,34 @@ class NewPlayListFragment: Fragment() {
                         )
                     )
                     .placeholder(R.drawable.img_placeholder_312)
-                    .into( binding.PlaylistArtwork)
-                binding.PlaylistArtwork.setImageURI(uri)
+                    .into( playlistArtwork)
+                this.uri=uri
+                playlistArtwork.setImageURI(uri)
             }
         }
 
-        binding.PlaylistArtwork.setOnClickListener {
+        playlistArtwork.setOnClickListener {
             pickPicture.launch(PickVisualMediaRequest(
                 ActivityResultContracts
                 .PickVisualMedia
                 .ImageOnly))
-            binding.PlaylistArtwork.scaleType= ImageView.ScaleType.FIT_XY
+            playlistArtwork.scaleType= ImageView.ScaleType.FIT_XY
+        }
+
+        binding.createPlaylistButton.setOnClickListener {
+
+
+            viewModel.createPlayList(playListName, playListDescription, uri)
+            val toast = Toast(requireContext())
+            toast.duration= Toast.LENGTH_SHORT
+            toast.setText(getString(R.string.playlist_created, playListName))
+            toast.show()
+            findNavController().navigateUp()
         }
     }
+
+
+
 
     override fun onPause() {
         super.onPause()
@@ -106,11 +134,10 @@ class NewPlayListFragment: Fragment() {
 
     fun onScreenCloseDialog(context: Context):MaterialAlertDialogBuilder {
         return MaterialAlertDialogBuilder(context)
-            .setTitle("Завершить создание плейлиста?")
-            .setMessage("Все несохраненные данные будут потеряны")
-            .setNegativeButton("Отмена") {dialog, which ->{}
-            }.setPositiveButton("Завершить"){dialog, which -> {}}
-
+            .setTitle(R.string.Finish_creating_a_playlist)
+            .setMessage(R.string.Unsaved_data_will_be_lost)
+            .setNegativeButton(R.string.Cancel) {dialog, which ->{}
+            }.setPositiveButton(R.string.Complete) {dialog, which -> findNavController().navigateUp()}
     }
 
 

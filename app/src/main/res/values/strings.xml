@@ -41,4 +41,12 @@
     <string name="Playlist_description">Описание</string>
     <string name="Playlist_create">Создать</string>
 
+    <string name="Finish_creating_a_playlist">Завершить создание плейлиста?</string>
+    <string name="Unsaved_data_will_be_lost">Все несохраненные данные будут потеряны</string>
+    <string name="Cancel">Отмена</string>
+    <string name="Complete">Завершить</string>
+    <string name="playlist_created">Плейлист %s создан</string>
+
+
+
 </resources>
