@@ -1,5 +1,6 @@
 package com.practicum.playlistmaker.newplaylist.ui
 
+import android.app.AlertDialog
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
@@ -12,6 +13,7 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.core.util.TypedValueCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -73,7 +75,7 @@ class NewPlayListFragment: Fragment() {
 
         binding.backFromNewPlaylistButton.setOnClickListener {
             if (playListName.isEmpty() and playListDescription.isEmpty() and (playlistArtwork.drawable==null)) findNavController().navigateUp()
-            else onScreenCloseDialog(requireContext()).show()
+            else onScreenCloseDialog(requireContext())
         }
 
         val pickPicture = registerForActivityResult(ActivityResultContracts
@@ -103,7 +105,7 @@ class NewPlayListFragment: Fragment() {
         }
 
         binding.createPlaylistButton.setOnClickListener {
-            val path = viewModel.saveImageToPrivateStorage(uri, playListName,)
+            val path = viewModel.saveImageToPrivateStorage(uri, playListName)
             viewModel.createPlayList(playListName, playListDescription, path)
             val toast = Toast(requireContext())
             toast.duration= Toast.LENGTH_SHORT
@@ -123,14 +125,21 @@ class NewPlayListFragment: Fragment() {
         descriptionInputControl?.let{binding.inputPlaylistDescription.removeTextChangedListener(it)}
     }
 
-    fun onScreenCloseDialog(context: Context):MaterialAlertDialogBuilder {
-        return MaterialAlertDialogBuilder(context)
+    fun onScreenCloseDialog(context: Context) {
+        val dialog = MaterialAlertDialogBuilder(context)
             .setTitle(R.string.Finish_creating_a_playlist)
             .setMessage(R.string.Unsaved_data_will_be_lost)
             .setNegativeButton(R.string.Cancel) {dialog, which ->{}
-            }.setPositiveButton(R.string.Complete) {dialog, which -> findNavController().navigateUp()}
-    }
+            }.setPositiveButton(R.string.Complete) {dialog, which -> findNavController().navigateUp()
+            }.create()
 
-    companion object{
+        dialog.setOnShowListener {
+            val negativeButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
+            negativeButton.setTextColor(ContextCompat.getColor(context, R.color.Black_white_color))
+
+            val positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+            positiveButton.setTextColor(ContextCompat.getColor(context, R.color.Black_white_color))
+        }
+        dialog.show()
     }
 }

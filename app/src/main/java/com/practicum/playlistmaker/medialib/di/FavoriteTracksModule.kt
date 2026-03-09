@@ -8,5 +8,4 @@ val FavoriteTracksModule = module {
     viewModel {
         FavoriteViewModel(get())
     }
-
 }
