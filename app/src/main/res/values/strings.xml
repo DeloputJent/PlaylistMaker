@@ -46,6 +46,7 @@
     <string name="Cancel">Отмена</string>
     <string name="Complete">Завершить</string>
     <string name="playlist_created">Плейлист %s создан</string>
+    <string name="tracks">%s треков</string>
 
 
 

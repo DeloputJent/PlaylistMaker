@@ -1,7 +1,7 @@
 package com.practicum.playlistmaker.db.data.converters
 
 import com.practicum.playlistmaker.db.data.entity.PlayListEntity
-import com.practicum.playlistmaker.newplaylist.domain.Playlist
+import com.practicum.playlistmaker.medialib.domain.Playlist
 
 class PlaylistDbConverter {
     fun map(playList: PlayListEntity): Playlist {
@@ -16,7 +16,8 @@ class PlaylistDbConverter {
     }
 
     fun map(playList: Playlist): PlayListEntity {
-        return PlayListEntity(playList.playlistID,
+        return PlayListEntity(
+            playList.playlistID,
             playList.playlistName,
             playList.playlistDescription,
             playList.pathToArtwork,

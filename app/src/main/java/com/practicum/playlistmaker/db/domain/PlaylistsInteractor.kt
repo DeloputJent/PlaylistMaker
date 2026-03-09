@@ -1,6 +1,6 @@
 package com.practicum.playlistmaker.db.domain
 
-import com.practicum.playlistmaker.newplaylist.domain.Playlist
+import com.practicum.playlistmaker.medialib.domain.Playlist
 import kotlinx.coroutines.flow.Flow
 
 interface PlaylistsInteractor {

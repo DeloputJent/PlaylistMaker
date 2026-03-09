@@ -4,7 +4,7 @@ import com.practicum.playlistmaker.db.PlaylistsDatabase
 import com.practicum.playlistmaker.db.data.converters.PlaylistDbConverter
 import com.practicum.playlistmaker.db.data.entity.PlayListEntity
 import com.practicum.playlistmaker.db.domain.PlaylistsRepository
-import com.practicum.playlistmaker.newplaylist.domain.Playlist
+import com.practicum.playlistmaker.medialib.domain.Playlist
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 

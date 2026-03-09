@@ -3,7 +3,6 @@ package com.practicum.playlistmaker.newplaylist.ui
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -16,17 +15,13 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.util.TypedValueCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.FragmentNewPlaylistBinding
-import com.practicum.playlistmaker.newplaylist.domain.Playlist
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import java.io.File
-import java.net.URI
 
 class NewPlayListFragment: Fragment() {
 
@@ -108,9 +103,8 @@ class NewPlayListFragment: Fragment() {
         }
 
         binding.createPlaylistButton.setOnClickListener {
-
-
-            viewModel.createPlayList(playListName, playListDescription, uri)
+            val path = viewModel.saveImageToPrivateStorage(uri, playListName,)
+            viewModel.createPlayList(playListName, playListDescription, path)
             val toast = Toast(requireContext())
             toast.duration= Toast.LENGTH_SHORT
             toast.setText(getString(R.string.playlist_created, playListName))
@@ -118,9 +112,6 @@ class NewPlayListFragment: Fragment() {
             findNavController().navigateUp()
         }
     }
-
-
-
 
     override fun onPause() {
         super.onPause()
@@ -139,7 +130,6 @@ class NewPlayListFragment: Fragment() {
             .setNegativeButton(R.string.Cancel) {dialog, which ->{}
             }.setPositiveButton(R.string.Complete) {dialog, which -> findNavController().navigateUp()}
     }
-
 
     companion object{
     }
