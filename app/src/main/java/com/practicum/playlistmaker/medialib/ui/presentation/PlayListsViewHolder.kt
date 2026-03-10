@@ -37,7 +37,7 @@ class PlayListsViewHolder (
         Glide.with(itemView)
             .load(uri)
             .centerCrop()
-            .transform(RoundedCorners(dpToPx(2f, itemView.context)))
+            .transform(RoundedCorners(dpToPx(8f, itemView.context)))
             .placeholder(R.drawable.placeholder)
             .into(cover)
     }
