@@ -13,7 +13,7 @@
             android:layout_width="160dp"
             android:layout_height="160dp"
             android:padding="1dp"
-            android:scaleType="centerInside"
+            android:scaleType="fitXY"
             android:src="@drawable/placeholder"
             android:background="@drawable/background_rounded_border"/>
         <TextView

@@ -105,7 +105,11 @@ class NewPlayListFragment: Fragment() {
         }
 
         binding.createPlaylistButton.setOnClickListener {
-            val path = viewModel.saveImageToPrivateStorage(uri, playListName)
+            var path:String=""
+            if (uri!=Uri.EMPTY)
+            {
+                path = viewModel.saveImageToPrivateStorage(uri, playListName)
+            }
             viewModel.createPlayList(playListName, playListDescription, path)
             val toast = Toast(requireContext())
             toast.duration= Toast.LENGTH_SHORT
