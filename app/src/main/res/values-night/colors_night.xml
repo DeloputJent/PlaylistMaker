@@ -12,4 +12,5 @@
     <color name="switchtrack_color">#9FBBF3</color>
     <color name="gray_white_border">#FFFFFFFF</color>
     <color name="Black_white_color">#FFFFFFFF</color>
+    <color name="light_gray_white">#FFFFFF</color>
 </resources>

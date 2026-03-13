@@ -1,0 +1,60 @@
+package com.practicum.playlistmaker.player.ui.presentation
+
+import android.content.Context
+import android.os.Environment
+import android.util.TypedValue
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import android.widget.ImageView
+import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.practicum.playlistmaker.R
+import com.practicum.playlistmaker.databinding.AddToPlaylistFrameViewBinding
+import com.practicum.playlistmaker.medialib.domain.Playlist
+import java.io.File
+
+class PlayListsOnMpViewHolder (
+    private val binding: AddToPlaylistFrameViewBinding,
+):RecyclerView.ViewHolder(binding.root) {
+    private val cover: ImageView = binding.addToPlayListCover
+
+    fun bind(playlist: Playlist) {
+        binding.apply {
+            addToPlayListName.text = playlist.playlistName.trim()
+            addToPlayListSongsAmount.text = itemView.context.getString(
+                R.string.tracks,
+                playlist.tracksAmount.toString()
+            )
+        }
+
+        val filePath = File(itemView.context
+            .getExternalFilesDir(Environment.DIRECTORY_PICTURES), "artwork_album")
+        val uri = File(filePath, playlist.pathToArtwork)
+
+        Glide.with(itemView)
+            .load(uri)
+            .centerCrop()
+            .transform(RoundedCorners(dpToPx(2f, itemView.context)))
+            .placeholder(R.drawable.placeholder)
+            .into(cover)
+    }
+
+    fun dpToPx(dp: Float, context: Context): Int {
+        return TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP,
+            dp,
+            context.resources.displayMetrics).toInt()
+    }
+
+    companion object {
+        fun from(parent: ViewGroup): PlayListsOnMpViewHolder {
+            val inflater = LayoutInflater.from(parent.context)
+            val binding = AddToPlaylistFrameViewBinding.inflate(inflater, parent, false)
+            return PlayListsOnMpViewHolder(binding)
+        }
+    }
+
+
+
+}
