@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.practicum.playlistmaker.db.domain.FavoriteInteractor
 import com.practicum.playlistmaker.db.domain.PlaylistsInteractor
+import com.practicum.playlistmaker.medialib.domain.Playlist
 import com.practicum.playlistmaker.search.domain.Track
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -21,11 +22,17 @@ class PlayerViewModel(private val track: Track,
 
     var isTrackFavorite: Boolean=false
 
+    var playlists:List<Playlist> = emptyList()
+
     fun checkIsTrackFavorite() {
         viewModelScope.launch {
         isTrackFavoriteLiveData.value=favoriteInteractor.getFavoritesId().contains(track.trackId)
         }
     }
+
+    private val playlistLiveData = MutableLiveData<List<Playlist>>(
+        playlists
+    )
 
     private val playerStateLiveData = MutableLiveData<PlayerState>(
         PlayerState.Default()
@@ -37,6 +44,8 @@ class PlayerViewModel(private val track: Track,
 
     fun observeFavoriteState(): LiveData<Boolean> = isTrackFavoriteLiveData
     fun observePlayerState(): LiveData<PlayerState> = playerStateLiveData
+
+    fun observePlaylistLiveData(): LiveData<List<Playlist>> = playlistLiveData
 
     private var timerJob: Job? = null
 
@@ -125,6 +134,14 @@ class PlayerViewModel(private val track: Track,
     private fun resetTimer() {
         timerJob?.cancel()
         playerStateLiveData.postValue(PlayerState.Default())
+    }
+
+    fun getPlaylists() {
+        viewModelScope.launch {
+            playlistsInteractor.getPlaylists().collect {playlists->
+                playlistLiveData.postValue(playlists)
+            }
+        }
     }
 
     companion object{

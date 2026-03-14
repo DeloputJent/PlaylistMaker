@@ -306,9 +306,8 @@
         android:layout_height="match_parent"
         android:background="@drawable/top_rounded"
         android:orientation="vertical"
-        android:paddingHorizontal="16dp"
         app:behavior_hideable="true"
-        app:behavior_peekHeight="240dp"
+        app:behavior_peekHeight="505dp"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
         <View
@@ -326,7 +325,7 @@
             android:text="@string/add_to_playlist"
             style="@style/Black_White_Text19sp_medium"/>
         <Button
-            android:id="@+id/ButtonMakePlayList"
+            android:id="@+id/buttonMakePlayList"
             style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
             android:layout_width="140dp"
             android:layout_height="36dp"

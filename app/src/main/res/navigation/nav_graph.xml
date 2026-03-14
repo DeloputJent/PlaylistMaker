@@ -35,7 +35,11 @@
         android:id="@+id/musicPlayerFragment"
         android:name="com.practicum.playlistmaker.player.ui.MusicPlayerFragment"
         android:label="fragment_player_screen"
-        tools:layout="@layout/fragment_player_screen" />
+        tools:layout="@layout/fragment_player_screen" >
+        <action
+            android:id="@+id/action_musicPlayerFragment_to_newPlayListFragment"
+            app:destination="@id/newPlayListFragment" />
+    </fragment>
     <fragment
         android:id="@+id/favoriteTracksFragment"
         android:name="com.practicum.playlistmaker.medialib.ui.FavoriteTracksFragment"

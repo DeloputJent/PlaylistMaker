@@ -1,18 +1,22 @@
 package com.practicum.playlistmaker.player.ui
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.core.util.TypedValueCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.FragmentPlayerScreenBinding
+import com.practicum.playlistmaker.player.ui.presentation.PlayListOnMPAdapter
 import com.practicum.playlistmaker.search.domain.Track
 import org.koin.androidx.viewmodel.ext.android.getViewModel
 import org.koin.core.parameter.parametersOf
@@ -21,6 +25,10 @@ class MusicPlayerFragment: Fragment() {
 
     private lateinit var binding: FragmentPlayerScreenBinding
     private lateinit var viewModel: PlayerViewModel
+
+    private lateinit var playListAdapter : PlayListOnMPAdapter
+
+    private lateinit var recyclerView : RecyclerView
 
     private fun changeButton(isPlaying: Boolean) {
         if (isPlaying) binding.playTrackButton.setImageResource(R.drawable.pause_button)
@@ -48,6 +56,45 @@ class MusicPlayerFragment: Fragment() {
 
         viewModel=getViewModel(parameters = { parametersOf(currentTrack) })
 
+        val bottomSheetContainer = binding.bottomSheet
+
+        val bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetContainer).apply {
+            state = BottomSheetBehavior.STATE_HIDDEN
+        }
+
+        recyclerView = binding.PlaylistsOnPlayer
+
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+
+        playListAdapter = PlayListOnMPAdapter(
+            clickListener = { playlist ->
+                run {
+                    val toast = Toast(requireContext())
+                    toast.duration = Toast.LENGTH_SHORT
+                    toast.setText(
+                        getString(
+                            R.string.new_track_added_to_playlist,
+                            playlist.playlistName
+                        )
+                    )
+                    toast.show()
+                }
+            }
+        )
+
+        viewModel.getPlaylists()
+
+        viewModel.observePlaylistLiveData().observe(viewLifecycleOwner) {
+            playListAdapter.setPlayLists(it)
+            recyclerView.visibility= View.VISIBLE
+        }
+
+        recyclerView.adapter = playListAdapter
+
+        binding.buttonMakePlayList.setOnClickListener {
+            findNavController().navigate(R.id.action_musicPlayerFragment_to_newPlayListFragment)
+        }
+
         viewModel.observePlayerState().observe(viewLifecycleOwner) {
             changeButton(it.isPlaying)
             binding.currentPlayedTime.text = it.progress
@@ -67,6 +114,10 @@ class MusicPlayerFragment: Fragment() {
 
         binding.ToFavoriteButton.setOnClickListener {
             viewModel.onFavoriteClicked()
+        }
+
+        binding.ToPlaylistButton.setOnClickListener {
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
         }
 
         Glide.with(this)
@@ -102,6 +153,26 @@ class MusicPlayerFragment: Fragment() {
 
         binding.currentTrackGenre.text = currentTrack.primaryGenreName
         binding.currentTrackCountry.text = currentTrack.country
+
+        val overlay = binding.overlay
+
+        bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+
+                when (newState) {
+                    BottomSheetBehavior.STATE_HIDDEN -> {
+                        overlay.visibility = View.GONE
+                    }
+                    else -> {
+                        overlay.visibility = View.VISIBLE
+                    }
+                }
+            }
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {}
+        })
+
     }
 
     override fun onPause() {
