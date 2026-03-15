@@ -13,7 +13,7 @@ class PlayListOnMPAdapter (
     private val playlists: MutableList<Playlist> = mutableListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlayListsOnMpViewHolder =
-        PlayListsOnMpViewHolder.Companion.from(parent)
+        PlayListsOnMpViewHolder.from(parent)
 
     override fun onBindViewHolder(holder: PlayListsOnMpViewHolder, position: Int) {
         holder.bind(playlists[position])

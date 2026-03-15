@@ -1,6 +1,8 @@
 package com.practicum.playlistmaker.player.ui
 
 import android.media.MediaPlayer
+import android.util.Log
+import androidx.core.R
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -25,7 +27,7 @@ class PlayerViewModel(private val track: Track,
 
     var isTrackFavorite: Boolean=false
 
-    private var playlists: MutableList<Playlist> = mutableListOf()
+    private var currentPlaylists: MutableList<Playlist> = mutableListOf()
 
     fun checkIsTrackFavorite() {
         viewModelScope.launch {
@@ -34,7 +36,7 @@ class PlayerViewModel(private val track: Track,
     }
 
     private val playlistLiveData = MutableLiveData<MutableList<Playlist>>(
-        playlists
+        currentPlaylists
     )
 
     private val playerStateLiveData = MutableLiveData<PlayerState>(
@@ -141,8 +143,10 @@ class PlayerViewModel(private val track: Track,
 
     fun getPlaylists() {
         viewModelScope.launch {
-            playlistsInteractor.getPlaylists().collect {playlists->
-                playlistLiveData.postValue(playlists.toMutableList())
+            playlistsInteractor.getPlaylists()
+                .collect {playlists->
+                    currentPlaylists=playlists.toMutableList()
+                    playlistLiveData.postValue(playlists.toMutableList())
             }
         }
     }
@@ -159,32 +163,35 @@ class PlayerViewModel(private val track: Track,
         }
     }
 
+    fun getTracksID(playlist: Playlist): List<String> {
+     return if (!playlist.tracksId.isNullOrEmpty())
+         gson.fromJson<MutableList<String>>(
+             playlist.tracksId,
+             object : TypeToken<List<String>>(){}.type)
+     else emptyList()
+    }
+
     fun addTrackToPlayList (playlist: Playlist): Boolean
     {
-        var trackIdsList: MutableList<String> = gson
-            .fromJson<MutableList<String>>(
-                playlist.tracksId,
-                object : TypeToken<List<String>>() {}.type
-            )
-            .toMutableList()
+        val trackIdsList: MutableList<String> = getTracksID(playlist).toMutableList()
+
         if (trackIdsList.contains(track.trackId)) return false
         else {
             trackIdsList.add(track.trackId)
             val tracksId = gson.toJson(trackIdsList.toList())
             val amount = playlist.tracksAmount+1
-            var updatedPlaylist = Playlist(
+            val updatedPlaylist = Playlist(
                 playlist.playlistID,
                 playlist.playlistName,
                 playlist.playlistDescription,
                 playlist.pathToArtwork,
                 tracksId=tracksId,
                 tracksAmount = amount)
-            playlists[playlists.indexOf(playlist)] = updatedPlaylist
+            currentPlaylists[currentPlaylists.indexOf(playlist)] = updatedPlaylist
             updatePlaylist(updatedPlaylist)
             addTrackToBase(track)
             return true
         }
-
     }
 
 

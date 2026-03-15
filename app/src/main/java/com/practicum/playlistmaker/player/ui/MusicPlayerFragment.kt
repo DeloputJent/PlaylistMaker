@@ -69,16 +69,23 @@ class MusicPlayerFragment: Fragment() {
         playListAdapter = PlayListOnMPAdapter(
             clickListener = { playlist ->
                 run {
-                    if (viewModel.addTrackToPlayList(playlist)) {
                     val toast = Toast(requireContext())
                     toast.duration = Toast.LENGTH_SHORT
-                    toast.setText(
-                        getString(
+                    if (viewModel.addTrackToPlayList(playlist)) {
+                        toast.setText(
+                            getString(
                             R.string.new_track_added_to_playlist,
+                            playlist.playlistName
+                            )
+                        )
+                        viewModel.getPlaylists()
+                    } else toast.setText(
+                        getString(
+                            R.string.allready_added_to_playlist,
                             playlist.playlistName
                         )
                     )
-                    toast.show()}
+                    toast.show()
                 }
             }
         )
