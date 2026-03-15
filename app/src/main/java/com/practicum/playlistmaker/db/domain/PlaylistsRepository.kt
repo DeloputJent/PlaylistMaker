@@ -1,6 +1,7 @@
 package com.practicum.playlistmaker.db.domain
 
 import com.practicum.playlistmaker.medialib.domain.Playlist
+import com.practicum.playlistmaker.search.domain.Track
 import kotlinx.coroutines.flow.Flow
 
 interface PlaylistsRepository {
@@ -12,4 +13,6 @@ interface PlaylistsRepository {
     suspend fun updatePlaylist(playlist: Playlist)
 
     suspend fun deletePlaylist(playlist: Playlist)
+
+    suspend fun insertTrack(track: Track)
 }

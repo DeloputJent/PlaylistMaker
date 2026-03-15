@@ -3,6 +3,7 @@ package com.practicum.playlistmaker.db.domain.impl
 import com.practicum.playlistmaker.db.domain.PlaylistsInteractor
 import com.practicum.playlistmaker.db.domain.PlaylistsRepository
 import com.practicum.playlistmaker.medialib.domain.Playlist
+import com.practicum.playlistmaker.search.domain.Track
 import kotlinx.coroutines.flow.Flow
 
 class PlaylistsInteractorImpl(private val repository: PlaylistsRepository): PlaylistsInteractor {
@@ -20,5 +21,9 @@ class PlaylistsInteractorImpl(private val repository: PlaylistsRepository): Play
 
     override suspend fun deletePlaylist(playlist: Playlist) {
         repository.deletePlaylist(playlist)
+    }
+
+    override suspend fun insertTrack(track: Track) {
+        repository.insertTrack(track)
     }
 }

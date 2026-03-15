@@ -3,6 +3,7 @@ package com.practicum.playlistmaker.db.di
 import androidx.room.Room
 import com.practicum.playlistmaker.db.PlaylistsDatabase
 import com.practicum.playlistmaker.db.TrackDatabase
+import com.practicum.playlistmaker.db.TracksInPlaylistsDatabase
 import com.practicum.playlistmaker.db.data.converters.PlaylistDbConverter
 import com.practicum.playlistmaker.db.data.converters.TrackDbConvertor
 import com.practicum.playlistmaker.db.data.impl.FavoriteRepositoryImpl
@@ -24,12 +25,17 @@ val dataModule = module {
             .build()
     }
 
+    single{
+        Room.databaseBuilder(androidContext(), TracksInPlaylistsDatabase::class.java, "TracksInPlaylists_table")
+            .build()
+    }
+
     single<FavoriteRepository> {
         FavoriteRepositoryImpl(get(), get())
     }
 
     single <PlaylistsRepository>{
-        PlaylistsRepositoryImpl(get(),get())
+        PlaylistsRepositoryImpl(get(),get(),get())
     }
 
     factory { TrackDbConvertor() }

@@ -5,6 +5,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.practicum.playlistmaker.db.domain.FavoriteInteractor
 import com.practicum.playlistmaker.db.domain.PlaylistsInteractor
 import com.practicum.playlistmaker.medialib.domain.Playlist
@@ -18,11 +20,12 @@ import java.util.Locale
 class PlayerViewModel(private val track: Track,
                       private val mediaPlayer:MediaPlayer,
                       private val favoriteInteractor: FavoriteInteractor,
-                      private val playlistsInteractor: PlaylistsInteractor) : ViewModel() {
+                      private val playlistsInteractor: PlaylistsInteractor,
+                      private val gson : Gson) : ViewModel() {
 
     var isTrackFavorite: Boolean=false
 
-    var playlists:List<Playlist> = emptyList()
+    private var playlists: MutableList<Playlist> = mutableListOf()
 
     fun checkIsTrackFavorite() {
         viewModelScope.launch {
@@ -30,7 +33,7 @@ class PlayerViewModel(private val track: Track,
         }
     }
 
-    private val playlistLiveData = MutableLiveData<List<Playlist>>(
+    private val playlistLiveData = MutableLiveData<MutableList<Playlist>>(
         playlists
     )
 
@@ -45,7 +48,7 @@ class PlayerViewModel(private val track: Track,
     fun observeFavoriteState(): LiveData<Boolean> = isTrackFavoriteLiveData
     fun observePlayerState(): LiveData<PlayerState> = playerStateLiveData
 
-    fun observePlaylistLiveData(): LiveData<List<Playlist>> = playlistLiveData
+    fun observePlaylistLiveData(): LiveData<MutableList<Playlist>> = playlistLiveData
 
     private var timerJob: Job? = null
 
@@ -139,10 +142,51 @@ class PlayerViewModel(private val track: Track,
     fun getPlaylists() {
         viewModelScope.launch {
             playlistsInteractor.getPlaylists().collect {playlists->
-                playlistLiveData.postValue(playlists)
+                playlistLiveData.postValue(playlists.toMutableList())
             }
         }
     }
+
+    fun updatePlaylist(playlist: Playlist) {
+        viewModelScope.launch {
+            playlistsInteractor.updatePlaylist(playlist)
+        }
+    }
+
+    fun addTrackToBase(track: Track) {
+        viewModelScope.launch {
+            playlistsInteractor.insertTrack(track)
+        }
+    }
+
+    fun addTrackToPlayList (playlist: Playlist): Boolean
+    {
+        var trackIdsList: MutableList<String> = gson
+            .fromJson<MutableList<String>>(
+                playlist.tracksId,
+                object : TypeToken<List<String>>() {}.type
+            )
+            .toMutableList()
+        if (trackIdsList.contains(track.trackId)) return false
+        else {
+            trackIdsList.add(track.trackId)
+            val tracksId = gson.toJson(trackIdsList.toList())
+            val amount = playlist.tracksAmount+1
+            var updatedPlaylist = Playlist(
+                playlist.playlistID,
+                playlist.playlistName,
+                playlist.playlistDescription,
+                playlist.pathToArtwork,
+                tracksId=tracksId,
+                tracksAmount = amount)
+            playlists[playlists.indexOf(playlist)] = updatedPlaylist
+            updatePlaylist(updatedPlaylist)
+            addTrackToBase(track)
+            return true
+        }
+
+    }
+
 
     companion object{
         private const val CHECK_CURRENT_POSITION = 300L

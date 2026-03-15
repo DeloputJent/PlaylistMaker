@@ -69,6 +69,7 @@ class MusicPlayerFragment: Fragment() {
         playListAdapter = PlayListOnMPAdapter(
             clickListener = { playlist ->
                 run {
+                    if (viewModel.addTrackToPlayList(playlist)) {
                     val toast = Toast(requireContext())
                     toast.duration = Toast.LENGTH_SHORT
                     toast.setText(
@@ -77,7 +78,7 @@ class MusicPlayerFragment: Fragment() {
                             playlist.playlistName
                         )
                     )
-                    toast.show()
+                    toast.show()}
                 }
             }
         )
