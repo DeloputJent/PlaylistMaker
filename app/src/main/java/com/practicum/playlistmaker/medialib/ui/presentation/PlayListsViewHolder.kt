@@ -1,7 +1,7 @@
 package com.practicum.playlistmaker.medialib.ui.presentation
 
 import android.content.Context
-import android.net.Uri
+
 import android.os.Environment
 import android.util.TypedValue
 import android.view.LayoutInflater
@@ -12,7 +12,6 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.PlaylistFrameViewBinding
-import com.practicum.playlistmaker.databinding.TrackFrameViewBinding
 import com.practicum.playlistmaker.medialib.domain.Playlist
 import java.io.File
 
@@ -24,10 +23,10 @@ class PlayListsViewHolder (
     fun bind(playlist: Playlist) {
         binding.apply {
             playlistName.text = playlist.playlistName.trim()
-            tracksInPlaylist.text = itemView.context.getString(
-                R.string.tracks,
-                playlist.tracksAmount.toString()
-            )
+            val amount = playlist.tracksAmount
+            tracksInPlaylist.text = itemView.context
+                .resources
+                .getQuantityString(R.plurals.tracks,amount,amount)
         }
 
         val filePath = File(itemView.context

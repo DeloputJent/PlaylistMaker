@@ -12,10 +12,9 @@
             android:id="@+id/playlistArtwork"
             android:layout_width="160dp"
             android:layout_height="160dp"
-            android:padding="1dp"
             android:scaleType="fitXY"
-            android:src="@drawable/placeholder"
-            android:background="@drawable/background_rounded_border"/>
+            android:background="@drawable/background_rounded_border_eight"
+            android:src="@drawable/placeholder"/>
         <TextView
             android:id="@+id/playlistName"
             android:layout_gravity="center_vertical|start"

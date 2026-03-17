@@ -20,7 +20,9 @@ class PlayListsFragment : Fragment() {
 
     private val viewModel by viewModel< PlayListsViewModel>()
 
-    private lateinit var binding: FragmentPlaylistsBinding
+    private var _binding: FragmentPlaylistsBinding? = null
+
+    private val binding get() = _binding!!
 
     private lateinit var playListAdapter : PlayListsAdapter
 
@@ -30,8 +32,9 @@ class PlayListsFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        binding = FragmentPlaylistsBinding.inflate(inflater, container,false)
-        return binding.root
+        _binding = FragmentPlaylistsBinding.inflate(inflater, container,false)
+        val view = binding.root
+        return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -58,10 +61,16 @@ class PlayListsFragment : Fragment() {
 
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
     fun render(state: PlayListsScrollState) {
         when (state) {
             is PlayListsScrollState.Content -> showContent(state.playLists)
             is PlayListsScrollState.NoPlaylistsFound -> showNoPlaylistsMessage()
+            else -> showNoPlaylistsMessage()
         }
     }
 

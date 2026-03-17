@@ -13,8 +13,9 @@
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginStart="13dp"
         android:layout_marginTop="8dp"
+        android:background="@drawable/background_rounded_corner_two"
         android:src="@drawable/placeholder"
-        android:scaleType="centerCrop"/>
+        android:scaleType="fitXY"/>
 
         <TextView
             android:id="@+id/addToPlayListName"

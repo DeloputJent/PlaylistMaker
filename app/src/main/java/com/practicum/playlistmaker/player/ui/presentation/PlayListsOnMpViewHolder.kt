@@ -22,10 +22,11 @@ class PlayListsOnMpViewHolder (
     fun bind(playlist: Playlist) {
         binding.apply {
             addToPlayListName.text = playlist.playlistName.trim()
-            addToPlayListSongsAmount.text = itemView.context.getString(
-                R.string.tracks,
-                playlist.tracksAmount.toString()
-            )
+            val amount = playlist.tracksAmount
+            addToPlayListSongsAmount.text = itemView
+                .context
+                .resources
+                .getQuantityString(R.plurals.tracks, amount,amount)
         }
 
         val filePath = File(itemView.context

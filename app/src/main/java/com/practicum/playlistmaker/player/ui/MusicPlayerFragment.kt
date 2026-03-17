@@ -23,7 +23,9 @@ import org.koin.core.parameter.parametersOf
 
 class MusicPlayerFragment: Fragment() {
 
-    private lateinit var binding: FragmentPlayerScreenBinding
+    private var _binding: FragmentPlayerScreenBinding? = null
+    private val binding get() = _binding!!
+
     private lateinit var viewModel: PlayerViewModel
 
     private lateinit var playListAdapter : PlayListOnMPAdapter
@@ -45,8 +47,9 @@ class MusicPlayerFragment: Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentPlayerScreenBinding.inflate(inflater, container, false)
-        return binding.root
+        _binding = FragmentPlayerScreenBinding.inflate(inflater, container, false)
+        val view = binding.root
+        return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -72,6 +75,7 @@ class MusicPlayerFragment: Fragment() {
                     val toast = Toast(requireContext())
                     toast.duration = Toast.LENGTH_SHORT
                     if (viewModel.addTrackToPlayList(playlist)) {
+                        bottomSheetBehavior.state= BottomSheetBehavior.STATE_HIDDEN
                         toast.setText(
                             getString(
                             R.string.new_track_added_to_playlist,
@@ -190,6 +194,7 @@ class MusicPlayerFragment: Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        _binding = null
     }
 
     companion object{

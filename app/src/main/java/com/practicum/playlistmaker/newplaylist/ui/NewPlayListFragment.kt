@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
@@ -26,14 +27,13 @@ import com.practicum.playlistmaker.databinding.FragmentNewPlaylistBinding
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class NewPlayListFragment: Fragment() {
-
-    private lateinit var binding: FragmentNewPlaylistBinding
+    private var _binding: FragmentNewPlaylistBinding? = null
+    private val binding get() = _binding!!
     private val viewModel: NewPlayListViewModel by viewModel()
+    private lateinit var playlistArtwork:ImageView
     private var playListName: String = ""
     private var playListDescription: String = ""
-
     private var uri: Uri = Uri.EMPTY
-
     private var nameInputControl: TextWatcher? = null
     private var descriptionInputControl: TextWatcher? = null
 
@@ -42,14 +42,15 @@ class NewPlayListFragment: Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentNewPlaylistBinding.inflate(inflater,container,false)
-        return binding.root
+        _binding = FragmentNewPlaylistBinding.inflate(inflater,container,false)
+        val view = binding.root
+        return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val playlistArtwork = binding.PlaylistArtwork
+        playlistArtwork = binding.PlaylistArtwork
 
         nameInputControl = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -117,6 +118,14 @@ class NewPlayListFragment: Fragment() {
             toast.show()
             findNavController().navigateUp()
         }
+
+        val backCallback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (!isDescriptionEmpty()) onScreenCloseDialog(requireContext())
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, backCallback)
+
     }
 
     override fun onPause() {
@@ -127,14 +136,18 @@ class NewPlayListFragment: Fragment() {
         super.onDestroyView()
         nameInputControl?.let { binding.inputPlaylistName.removeTextChangedListener(it) }
         descriptionInputControl?.let{binding.inputPlaylistDescription.removeTextChangedListener(it)}
+        _binding = null
     }
 
-    fun onScreenCloseDialog(context: Context) {
+    fun isDescriptionEmpty(): Boolean {
+       return playListName.isEmpty() and playListDescription.isEmpty() and (playlistArtwork.drawable==null)
+    }
+    private fun onScreenCloseDialog(context: Context) {
         val dialog = MaterialAlertDialogBuilder(context)
             .setTitle(R.string.Finish_creating_a_playlist)
             .setMessage(R.string.Unsaved_data_will_be_lost)
-            .setNegativeButton(R.string.Cancel) {dialog, which ->{}
-            }.setPositiveButton(R.string.Complete) {dialog, which -> findNavController().navigateUp()
+            .setNegativeButton(R.string.Cancel) { dialog, which ->{}
+            }.setPositiveButton(R.string.Complete) { dialog, which -> findNavController().navigateUp()
             }.create()
 
         dialog.setOnShowListener {
