@@ -3,4 +3,6 @@
     <dimen name="margin_small">4dp</dimen>
     <dimen name="margin_medium">16dp</dimen>
     <dimen name="corner_radius">16dp</dimen>
+    <dimen name="spacing_8dp">8dp</dimen>
+    <dimen name="spacing_16dp">16dp</dimen>
 </resources>

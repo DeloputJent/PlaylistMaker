@@ -1,5 +1,6 @@
 package com.practicum.playlistmaker.medialib.ui
 
+import android.graphics.Rect
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -52,6 +53,22 @@ class PlayListsFragment : Fragment() {
             clickListener = { playlist -> {}} )
 
         recyclerView.adapter= playListAdapter
+
+        val spacing = 8 // расстояние в dp между элементами
+        recyclerView.addItemDecoration(object : RecyclerView.ItemDecoration() {
+            override fun getItemOffsets(
+                outRect: Rect,
+                view: View,
+                parent: RecyclerView,
+                state: RecyclerView.State
+            ) {
+                val dp8 = resources.getDimensionPixelSize(R.dimen.spacing_8dp)
+                val dp16 = resources.getDimensionPixelSize(R.dimen.spacing_16dp)
+                outRect.left = dp8
+                outRect.right = dp8
+                outRect.bottom = dp16
+            }
+        })
 
         viewModel.getPlaylists()
 

@@ -22,25 +22,11 @@ import org.koin.androidx.viewmodel.ext.android.getViewModel
 import org.koin.core.parameter.parametersOf
 
 class MusicPlayerFragment: Fragment() {
-
     private var _binding: FragmentPlayerScreenBinding? = null
     private val binding get() = _binding!!
-
     private lateinit var viewModel: PlayerViewModel
-
     private lateinit var playListAdapter : PlayListOnMPAdapter
-
     private lateinit var recyclerView : RecyclerView
-
-    private fun changeButton(isPlaying: Boolean) {
-        if (isPlaying) binding.playTrackButton.setImageResource(R.drawable.pause_button)
-        else binding.playTrackButton.setImageResource(R.drawable.ic_start_play_84)
-    }
-
-    private fun setFavoriteButton(isTrackFavorite: Boolean) {
-        if (isTrackFavorite) binding.ToFavoriteButton.setImageResource(R.drawable.ic_to_favorite_pressed_51)
-        else binding.ToFavoriteButton.setImageResource(R.drawable.ic_to_favorite_51)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -184,7 +170,16 @@ class MusicPlayerFragment: Fragment() {
 
             override fun onSlide(bottomSheet: View, slideOffset: Float) {}
         })
+    }
 
+    private fun changeButton(isPlaying: Boolean) {
+        if (isPlaying) binding.playTrackButton.setImageResource(R.drawable.pause_button)
+        else binding.playTrackButton.setImageResource(R.drawable.ic_start_play_84)
+    }
+
+    private fun setFavoriteButton(isTrackFavorite: Boolean) {
+        if (isTrackFavorite) binding.ToFavoriteButton.setImageResource(R.drawable.ic_to_favorite_pressed_51)
+        else binding.ToFavoriteButton.setImageResource(R.drawable.ic_to_favorite_51)
     }
 
     override fun onPause() {
@@ -199,7 +194,6 @@ class MusicPlayerFragment: Fragment() {
 
     companion object{
         private const val TRACK_KEY = "current_track"
-
         fun createArgs(track: Track): Bundle =
             bundleOf(TRACK_KEY to track,
                )

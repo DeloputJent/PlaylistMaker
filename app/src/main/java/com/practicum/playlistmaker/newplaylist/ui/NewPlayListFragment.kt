@@ -122,6 +122,7 @@ class NewPlayListFragment: Fragment() {
         val backCallback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 if (!isDescriptionEmpty()) onScreenCloseDialog(requireContext())
+                else findNavController().navigateUp()
             }
         }
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, backCallback)
