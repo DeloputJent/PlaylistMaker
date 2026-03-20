@@ -66,12 +66,15 @@ class SearchFragment : Fragment() {
         trackAdapter = TrackListAdapter(
             clickListener = { track ->
                     if (clickDebounce()) {
-                    viewModel.addToHistoryList(track)
-                    bundle.putParcelable(CURRENT_TRACK, track)
-                    val fragment = MusicPlayerFragment()
-                    fragment.arguments = bundle
-                    findNavController().navigate(R.id.action_searchFragment_to_musicPlayerFragment,MusicPlayerFragment.createArgs(track))
-                }
+                        viewModel.addToHistoryList(track)
+                        bundle.putParcelable(CURRENT_TRACK, track)
+                        val fragment = MusicPlayerFragment()
+                        fragment.arguments = bundle
+                        findNavController().navigate(
+                            R.id.action_searchFragment_to_musicPlayerFragment,
+                            MusicPlayerFragment.createArgs(track)
+                        )
+                    }
             }
         )
 

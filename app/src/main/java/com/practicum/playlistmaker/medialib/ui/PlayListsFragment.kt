@@ -50,7 +50,9 @@ class PlayListsFragment : Fragment() {
         recyclerView.layoutManager = GridLayoutManager(requireContext(),2)
 
         playListAdapter = PlayListsAdapter(
-            clickListener = { playlist -> {}} )
+            clickListener = { playlist -> {
+
+            }} )
 
         recyclerView.adapter= playListAdapter
 

@@ -154,10 +154,9 @@ class MusicPlayerFragment: Fragment() {
 
         val overlay = binding.overlay
 
-        bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
-
+        bottomSheetBehavior.addBottomSheetCallback(
+            object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
-
                 when (newState) {
                     BottomSheetBehavior.STATE_HIDDEN -> {
                         overlay.visibility = View.GONE
