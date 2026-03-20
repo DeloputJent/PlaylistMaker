@@ -1,15 +1,21 @@
 package com.practicum.playlistmaker.playlist.ui
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.practicum.playlistmaker.db.domain.PlaylistsInteractor
-import com.practicum.playlistmaker.medialib.domain.Playlist
-import com.practicum.playlistmaker.medialib.ui.presentation.PlayListsScrollState
+import com.practicum.playlistmaker.search.domain.Track
 import kotlinx.coroutines.launch
 
 class PlayListViewModel(private val dbinteractor: PlaylistsInteractor): ViewModel() {
+
+    var playListTracks: MutableList<Track> = mutableListOf()
+
+    fun getTracksFromPlaylists() {
+        viewModelScope.launch {
+
+            }
+        }
+
 
     /*private val stateLiveData = MutableLiveData<PlayListsScrollState>()
 

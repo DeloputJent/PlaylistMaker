@@ -30,6 +30,9 @@
         <action
             android:id="@+id/action_mediaLibFragment_to_newPlayListFragment"
             app:destination="@id/newPlayListFragment" />
+        <action
+            android:id="@+id/action_mediaLibFragment_to_playListFragment"
+            app:destination="@id/playListFragment" />
     </fragment>
     <fragment
         android:id="@+id/musicPlayerFragment"
@@ -50,4 +53,13 @@
         android:name="com.practicum.playlistmaker.newplaylist.ui.NewPlayListFragment"
         android:label="fragment_new_playlist"
         tools:layout="@layout/fragment_new_playlist" />
+    <fragment
+        android:id="@+id/playListFragment"
+        android:name="com.practicum.playlistmaker.playlist.ui.PlayListFragment"
+        android:label="PlayListFragment"
+        tools:layout="@layout/fragment_current_playlist">
+        <action
+            android:id="@+id/action_playListFragment_to_musicPlayerFragment"
+            app:destination="@id/musicPlayerFragment" />
+    </fragment>
 </navigation>

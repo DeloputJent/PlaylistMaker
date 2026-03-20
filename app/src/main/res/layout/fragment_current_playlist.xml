@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/CurrentPlaylistScreen"
+    tools:context=".playlist.ui.PlayListFragment"
     android:background="@color/YP_Light_Gray">
 
     <View android:id="@+id/overlay"

@@ -14,20 +14,18 @@ import com.practicum.playlistmaker.databinding.FragmentPlaylistsBinding
 import com.practicum.playlistmaker.medialib.domain.Playlist
 import com.practicum.playlistmaker.medialib.ui.presentation.PlayListsAdapter
 import com.practicum.playlistmaker.medialib.ui.presentation.PlayListsScrollState
+import com.practicum.playlistmaker.player.ui.MusicPlayerFragment
+import com.practicum.playlistmaker.playlist.ui.PlayListFragment
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.getValue
 
 class PlayListsFragment : Fragment() {
-
     private val viewModel by viewModel< PlayListsViewModel>()
-
     private var _binding: FragmentPlaylistsBinding? = null
-
     private val binding get() = _binding!!
-
     private lateinit var playListAdapter : PlayListsAdapter
-
     private lateinit var recyclerView : RecyclerView
+    val bundle = Bundle()
 
 
     override fun onCreateView(inflater: LayoutInflater,
@@ -50,13 +48,19 @@ class PlayListsFragment : Fragment() {
         recyclerView.layoutManager = GridLayoutManager(requireContext(),2)
 
         playListAdapter = PlayListsAdapter(
-            clickListener = { playlist -> {
-
-            }} )
+            clickListener = { playlist ->
+                run {
+                    bundle.putParcelable(PLAYLIST_KEY, playlist)
+                    val fragment = MusicPlayerFragment()
+                    fragment.arguments = bundle
+                    findNavController().navigate(R.id.action_mediaLibFragment_to_playListFragment,
+                    PlayListFragment.createArgs(playlist))
+                }
+            }
+        )
 
         recyclerView.adapter= playListAdapter
 
-        val spacing = 8 // расстояние в dp между элементами
         recyclerView.addItemDecoration(object : RecyclerView.ItemDecoration() {
             override fun getItemOffsets(
                 outRect: Rect,
@@ -77,7 +81,6 @@ class PlayListsFragment : Fragment() {
         viewModel.observeState().observe(viewLifecycleOwner) {
             render(it)
         }
-
     }
 
     override fun onDestroyView() {
@@ -107,6 +110,7 @@ class PlayListsFragment : Fragment() {
     }
 
     companion object{
+        private const val PLAYLIST_KEY = "current_playlist"
         fun newInstace():PlayListsFragment{
             val fragment= PlayListsFragment()
             val bundle=Bundle()
