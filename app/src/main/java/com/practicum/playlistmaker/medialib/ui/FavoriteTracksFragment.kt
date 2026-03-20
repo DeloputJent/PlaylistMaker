@@ -43,8 +43,6 @@ class FavoriteTracksFragment : Fragment() {
 
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-
-
         favoriteTrackAdapter = FavoriteListAdapter(
             clickListener = { track ->
                 if (clickDebounce()) {
@@ -59,6 +57,7 @@ class FavoriteTracksFragment : Fragment() {
                 }
             }
         )
+
         recyclerView.adapter = favoriteTrackAdapter
 
         viewModel.fillData()
@@ -90,8 +89,8 @@ class FavoriteTracksFragment : Fragment() {
     }
     fun showNothingFoundMessage() {
         binding.apply {
-            binding.progressBar.visibility = View.GONE
-            binding.noFavoriteTracksMessage.visibility = View.VISIBLE
+           progressBar.visibility = View.GONE
+           noFavoriteTracksMessage.visibility = View.VISIBLE
         }
     }
     fun hideProblemMessage() {

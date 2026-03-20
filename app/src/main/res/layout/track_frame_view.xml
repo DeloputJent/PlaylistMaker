@@ -10,7 +10,7 @@
         android:layout_marginStart="13dp"
         android:layout_marginTop="8dp"
         android:src="@drawable/placeholder"
-        android:scaleType="centerCrop"/>
+        android:scaleType="fitXY"/>
     <TextView
         android:id="@+id/SongName"
         android:layout_gravity="top|start"

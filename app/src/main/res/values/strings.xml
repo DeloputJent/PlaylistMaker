@@ -36,5 +36,30 @@
     <string name="New_playlist">Новый плейлист</string>
     <string name="Your_media_library_is_empty">Ваша медиатека пуста</string>
     <string name="You_didnt_create_any_playlist">Вы не создали\n ни одного плейлиста</string>
+    <string name="Playlist_artwork">Обложка плэйлиста</string>
+    <string name="Playlist_name">Название*</string>
+    <string name="Playlist_description">Описание</string>
+    <string name="Playlist_create">Создать</string>
+
+    <string name="Finish_creating_a_playlist">Завершить создание плейлиста?</string>
+    <string name="Unsaved_data_will_be_lost">Все несохраненные данные будут потеряны</string>
+    <string name="Cancel">Отмена</string>
+    <string name="Complete">Завершить</string>
+    <string name="playlist_created">Плейлист %s создан</string>
+    <plurals name="tracks">
+        <item quantity="zero">%d треков</item>
+        <item quantity="one">%d трек</item>
+        <item quantity="two">%d трека</item>
+        <item quantity="few">%d трека</item>
+        <item quantity="many">%d треков</item>
+        <item quantity="other">%d треков</item>
+    </plurals>
+    <string name="add_to_playlist">Добавить в плейлист</string>
+
+    <string name="new_track_added_to_playlist">Добавлено в плейлист %s</string>
+    <string name="allready_added_to_playlist">Трек уже добавлен в плейлист %s</string>
+
+
+
 
 </resources>

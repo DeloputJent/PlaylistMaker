@@ -12,7 +12,7 @@ import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.TrackFrameViewBinding
 import com.practicum.playlistmaker.search.domain.Track
 
-class FavoriteListViewHolder (private val binding: TrackFrameViewBinding): RecyclerView.ViewHolder(binding.root) {
+class FavoriteListViewHolder (private val binding: TrackFrameViewBinding):RecyclerView.ViewHolder(binding.root) {
 
     private val cover: ImageView = itemView.findViewById(R.id.AlbumCover)
 

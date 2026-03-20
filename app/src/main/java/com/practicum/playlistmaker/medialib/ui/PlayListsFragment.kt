@@ -1,25 +1,107 @@
 package com.practicum.playlistmaker.medialib.ui
 
+import android.graphics.Rect
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.FragmentPlaylistsBinding
+import com.practicum.playlistmaker.medialib.domain.Playlist
+import com.practicum.playlistmaker.medialib.ui.presentation.PlayListsAdapter
+import com.practicum.playlistmaker.medialib.ui.presentation.PlayListsScrollState
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import kotlin.getValue
 
 class PlayListsFragment : Fragment() {
 
-    private lateinit var binding: FragmentPlaylistsBinding
+    private val viewModel by viewModel< PlayListsViewModel>()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
+    private var _binding: FragmentPlaylistsBinding? = null
+
+    private val binding get() = _binding!!
+
+    private lateinit var playListAdapter : PlayListsAdapter
+
+    private lateinit var recyclerView : RecyclerView
+
+
+    override fun onCreateView(inflater: LayoutInflater,
+                              container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-
-        binding = FragmentPlaylistsBinding.inflate(inflater, container,false)
-        return binding.root
+        _binding = FragmentPlaylistsBinding.inflate(inflater, container,false)
+        val view = binding.root
+        return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        binding.ButtonAddNewPlayList.setOnClickListener{
+            findNavController().navigate(R.id.action_mediaLibFragment_to_newPlayListFragment)
+        }
+
+        recyclerView = binding.PlayListsScroll
+
+        recyclerView.layoutManager = GridLayoutManager(requireContext(),2)
+
+        playListAdapter = PlayListsAdapter(
+            clickListener = { playlist -> {}} )
+
+        recyclerView.adapter= playListAdapter
+
+        val spacing = 8 // расстояние в dp между элементами
+        recyclerView.addItemDecoration(object : RecyclerView.ItemDecoration() {
+            override fun getItemOffsets(
+                outRect: Rect,
+                view: View,
+                parent: RecyclerView,
+                state: RecyclerView.State
+            ) {
+                val dp8 = resources.getDimensionPixelSize(R.dimen.spacing_8dp)
+                val dp16 = resources.getDimensionPixelSize(R.dimen.spacing_16dp)
+                outRect.left = dp8
+                outRect.right = dp8
+                outRect.bottom = dp16
+            }
+        })
+
+        viewModel.getPlaylists()
+
+        viewModel.observeState().observe(viewLifecycleOwner) {
+            render(it)
+        }
+
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    fun render(state: PlayListsScrollState) {
+        when (state) {
+            is PlayListsScrollState.Content -> showContent(state.playLists)
+            is PlayListsScrollState.NoPlaylistsFound -> showNoPlaylistsMessage()
+            else -> showNoPlaylistsMessage()
+        }
+    }
+
+    fun showContent(playLists: List<Playlist>) {
+        binding.noPlayListMessage.visibility = View.GONE
+        playListAdapter.setPlayLists(playLists)
+        recyclerView.visibility= View.VISIBLE
+    }
+
+    fun showNoPlaylistsMessage() {
+        binding.apply {
+            recyclerView.visibility = View.GONE
+            noPlayListMessage.visibility = View.VISIBLE
+        }
     }
 
     companion object{

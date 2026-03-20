@@ -37,11 +37,13 @@ class SearchFragment : Fragment() {
     private lateinit var trackAdapterHistory : TrackListAdapter
     private lateinit var recyclerView : RecyclerView
     private lateinit var recyclerViewHistory : RecyclerView
-    private lateinit var binding: FragmentSearchBinding
+    private var _binding: FragmentSearchBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = FragmentSearchBinding.inflate(inflater, container, false)
-        return binding.root
+        _binding = FragmentSearchBinding.inflate(inflater, container, false)
+        val view = binding.root
+        return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -145,6 +147,7 @@ class SearchFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         textInputControl?.let { binding.inputSearch.removeTextChangedListener(it) }
+        _binding = null
     }
 
     fun render(state: SearchTrackState) {
