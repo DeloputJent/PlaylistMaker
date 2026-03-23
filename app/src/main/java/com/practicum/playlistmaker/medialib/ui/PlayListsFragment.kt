@@ -2,6 +2,7 @@ package com.practicum.playlistmaker.medialib.ui
 
 import android.graphics.Rect
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -50,11 +51,15 @@ class PlayListsFragment : Fragment() {
         playListAdapter = PlayListsAdapter(
             clickListener = { playlist ->
                 run {
-                    bundle.putParcelable(PLAYLIST_KEY, playlist)
+                    bundle.putString(PLAYLIST_KEY, playlist.playlistID.toString())
+                    Log.d("currentPlaylist Name", "ID from playlists = "+playlist.playlistID.toString())
                     val fragment = MusicPlayerFragment()
                     fragment.arguments = bundle
-                    findNavController().navigate(R.id.action_mediaLibFragment_to_playListFragment,
-                    PlayListFragment.createArgs(playlist))
+                    findNavController().navigate(
+                        R.id.action_mediaLibFragment_to_playListFragment,
+                        PlayListFragment.createArgs(playlist.playlistID)
+                    )
+
                 }
             }
         )

@@ -15,11 +15,11 @@ class PlaylistsRepositoryImpl(
     private val playlistBase: PlaylistsDatabase,
     private val tracksInPlaylistsBase: TracksInPlaylistsDatabase,
     private val converter: PlaylistDbConverter,
-
 ): PlaylistsRepository {
+
     override fun getPlaylists(): Flow<List<Playlist>> = flow {
         val playlists = playlistBase.getPlaylistsDao().getPlayLists()
-        emit(convertFromEntity(playlists).reversed())
+        emit(convertFromPlaylistEntityList(playlists).reversed())
     }
 
     override suspend fun addNewPlaylist(playlist: Playlist) {
@@ -34,16 +34,32 @@ class PlaylistsRepositoryImpl(
         playlistBase.getPlaylistsDao().deletePlaylist(convertFromPlayList(playlist))
     }
 
+    override suspend fun getPlaylistById(playlistId: Int): Playlist {
+        val entity = playlistBase.getPlaylistsDao().getPlayListById(playlistId)
+        return convertFromPlaylistEntity(entity)
+    }
+
     override suspend fun insertTrack(track: Track) {
         tracksInPlaylistsBase
             .getPlaylistsTracksInPlaylistsDao()
             .insertTrack(convertFromTrack(track))
     }
 
-    private fun convertFromEntity(playlists: List<PlayListEntity>): List<Playlist> {
+    override suspend fun getTracksFromPlaylist(tracksIdList: List<String>): List<Track> {
+        val allTrackList = tracksInPlaylistsBase.getPlaylistsTracksInPlaylistsDao().getTracksInPlaylists()
+        val trackListWithId = allTrackList.filter { track ->
+            tracksIdList.contains(track.trackId)
+        }
+        return convertFromTracksInPlaylistsEntity(trackListWithId)
+    }
+
+    private fun convertFromPlaylistEntityList(playlists: List<PlayListEntity>): List<Playlist> {
         return playlists.map { playlist -> converter.map(playlist) }
     }
 
+    private fun convertFromPlaylistEntity(playlistEntity: PlayListEntity): Playlist {
+        return converter.map(playlistEntity)
+    }
     private fun convertFromPlayList(playlist: Playlist): PlayListEntity {
         return converter.map(playlist)
     }
@@ -51,7 +67,6 @@ class PlaylistsRepositoryImpl(
     private fun convertFromTracksInPlaylistsEntity(tracks: List<TracksInPlaylistsEntity>): List<Track> {
         return tracks.map { track -> converter.mapTrack(track) }
     }
-
     private fun convertFromTrack(track: Track): TracksInPlaylistsEntity {
         return converter.mapTrack(track)
     }

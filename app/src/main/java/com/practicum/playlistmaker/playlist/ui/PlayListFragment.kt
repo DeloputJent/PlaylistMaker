@@ -2,6 +2,7 @@ package com.practicum.playlistmaker.playlist.ui
 
 import android.os.Bundle
 import android.os.Environment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,6 +20,7 @@ import com.practicum.playlistmaker.databinding.FragmentCurrentPlaylistBinding
 import com.practicum.playlistmaker.medialib.domain.Playlist
 import com.practicum.playlistmaker.player.ui.MusicPlayerFragment
 import com.practicum.playlistmaker.playlist.ui.presentation.TracksInPlaylistAdapter
+import com.practicum.playlistmaker.search.domain.Track
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
 import kotlin.getValue
@@ -43,10 +45,15 @@ class PlayListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        var currentPlaylist = requireArguments().getParcelable<Playlist>(PLAYLIST_KEY)
-        if (currentPlaylist==null) currentPlaylist = Playlist()
+        val currentPlaylistId = requireArguments().getString(PLAYLIST_KEY)?.toInt() ?: 0
 
-        render(currentPlaylist)
+        Log.d("currentPlaylist Name", "Id = "+ currentPlaylistId.toString())
+
+        viewModel.getPlaylistsById(currentPlaylistId)
+
+        viewModel.observeCurrentPlaylist().observe(viewLifecycleOwner) {
+            render(it.playList, it.tracks)
+        }
 
         binding.backFromPlaylistButton.setOnClickListener{
             findNavController().navigateUp()
@@ -72,13 +79,6 @@ class PlayListFragment : Fragment() {
         })
 
         recyclerView.adapter = playListAdapter
-
-        /*viewModel.getPlaylists()
-
-        viewModel.observeState().observe(viewLifecycleOwner) {
-            render(it)
-        }*/
-
     }
 
     override fun onDestroyView() {
@@ -86,7 +86,7 @@ class PlayListFragment : Fragment() {
         _binding = null
     }
 
-    fun render(playlist: Playlist) {
+    fun render(playlist: Playlist, tracks: List<Track>) {
         val filePath = File(requireContext()
             .getExternalFilesDir(Environment.DIRECTORY_PICTURES), "artwork_album")
         val uri = File(filePath, playlist.pathToArtwork)
@@ -103,10 +103,11 @@ class PlayListFragment : Fragment() {
             PlaylistName.text = playlist.playlistName
             PlaylistDescription.text = playlist.playlistDescription
         }
+        showTracks(tracks)
     }
 
-    fun showContent(playLists: List<Playlist>) {
-        //playListAdapter.setPlayLists(playLists)
+    fun showTracks(tracks: List<Track>) {
+        playListAdapter.setTrackList(tracks)
         recyclerView.visibility= View.VISIBLE
     }
 
@@ -120,8 +121,8 @@ class PlayListFragment : Fragment() {
         private const val CURRENT_TRACK = "current_track"
         private const val PLAYLIST_KEY = "current_playlist"
 
-        fun createArgs(currentPlaylist: Playlist): Bundle =
-            bundleOf(PLAYLIST_KEY to currentPlaylist,
+        fun createArgs(currentPlaylistId: Int): Bundle =
+            bundleOf(PLAYLIST_KEY to currentPlaylistId,
             )
     }
 }

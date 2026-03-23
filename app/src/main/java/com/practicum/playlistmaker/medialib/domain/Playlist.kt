@@ -11,4 +11,4 @@ data class Playlist(
     val pathToArtwork:String="",
     val tracksId:String="",
     val tracksAmount:Int=0,
-): Parcelable { }
+): Parcelable {}
