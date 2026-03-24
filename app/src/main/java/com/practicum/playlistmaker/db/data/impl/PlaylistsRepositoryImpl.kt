@@ -34,7 +34,7 @@ class PlaylistsRepositoryImpl(
         playlistBase.getPlaylistsDao().deletePlaylist(convertFromPlayList(playlist))
     }
 
-    override suspend fun getPlaylistById(playlistId: Int): Playlist {
+    override suspend fun getPlaylistById(playlistId: Int):Playlist {
         val entity = playlistBase.getPlaylistsDao().getPlayListById(playlistId)
         return convertFromPlaylistEntity(entity)
     }
@@ -45,12 +45,12 @@ class PlaylistsRepositoryImpl(
             .insertTrack(convertFromTrack(track))
     }
 
-    override suspend fun getTracksFromPlaylist(tracksIdList: List<String>): List<Track> {
+    override fun getTracksFromPlaylist(tracksIdList: List<String>): Flow<List<Track>> = flow {
         val allTrackList = tracksInPlaylistsBase.getPlaylistsTracksInPlaylistsDao().getTracksInPlaylists()
         val trackListWithId = allTrackList.filter { track ->
             tracksIdList.contains(track.trackId)
         }
-        return convertFromTracksInPlaylistsEntity(trackListWithId)
+        emit (convertFromTracksInPlaylistsEntity(trackListWithId))
     }
 
     private fun convertFromPlaylistEntityList(playlists: List<PlayListEntity>): List<Playlist> {

@@ -17,5 +17,5 @@ interface PlaylistsInteractor {
 
     suspend fun insertTrack(track: Track)
 
-    suspend fun getTracksFromPlaylist(tracksIdList: List<String>):List<Track>
+    fun getTracksFromPlaylist(tracksIdList: List<String>):Flow<List<Track>>
 }

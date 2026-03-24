@@ -31,7 +31,7 @@ class PlaylistsInteractorImpl(private val repository: PlaylistsRepository): Play
         repository.insertTrack(track)
     }
 
-    override suspend fun getTracksFromPlaylist(tracksIdList: List<String>): List<Track> {
+    override fun getTracksFromPlaylist(tracksIdList: List<String>): Flow<List<Track>> {
        return repository.getTracksFromPlaylist(tracksIdList)
     }
 }

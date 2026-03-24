@@ -45,14 +45,14 @@ class PlayListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val currentPlaylistId = requireArguments().getString(PLAYLIST_KEY)?.toInt() ?: 0
+        val currentPlaylistId = requireArguments().getInt(PLAYLIST_KEY)
 
-        Log.d("currentPlaylist Name", "Id = "+ currentPlaylistId.toString())
+        Log.d("current_playlist", "PlaylistId Playlist = "+ currentPlaylistId.toString())
 
         viewModel.getPlaylistsById(currentPlaylistId)
 
         viewModel.observeCurrentPlaylist().observe(viewLifecycleOwner) {
-            render(it.playList, it.tracks)
+            render(it.playList, it.tracks, it.summaryTime, it.tracksAmount)
         }
 
         binding.backFromPlaylistButton.setOnClickListener{
@@ -86,7 +86,7 @@ class PlayListFragment : Fragment() {
         _binding = null
     }
 
-    fun render(playlist: Playlist, tracks: List<Track>) {
+    fun render(playlist: Playlist, tracks: List<Track>, summaryTime:Int, tracksAmount: Int) {
         val filePath = File(requireContext()
             .getExternalFilesDir(Environment.DIRECTORY_PICTURES), "artwork_album")
         val uri = File(filePath, playlist.pathToArtwork)
@@ -102,6 +102,13 @@ class PlayListFragment : Fragment() {
         binding.apply {
             PlaylistName.text = playlist.playlistName
             PlaylistDescription.text = playlist.playlistDescription
+            SummaryLength.text = requireContext()
+                .resources
+                .getQuantityString(R.plurals.summary_time,summaryTime,summaryTime)
+            TracksAmount.text = requireContext()
+                .resources
+                .getQuantityString(R.plurals.tracks,tracksAmount,tracksAmount)
+
         }
         showTracks(tracks)
     }

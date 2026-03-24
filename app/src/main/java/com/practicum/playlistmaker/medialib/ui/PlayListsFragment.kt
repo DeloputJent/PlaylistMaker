@@ -2,7 +2,7 @@ package com.practicum.playlistmaker.medialib.ui
 
 import android.graphics.Rect
 import android.os.Bundle
-import android.util.Log
+
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,7 +16,7 @@ import com.practicum.playlistmaker.medialib.domain.Playlist
 import com.practicum.playlistmaker.medialib.ui.presentation.PlayListsAdapter
 import com.practicum.playlistmaker.medialib.ui.presentation.PlayListsScrollState
 import com.practicum.playlistmaker.player.ui.MusicPlayerFragment
-import com.practicum.playlistmaker.playlist.ui.PlayListFragment
+
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.getValue
 
@@ -51,15 +51,13 @@ class PlayListsFragment : Fragment() {
         playListAdapter = PlayListsAdapter(
             clickListener = { playlist ->
                 run {
-                    bundle.putString(PLAYLIST_KEY, playlist.playlistID.toString())
-                    Log.d("currentPlaylist Name", "ID from playlists = "+playlist.playlistID.toString())
+                    bundle.putInt(PLAYLIST_KEY, playlist.playlistID)
                     val fragment = MusicPlayerFragment()
                     fragment.arguments = bundle
                     findNavController().navigate(
                         R.id.action_mediaLibFragment_to_playListFragment,
-                        PlayListFragment.createArgs(playlist.playlistID)
+                        bundle
                     )
-
                 }
             }
         )
