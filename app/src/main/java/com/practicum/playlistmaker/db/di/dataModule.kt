@@ -35,7 +35,7 @@ val dataModule = module {
     }
 
     single <PlaylistsRepository>{
-        PlaylistsRepositoryImpl(get(),get(),get())
+        PlaylistsRepositoryImpl(get(),get(),get(), get())
     }
 
     factory { TrackDbConvertor() }

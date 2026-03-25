@@ -1,11 +1,14 @@
 package com.practicum.playlistmaker.playlist.ui
 
+import android.app.AlertDialog
+import android.content.Context
 import android.os.Bundle
 import android.os.Environment
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.util.TypedValueCompat.dpToPx
 import androidx.fragment.app.Fragment
@@ -15,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.FragmentCurrentPlaylistBinding
 import com.practicum.playlistmaker.medialib.domain.Playlist
@@ -76,7 +80,14 @@ class PlayListFragment : Fragment() {
             findNavController().navigate(
             R.id.action_playListFragment_to_musicPlayerFragment,
             MusicPlayerFragment.createArgs(track))
-        })
+        },
+            longClickListener = {
+                track -> run {
+                    deleteThisTrackDialog(requireContext(), track)
+
+                }
+            }
+        )
 
         recyclerView.adapter = playListAdapter
     }
@@ -113,15 +124,29 @@ class PlayListFragment : Fragment() {
         showTracks(tracks)
     }
 
+    private fun deleteThisTrackDialog(context: Context, track: Track) {
+        val dialog = MaterialAlertDialogBuilder(context, R.style.WhiteDialogTheme)
+            .setTitle(R.string.Do_you_want_delete_track)
+            .setNegativeButton(R.string.Delete_track_no) { dialog, which ->{}
+            }.setPositiveButton(R.string.Delete_track_yes) { dialog, which -> run {
+                viewModel.deleteTrackFromPlaylist(track)
+
+            }
+            }.create()
+
+        dialog.setOnShowListener {
+            val negativeButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
+            negativeButton.setTextColor(ContextCompat.getColor(context, R.color.YP_Blue))
+
+            val positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+            positiveButton.setTextColor(ContextCompat.getColor(context, R.color.YP_Blue))
+        }
+        dialog.show()
+    }
+
     fun showTracks(tracks: List<Track>) {
         playListAdapter.setTrackList(tracks)
         recyclerView.visibility= View.VISIBLE
-    }
-
-    fun showNoPlaylistsMessage() {
-        binding.apply {
-            recyclerView.visibility = View.GONE
-        }
     }
 
     companion object{

@@ -9,6 +9,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.practicum.playlistmaker.db.domain.PlaylistsInteractor
 import com.practicum.playlistmaker.medialib.domain.Playlist
+import com.practicum.playlistmaker.search.domain.Track
 import kotlinx.coroutines.launch
 
 class PlayListViewModel(private val dbinteractor: PlaylistsInteractor, private val gson : Gson): ViewModel() {
@@ -37,5 +38,11 @@ class PlayListViewModel(private val dbinteractor: PlaylistsInteractor, private v
                 playlist.tracksId,
                 object : TypeToken<List<String>>(){}.type)
         else emptyList()
+    }
+
+    fun deleteTrackFromPlaylist (track: Track) {
+        viewModelScope.launch {
+            dbinteractor.deleteTrackFromPlaylist(track.trackId, currentPlaylist.playlistID)
+        }
     }
 }

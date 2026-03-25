@@ -1,5 +1,7 @@
 package com.practicum.playlistmaker.db.data.impl
 
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.practicum.playlistmaker.db.PlaylistsDatabase
 import com.practicum.playlistmaker.db.TracksInPlaylistsDatabase
 import com.practicum.playlistmaker.db.data.converters.PlaylistDbConverter
@@ -15,6 +17,7 @@ class PlaylistsRepositoryImpl(
     private val playlistBase: PlaylistsDatabase,
     private val tracksInPlaylistsBase: TracksInPlaylistsDatabase,
     private val converter: PlaylistDbConverter,
+    private val gson: Gson
 ): PlaylistsRepository {
 
     override fun getPlaylists(): Flow<List<Playlist>> = flow {
@@ -45,6 +48,21 @@ class PlaylistsRepositoryImpl(
             .insertTrack(convertFromTrack(track))
     }
 
+    override suspend fun deleteTrackFromPlaylist(trackId: String, playlistId: Int) {
+        var playList = getPlaylistById(playlistId)
+        val trackIdsList: MutableList<String> = getTracksID(playList).toMutableList()
+        if (trackIdsList.contains(trackId)) trackIdsList.remove(trackId)
+        var tracksAmount = playList.tracksAmount-1
+        val tracksId = gson.toJson(trackIdsList.toList())
+        if (!checkIfTrackInPlaylists(trackId)) {
+            var track = getTrackByID(trackId)
+            dropOutTrack(track)
+        }
+        playList=playList.copy(tracksId=tracksId, tracksAmount = tracksAmount)
+        updatePlaylist(playList)
+
+    }
+
     override fun getTracksFromPlaylist(tracksIdList: List<String>): Flow<List<Track>> = flow {
         val allTrackList = tracksInPlaylistsBase.getPlaylistsTracksInPlaylistsDao().getTracksInPlaylists()
         val trackListWithId = allTrackList.filter { track ->
@@ -52,6 +70,34 @@ class PlaylistsRepositoryImpl(
         }
         emit (convertFromTracksInPlaylistsEntity(trackListWithId))
     }
+
+    private fun getTracksID(playlist: Playlist): List<String> {
+                return if (!playlist.tracksId.isNullOrEmpty())
+                gson.fromJson<MutableList<String>>(
+                playlist.tracksId,
+                object : TypeToken<List<String>>(){}.type)
+            else emptyList()
+    }
+
+    private suspend fun getTrackByID(trackId: String) =
+        tracksInPlaylistsBase.getPlaylistsTracksInPlaylistsDao().getTrackById(trackId)
+
+    private suspend fun dropOutTrack(trackInPlaylistsEntity: TracksInPlaylistsEntity) {
+        tracksInPlaylistsBase.getPlaylistsTracksInPlaylistsDao().dropOut(
+            trackInPlaylistsEntity
+        )
+    }
+
+
+
+    private suspend fun checkIfTrackInPlaylists (trackId: String): Boolean {
+        val playlists = convertFromPlaylistEntityList(playlistBase.getPlaylistsDao().getPlayLists())
+        playlists.forEach { playlist -> run {
+            if (getTracksID(playlist).contains(trackId)) return true
+        }        }
+        return false
+    }
+
 
     private fun convertFromPlaylistEntityList(playlists: List<PlayListEntity>): List<Playlist> {
         return playlists.map { playlist -> converter.map(playlist) }

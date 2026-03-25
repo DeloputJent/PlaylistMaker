@@ -144,5 +144,10 @@
         <item name="android:textAllCaps">false</item>
     </style>
 
+    <style name="WhiteDialogTheme" parent="Theme.MaterialComponents.DayNight.Dialog">
+        <item name="android:background">@color/YP_White</item>
+        <item name="android:textColorPrimary">@color/YP_Black</item>
+    </style>
+
 
 </resources>

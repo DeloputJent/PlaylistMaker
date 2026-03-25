@@ -16,7 +16,6 @@ import com.practicum.playlistmaker.medialib.domain.Playlist
 import com.practicum.playlistmaker.medialib.ui.presentation.PlayListsAdapter
 import com.practicum.playlistmaker.medialib.ui.presentation.PlayListsScrollState
 import com.practicum.playlistmaker.player.ui.MusicPlayerFragment
-
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.getValue
 
