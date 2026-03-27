@@ -1,6 +1,5 @@
 package com.practicum.playlistmaker.playlist.ui
 
-
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -31,7 +30,6 @@ class PlayListViewModel(private val dbinteractor: PlaylistsInteractor, private v
                 }
         }
     }
-
     fun getTracksID(playlist: Playlist): List<String> {
         return if (!playlist.tracksId.isNullOrEmpty())
             gson.fromJson<MutableList<String>>(
@@ -39,10 +37,16 @@ class PlayListViewModel(private val dbinteractor: PlaylistsInteractor, private v
                 object : TypeToken<List<String>>(){}.type)
         else emptyList()
     }
-
-    fun deleteTrackFromPlaylist (track: Track) {
+    fun deleteTrackFromPlaylist (track: Track, playlistId:Int) {
         viewModelScope.launch {
             dbinteractor.deleteTrackFromPlaylist(track.trackId, currentPlaylist.playlistID)
+            currentPlaylist = dbinteractor.getPlaylistById(playlistId)
+            dbinteractor.getTracksFromPlaylist(getTracksID(currentPlaylist))
+                .collect {
+                        playListTracks -> currentPlaylistLiveData.postValue(
+                    PlayListScreen(currentPlaylist, playListTracks)
+                )
+                }
         }
     }
 }

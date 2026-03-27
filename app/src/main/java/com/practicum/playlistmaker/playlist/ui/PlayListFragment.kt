@@ -4,7 +4,6 @@ import android.app.AlertDialog
 import android.content.Context
 import android.os.Bundle
 import android.os.Environment
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -51,8 +50,6 @@ class PlayListFragment : Fragment() {
 
         val currentPlaylistId = requireArguments().getInt(PLAYLIST_KEY)
 
-        Log.d("current_playlist", "PlaylistId Playlist = "+ currentPlaylistId.toString())
-
         viewModel.getPlaylistsById(currentPlaylistId)
 
         viewModel.observeCurrentPlaylist().observe(viewLifecycleOwner) {
@@ -82,13 +79,9 @@ class PlayListFragment : Fragment() {
             MusicPlayerFragment.createArgs(track))
         },
             longClickListener = {
-                track -> run {
-                    deleteThisTrackDialog(requireContext(), track)
-
-                }
+                track -> deleteThisTrackDialog(requireContext(), track, currentPlaylistId)
             }
         )
-
         recyclerView.adapter = playListAdapter
     }
 
@@ -110,6 +103,7 @@ class PlayListFragment : Fragment() {
             ))
             .placeholder(R.drawable.placeholder)
             .into(binding.PlaylistArtwork)
+
         binding.apply {
             PlaylistName.text = playlist.playlistName
             PlaylistDescription.text = playlist.playlistDescription
@@ -119,18 +113,16 @@ class PlayListFragment : Fragment() {
             TracksAmount.text = requireContext()
                 .resources
                 .getQuantityString(R.plurals.tracks,tracksAmount,tracksAmount)
-
         }
         showTracks(tracks)
     }
 
-    private fun deleteThisTrackDialog(context: Context, track: Track) {
+    private fun deleteThisTrackDialog(context: Context, track: Track, currentPlaylistId:Int) {
         val dialog = MaterialAlertDialogBuilder(context, R.style.WhiteDialogTheme)
             .setTitle(R.string.Do_you_want_delete_track)
-            .setNegativeButton(R.string.Delete_track_no) { dialog, which ->{}
-            }.setPositiveButton(R.string.Delete_track_yes) { dialog, which -> run {
-                viewModel.deleteTrackFromPlaylist(track)
-
+            .setNegativeButton(R.string.No_answer) { dialog, which ->{}
+            }.setPositiveButton(R.string.Yes_answer) { dialog, which -> run {
+                viewModel.deleteTrackFromPlaylist(track, currentPlaylistId)
             }
             }.create()
 

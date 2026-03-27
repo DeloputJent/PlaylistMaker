@@ -49,17 +49,17 @@ class PlaylistsRepositoryImpl(
     }
 
     override suspend fun deleteTrackFromPlaylist(trackId: String, playlistId: Int) {
-        var playList = getPlaylistById(playlistId)
+        val playList = getPlaylistById(playlistId)
         val trackIdsList: MutableList<String> = getTracksID(playList).toMutableList()
         if (trackIdsList.contains(trackId)) trackIdsList.remove(trackId)
-        var tracksAmount = playList.tracksAmount-1
         val tracksId = gson.toJson(trackIdsList.toList())
+        val updatedPlayList=playList.copy(tracksId=tracksId, tracksAmount = trackIdsList.size)
+        updatePlaylist(updatedPlayList)
         if (!checkIfTrackInPlaylists(trackId)) {
-            var track = getTrackByID(trackId)
-            dropOutTrack(track)
+            val track = getTrackByID(trackId)
+            if (track != null) {
+            dropOutTrack(track)}
         }
-        playList=playList.copy(tracksId=tracksId, tracksAmount = tracksAmount)
-        updatePlaylist(playList)
 
     }
 
@@ -79,8 +79,8 @@ class PlaylistsRepositoryImpl(
             else emptyList()
     }
 
-    private suspend fun getTrackByID(trackId: String) =
-        tracksInPlaylistsBase.getPlaylistsTracksInPlaylistsDao().getTrackById(trackId)
+    private suspend fun getTrackByID(trackId: String): TracksInPlaylistsEntity? =
+        tracksInPlaylistsBase.getPlaylistsTracksInPlaylistsDao().getTrackById(trackId)?: null
 
     private suspend fun dropOutTrack(trackInPlaylistsEntity: TracksInPlaylistsEntity) {
         tracksInPlaylistsBase.getPlaylistsTracksInPlaylistsDao().dropOut(
@@ -88,16 +88,15 @@ class PlaylistsRepositoryImpl(
         )
     }
 
-
-
     private suspend fun checkIfTrackInPlaylists (trackId: String): Boolean {
         val playlists = convertFromPlaylistEntityList(playlistBase.getPlaylistsDao().getPlayLists())
+        var result = false
         playlists.forEach { playlist -> run {
-            if (getTracksID(playlist).contains(trackId)) return true
+            if (getTracksID(playlist).contains(trackId)) result = true
+            else result = false
         }        }
-        return false
+       return result
     }
-
 
     private fun convertFromPlaylistEntityList(playlists: List<PlayListEntity>): List<Playlist> {
         return playlists.map { playlist -> converter.map(playlist) }

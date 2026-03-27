@@ -68,8 +68,20 @@
     <string name="allready_added_to_playlist">Трек уже добавлен в плейлист %s</string>
 
     <string name="Do_you_want_delete_track">Хотите удалить трек?</string>
-    <string name="Delete_track_yes">Да</string>
-    <string name="Delete_track_no">Нет</string>
+    <string name="Yes_answer">Да</string>
+    <string name="No_answer">Нет</string>
+
+    <string name="You_cant_share_this_playlist">В этом плейлисте нет списка треков, которым можно поделиться</string>
+    <string name="Playlist_message">Название плейлиста %s</string>
+    <string name="Playlist_description_message">Описание плейлиста %s</string>
+    <string name="Playlist_tracks_amount">%s треков</string>
+    <string name="Num_artist_trackName_trackLength_">%s. %s+ - %s (%s)</string>
+
+    <string name="Menu_share">Поделиться</string>
+    <string name="Menu_edit_information">Редактировать информацию</string>
+    <string name="Menu_delete_playlist">Удалить плейлист</string>
+    <string name="Do_you_want_delete_playlist">Хотите удалить плейлист?</string>
+
 
 
 </resources>

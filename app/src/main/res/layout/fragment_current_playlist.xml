@@ -27,7 +27,7 @@
             android:contentDescription="@string/Back_from_screen_button"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_back_arrow_24"/>
+            app:srcCompat="@drawable/ic_back_black_arrow_24"/>
 
         <ImageView
             android:id="@+id/PlaylistArtwork"

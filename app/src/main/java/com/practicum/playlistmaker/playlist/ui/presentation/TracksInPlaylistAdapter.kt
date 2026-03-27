@@ -1,6 +1,5 @@
 package com.practicum.playlistmaker.playlist.ui.presentation
 
-
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker.search.domain.Track

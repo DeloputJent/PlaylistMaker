@@ -7,6 +7,7 @@ import com.practicum.playlistmaker.search.domain.Track
 import kotlinx.coroutines.flow.Flow
 
 class PlaylistsInteractorImpl(private val repository: PlaylistsRepository): PlaylistsInteractor {
+
     override fun getPlaylists(): Flow<List<Playlist>> {
        return repository.getPlaylists()
     }
