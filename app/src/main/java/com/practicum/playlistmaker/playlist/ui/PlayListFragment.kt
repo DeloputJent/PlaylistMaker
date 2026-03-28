@@ -83,6 +83,10 @@ class PlayListFragment : Fragment() {
             }
         )
         recyclerView.adapter = playListAdapter
+
+        binding.sharePlaylist.setOnClickListener {
+            viewModel.sharePlaylist()
+        }
     }
 
     override fun onDestroyView() {

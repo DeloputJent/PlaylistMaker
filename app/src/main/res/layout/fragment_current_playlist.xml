@@ -25,8 +25,6 @@
             android:layout_marginTop="@dimen/margin_small"
             android:background="@android:color/transparent"
             android:contentDescription="@string/Back_from_screen_button"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_back_black_arrow_24"/>
 
         <ImageView
@@ -86,6 +84,7 @@
         <ImageView
             android:layout_width="13dp"
             android:layout_height="21dp"
+            android:importantForAccessibility="no"
             android:src="@drawable/ic_black_dot_separator"
             android:scaleType="centerCrop"/>
         <TextView
@@ -98,22 +97,26 @@
             tools:text="999 треков"/>
     </LinearLayout>
     
-    <ImageView
+    <ImageButton
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:id="@+id/share_playlist"
-        android:src="@drawable/ic_share_this_black_24"
         android:layout_marginTop="486dp"
         android:layout_marginStart="16dp"
+        android:id="@+id/share_playlist"
+        android:contentDescription="@string/contentDescription_share_playlist"
+        android:src="@drawable/ic_share_this_black_24"
+        android:background="@android:color/transparent"
         android:clickable="true"/>
 
-    <ImageView
+    <ImageButton
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:id="@+id/playlist_options"
-        android:src="@drawable/ic_vertical_dots_24"
         android:layout_marginTop="486dp"
         android:layout_marginStart="56dp"
+        android:id="@+id/playlist_options"
+        android:contentDescription="@string/contentDescription_playlist_options"
+        android:src="@drawable/ic_vertical_dots_24"
+        android:background="@android:color/transparent"
         android:clickable="true"/>
 
     <LinearLayout
@@ -142,8 +145,5 @@
             android:backgroundTint="@color/YP_Black"
             android:textAlignment="viewStart"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
-
     </LinearLayout>
-
-
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

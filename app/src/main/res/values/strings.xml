@@ -41,6 +41,9 @@
     <string name="Playlist_description">Описание</string>
     <string name="Playlist_create">Создать</string>
 
+    <string name="contentDescription_share_playlist">Поделиться плейлистом</string>
+    <string name="contentDescription_playlist_options">Опции плейлиста</string>
+
     <string name="Finish_creating_a_playlist">Завершить создание плейлиста?</string>
     <string name="Unsaved_data_will_be_lost">Все несохраненные данные будут потеряны</string>
     <string name="Cancel">Отмена</string>
