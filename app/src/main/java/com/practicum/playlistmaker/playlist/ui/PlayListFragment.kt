@@ -7,6 +7,7 @@ import android.os.Environment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.util.TypedValueCompat.dpToPx
@@ -54,6 +55,13 @@ class PlayListFragment : Fragment() {
 
         viewModel.observeCurrentPlaylist().observe(viewLifecycleOwner) {
             render(it.playList, it.tracks, it.summaryTime, it.tracksAmount)
+            viewModel.setTrackSet(it.tracks)
+        }
+
+        viewModel.isPlaylistDeleted.observe(viewLifecycleOwner) {
+            isDeleted -> if (isDeleted) {
+                findNavController().navigateUp()
+            }
         }
 
         binding.backFromPlaylistButton.setOnClickListener{
@@ -62,7 +70,15 @@ class PlayListFragment : Fragment() {
 
         val bottomSheetContainer = binding.bottomSheet
 
-        val bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetContainer).apply {
+        val bottomSheetContainerOptions = binding.bottomSheetOptions
+
+        val bottomSheetBehavior = BottomSheetBehavior
+            .from(bottomSheetContainer).apply {
+            state = BottomSheetBehavior.STATE_HIDDEN
+        }
+
+        val bottomSheetBehaviorOptions = BottomSheetBehavior
+            .from(bottomSheetContainerOptions).apply {
             state = BottomSheetBehavior.STATE_HIDDEN
         }
 
@@ -79,13 +95,59 @@ class PlayListFragment : Fragment() {
             MusicPlayerFragment.createArgs(track))
         },
             longClickListener = {
-                track -> deleteThisTrackDialog(requireContext(), track, currentPlaylistId)
+                track -> deleteThisTrackDialog(requireContext(), track)
             }
         )
+
         recyclerView.adapter = playListAdapter
 
         binding.sharePlaylist.setOnClickListener {
-            viewModel.sharePlaylist()
+            if(viewModel.currentPlaylist.tracksAmount==0) {
+                nothingToShareMessage(requireContext())
+            } else {
+            viewModel.sharePlaylist(binding.TracksAmount.text.toString())
+            }
+        }
+
+        val overlay = binding.overlay
+
+        bottomSheetBehaviorOptions.addBottomSheetCallback(
+            object : BottomSheetBehavior.BottomSheetCallback() {
+                override fun onStateChanged(bottomSheet: View, newState: Int) {
+                    when (newState) {
+                        BottomSheetBehavior.STATE_HIDDEN -> {
+                            overlay.visibility = View.GONE
+                        }
+                        else -> {
+                            overlay.visibility = View.VISIBLE
+                        }
+                    }
+                }
+                override fun onSlide(bottomSheet: View, slideOffset: Float) {}
+            }
+        )
+
+        binding.playlistOptions.setOnClickListener {
+            bottomSheetBehaviorOptions.state = BottomSheetBehavior.STATE_COLLAPSED
+        }
+
+        binding.OptionSharePlaylist.setOnClickListener {
+            if(viewModel.currentPlaylist.tracksAmount==0) {
+                nothingToShareMessage(requireContext())
+            } else {
+                viewModel.sharePlaylist(binding.TracksAmount.text.toString())
+            }
+        }
+
+        binding.OptionModifyPlaylist.setOnClickListener {
+            bundle.putInt(PLAYLIST_KEY, currentPlaylistId)
+            findNavController().navigate(
+                R.id.action_playListFragment_to_modifyPlayListFragment,bundle
+            )
+        }
+
+        binding.OptionDeletePlaylist.setOnClickListener {
+            deleteThisPlaylistDialog(requireContext())
         }
     }
 
@@ -94,19 +156,36 @@ class PlayListFragment : Fragment() {
         _binding = null
     }
 
+    private fun nothingToShareMessage (context: Context)
+    {
+        val toast = Toast(context)
+        toast.duration = Toast.LENGTH_SHORT
+        toast.setText(R.string.You_cant_share_this_playlist)
+        toast.show()
+    }
+
     fun render(playlist: Playlist, tracks: List<Track>, summaryTime:Int, tracksAmount: Int) {
         val filePath = File(requireContext()
             .getExternalFilesDir(Environment.DIRECTORY_PICTURES), "artwork_album")
-        val uri = File(filePath, playlist.pathToArtwork)
+        val file = File(filePath, playlist.pathToArtwork)
 
         Glide.with(this)
-            .load(uri)
+            .load(file)
             .centerCrop()
             .transform(RoundedCorners(
                 dpToPx(8f, this.resources.displayMetrics).toInt()
             ))
             .placeholder(R.drawable.placeholder)
             .into(binding.PlaylistArtwork)
+
+        Glide.with(this)
+            .load(file)
+            .centerCrop()
+            .transform(RoundedCorners(
+                dpToPx(2f, this.resources.displayMetrics).toInt()
+            ))
+            .placeholder(R.drawable.placeholder)
+            .into(binding.OptionPlayListCover)
 
         binding.apply {
             PlaylistName.text = playlist.playlistName
@@ -117,16 +196,20 @@ class PlayListFragment : Fragment() {
             TracksAmount.text = requireContext()
                 .resources
                 .getQuantityString(R.plurals.tracks,tracksAmount,tracksAmount)
+            OptionPlayListName.text = playlist.playlistName
+            OptionPlayListSongsAmount.text = requireContext()
+                .resources
+                .getQuantityString(R.plurals.tracks,tracksAmount,tracksAmount)
         }
         showTracks(tracks)
     }
 
-    private fun deleteThisTrackDialog(context: Context, track: Track, currentPlaylistId:Int) {
+    private fun deleteThisTrackDialog(context: Context, track: Track,) {
         val dialog = MaterialAlertDialogBuilder(context, R.style.WhiteDialogTheme)
             .setTitle(R.string.Do_you_want_delete_track)
             .setNegativeButton(R.string.No_answer) { dialog, which ->{}
             }.setPositiveButton(R.string.Yes_answer) { dialog, which -> run {
-                viewModel.deleteTrackFromPlaylist(track, currentPlaylistId)
+                viewModel.deleteTrackFromPlaylist(track)
             }
             }.create()
 
@@ -139,6 +222,26 @@ class PlayListFragment : Fragment() {
         }
         dialog.show()
     }
+
+    private fun deleteThisPlaylistDialog(context: Context) {
+        val dialog = MaterialAlertDialogBuilder(context, R.style.WhiteDialogTheme)
+            .setTitle(getString(R.string.Do_you_want_delete_playlist, viewModel.currentPlaylist.playlistName))
+            .setNegativeButton(R.string.No_answer) { dialog, which ->{}
+            }.setPositiveButton(R.string.Yes_answer) { dialog, which -> run {
+                viewModel.deleteThisPlaylist()
+            }
+            }.create()
+
+        dialog.setOnShowListener {
+            val negativeButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
+            negativeButton.setTextColor(ContextCompat.getColor(context, R.color.YP_Blue))
+
+            val positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+            positiveButton.setTextColor(ContextCompat.getColor(context, R.color.YP_Blue))
+        }
+        dialog.show()
+    }
+
 
     fun showTracks(tracks: List<Track>) {
         playListAdapter.setTrackList(tracks)

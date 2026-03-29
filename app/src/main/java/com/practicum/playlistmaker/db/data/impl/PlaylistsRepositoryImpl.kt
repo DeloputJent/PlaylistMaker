@@ -79,8 +79,8 @@ class PlaylistsRepositoryImpl(
             else emptyList()
     }
 
-    private suspend fun getTrackByID(trackId: String): TracksInPlaylistsEntity? =
-        tracksInPlaylistsBase.getPlaylistsTracksInPlaylistsDao().getTrackById(trackId)?: null
+    private suspend fun getTrackByID(trackId: String): TracksInPlaylistsEntity =
+        tracksInPlaylistsBase.getPlaylistsTracksInPlaylistsDao().getTrackById(trackId)?: TracksInPlaylistsEntity()
 
     private suspend fun dropOutTrack(trackInPlaylistsEntity: TracksInPlaylistsEntity) {
         tracksInPlaylistsBase.getPlaylistsTracksInPlaylistsDao().dropOut(

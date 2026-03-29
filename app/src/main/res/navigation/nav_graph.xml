@@ -61,5 +61,13 @@
         <action
             android:id="@+id/action_playListFragment_to_musicPlayerFragment"
             app:destination="@id/musicPlayerFragment" />
+        <action
+            android:id="@+id/action_playListFragment_to_modifyPlayListFragment"
+            app:destination="@id/modifyPlayListFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/modifyPlayListFragment"
+        android:name="com.practicum.playlistmaker.newplaylist.ui.ModifyPlayListFragment"
+        android:label="ModifyPlayListFragment"
+        tools:layout="@layout/fragment_new_playlist"/>
 </navigation>

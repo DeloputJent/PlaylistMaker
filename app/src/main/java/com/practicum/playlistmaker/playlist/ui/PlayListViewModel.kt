@@ -17,44 +17,90 @@ class PlayListViewModel(private val dbinteractor: PlaylistsInteractor,
                         private val gson : Gson): ViewModel() {
 
     var currentPlaylist: Playlist = Playlist()
+    var currentTrackSet: List<Track> = emptyList()
 
-    private val currentPlaylistLiveData = MutableLiveData <PlayListScreen> ( )
+    private val currentPlaylistLiveData = MutableLiveData<PlayListScreen>()
+
+    val isPlaylistDeleted = MutableLiveData<Boolean>()
 
     fun observeCurrentPlaylist(): LiveData<PlayListScreen> = currentPlaylistLiveData
 
-
-    fun sharePlaylist() {
-        sharingInteractor.sharePlaylist()
+    fun setTrackSet(trackSet: List<Track>) {
+        currentTrackSet = trackSet
     }
 
-    fun getPlaylistsById(playlistId:Int) {
+    fun sharePlaylist(trackAmount: String) {
+        val message = makeMessage(trackAmount)
+        sharingInteractor.sharePlaylist(message)
+    }
+
+    fun makeMessage(trackAmount: String): List<String> {
+        val message: MutableList<String> = mutableListOf()
+        message.add(currentPlaylist.playlistName)
+        message.add(currentPlaylist.playlistDescription)
+        message.add(trackAmount)
+        var index = 0
+        currentTrackSet.forEach { track ->
+            message.add(getTrackInfoToString(index++, track))
+        }
+        val messageList = message.toList()
+        return (messageList)
+    }
+
+    private fun getTrackInfoToString(trackNum: Int, track: Track): String {
+        var trackInfo: String
+        var num = trackNum
+        num++
+        trackInfo =
+            num.toString() + ". " + track.artistName + " - " + track.trackName + " (" + track.trackTimeMillis + ")"
+        return trackInfo
+    }
+
+    fun getPlaylistsById(playlistId: Int) {
         viewModelScope.launch {
             currentPlaylist = dbinteractor.getPlaylistById(playlistId)
             dbinteractor.getTracksFromPlaylist(getTracksID(currentPlaylist))
-                .collect {
-                    playListTracks -> currentPlaylistLiveData.postValue(
-                    PlayListScreen(currentPlaylist, playListTracks)
+                .collect { playListTracks ->
+                    currentPlaylistLiveData.postValue(
+                        PlayListScreen(currentPlaylist, playListTracks)
                     )
                 }
         }
     }
+
     fun getTracksID(playlist: Playlist): List<String> {
-        return if (!playlist.tracksId.isNullOrEmpty())
+        return if (playlist.tracksId.isNotEmpty())
             gson.fromJson<MutableList<String>>(
                 playlist.tracksId,
-                object : TypeToken<List<String>>(){}.type)
+                object : TypeToken<List<String>>() {}.type
+            )
         else emptyList()
     }
-    fun deleteTrackFromPlaylist (track: Track, playlistId:Int) {
+
+    fun deleteTrackFromPlaylist(track: Track) {
         viewModelScope.launch {
             dbinteractor.deleteTrackFromPlaylist(track.trackId, currentPlaylist.playlistID)
-            currentPlaylist = dbinteractor.getPlaylistById(playlistId)
             dbinteractor.getTracksFromPlaylist(getTracksID(currentPlaylist))
-                .collect {
-                        playListTracks -> currentPlaylistLiveData.postValue(
-                    PlayListScreen(currentPlaylist, playListTracks)
+                .collect { playListTracks ->
+                    currentPlaylistLiveData.postValue(
+                        PlayListScreen(currentPlaylist, playListTracks)
+                    )
+                }
+        }
+    }
+
+    fun deleteThisPlaylist() {
+        viewModelScope.launch {
+            val tracksIDList = getTracksID(currentPlaylist)
+            if (tracksIDList.isNotEmpty()) {
+                tracksIDList.forEach { trackId ->
+                dbinteractor.deleteTrackFromPlaylist(
+                    trackId, currentPlaylist.playlistID
                 )
                 }
+            }
+            dbinteractor.deletePlaylist(currentPlaylist)
+            isPlaylistDeleted.value = true
         }
     }
 }

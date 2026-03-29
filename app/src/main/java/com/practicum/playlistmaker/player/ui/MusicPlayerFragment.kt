@@ -166,7 +166,6 @@ class MusicPlayerFragment: Fragment() {
                     }
                 }
             }
-
             override fun onSlide(bottomSheet: View, slideOffset: Float) {}
         })
     }

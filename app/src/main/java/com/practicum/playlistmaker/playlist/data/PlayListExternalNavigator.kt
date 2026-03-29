@@ -7,13 +7,17 @@ import com.practicum.playlistmaker.playlist.domain.api.PlaylistIntentProvider
 
 class PlayListExternalNavigator (private val context: Context) : PlaylistIntentProvider {
 
-
-
-    override fun shareText() {
+    override fun shareText(message: List<String>) {
         val shareIntent = Intent(Intent.ACTION_SEND)
         shareIntent.type="text/plain"
-        shareIntent.putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.this_app_made_with_course))
-        shareIntent.putExtra(Intent.EXTRA_TEXT, context.getString(R.string.link_to_yandex_course))
+        shareIntent.putExtra(Intent.EXTRA_TITLE, context.getString(R.string.Playlist_title_message))
+        shareIntent.putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.Playlist_subject))
+        var sendedMessage = ""
+        message.forEach { messageText -> sendedMessage=sendedMessage+messageText+"\n" }
+        message.forEach { message ->shareIntent.putExtra(Intent.EXTRA_TEXT, sendedMessage)
+        }
+
+
         context.startActivity(Intent.createChooser(shareIntent,context.getString(R.string.share_with_help))
             .apply {flags= Intent.FLAG_ACTIVITY_NEW_TASK })
     }

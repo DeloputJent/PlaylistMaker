@@ -1,5 +1,5 @@
 package com.practicum.playlistmaker.playlist.domain.api
 
 interface PlaylistSharingInteractor {
-    fun sharePlaylist()
+    fun sharePlaylist(message: List<String>)
 }

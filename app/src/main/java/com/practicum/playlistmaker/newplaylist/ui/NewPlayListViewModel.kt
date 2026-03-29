@@ -13,11 +13,12 @@ import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileOutputStream
 
-class NewPlayListViewModel(private val playlistsInteractor: PlaylistsInteractor,
-                           private val context: Context,
+open class NewPlayListViewModel(
+    val playlistsInteractor: PlaylistsInteractor,
+    private val context: Context,
 ) : ViewModel() {
 
-    fun createPlayList(playlistName: String, playlistDescription:String, pathToArtwork:String) {
+    open fun createPlayList(playlistName: String, playlistDescription:String, pathToArtwork:String) {
         viewModelScope.launch {
             val playlist = Playlist(
                 playlistName = playlistName,

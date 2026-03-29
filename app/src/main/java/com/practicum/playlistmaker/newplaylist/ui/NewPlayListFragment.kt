@@ -26,14 +26,14 @@ import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.FragmentNewPlaylistBinding
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class NewPlayListFragment: Fragment() {
+open class NewPlayListFragment: Fragment() {
     private var _binding: FragmentNewPlaylistBinding? = null
-    private val binding get() = _binding!!
+    val binding get() = _binding!!
     private val viewModel: NewPlayListViewModel by viewModel()
     private lateinit var playlistArtwork:ImageView
-    private var playListName: String = ""
-    private var playListDescription: String = ""
-    private var uri: Uri = Uri.EMPTY
+    var playListName: String = ""
+    var playListDescription: String = ""
+    var uri: Uri = Uri.EMPTY
     private var nameInputControl: TextWatcher? = null
     private var descriptionInputControl: TextWatcher? = null
 
@@ -126,7 +126,6 @@ class NewPlayListFragment: Fragment() {
             }
         }
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, backCallback)
-
     }
 
     override fun onPause() {

@@ -75,15 +75,17 @@
     <string name="No_answer">Нет</string>
 
     <string name="You_cant_share_this_playlist">В этом плейлисте нет списка треков, которым можно поделиться</string>
-    <string name="Playlist_message">Название плейлиста %s</string>
-    <string name="Playlist_description_message">Описание плейлиста %s</string>
+    <string name="Playlist_title_message">Поделиться плейлистом</string>
+    <string name="Playlist_subject">Мой плейлист</string>
     <string name="Playlist_tracks_amount">%s треков</string>
     <string name="Num_artist_trackName_trackLength_">%s. %s+ - %s (%s)</string>
 
     <string name="Menu_share">Поделиться</string>
     <string name="Menu_edit_information">Редактировать информацию</string>
     <string name="Menu_delete_playlist">Удалить плейлист</string>
-    <string name="Do_you_want_delete_playlist">Хотите удалить плейлист?</string>
+    <string name="Do_you_want_delete_playlist">Хотите удалить плейлист %s?</string>
+    <string name="Modify_playlist_save">Сохранить</string>
+    <string name="Modify_playlist_modify">Редактировать</string>
 
 
 
