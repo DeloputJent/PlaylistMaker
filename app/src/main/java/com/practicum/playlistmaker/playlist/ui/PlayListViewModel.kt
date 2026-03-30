@@ -1,5 +1,6 @@
 package com.practicum.playlistmaker.playlist.ui
 
+import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -8,12 +9,14 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.practicum.playlistmaker.db.domain.PlaylistsInteractor
 import com.practicum.playlistmaker.medialib.domain.Playlist
+import com.practicum.playlistmaker.playlist.domain.api.FileStorageInteractor
 import com.practicum.playlistmaker.playlist.domain.api.PlaylistSharingInteractor
 import com.practicum.playlistmaker.search.domain.Track
 import kotlinx.coroutines.launch
 
 class PlayListViewModel(private val dbinteractor: PlaylistsInteractor,
                         private val sharingInteractor: PlaylistSharingInteractor,
+                        private val fileInteractor: FileStorageInteractor,
                         private val gson : Gson): ViewModel() {
 
     var currentPlaylist: Playlist = Playlist()
@@ -22,6 +25,10 @@ class PlayListViewModel(private val dbinteractor: PlaylistsInteractor,
     private val currentPlaylistLiveData = MutableLiveData<PlayListScreen>()
 
     val isPlaylistDeleted = MutableLiveData<Boolean>()
+
+    fun getImageUri(): Uri {
+        return fileInteractor.getFile(currentPlaylist.pathToArtwork)
+    }
 
     fun observeCurrentPlaylist(): LiveData<PlayListScreen> = currentPlaylistLiveData
 

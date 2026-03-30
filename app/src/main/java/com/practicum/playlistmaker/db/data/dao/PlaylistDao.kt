@@ -23,7 +23,7 @@ interface PlaylistDao {
     suspend fun getPlayListById(playListId: Int): PlayListEntity
 
     @Query("SELECT tracksId FROM PlayList_table")
-    suspend fun getTracksId():String
+    suspend fun getTracksId(): List<String>
 
     @Delete (entity = PlayListEntity::class)
     suspend fun deletePlaylist(playList: PlayListEntity)

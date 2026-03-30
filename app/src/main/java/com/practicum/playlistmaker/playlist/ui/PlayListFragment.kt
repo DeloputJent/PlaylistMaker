@@ -3,7 +3,6 @@ package com.practicum.playlistmaker.playlist.ui
 import android.app.AlertDialog
 import android.content.Context
 import android.os.Bundle
-import android.os.Environment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,7 +13,6 @@ import androidx.core.util.TypedValueCompat.dpToPx
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -26,7 +24,6 @@ import com.practicum.playlistmaker.player.ui.MusicPlayerFragment
 import com.practicum.playlistmaker.playlist.ui.presentation.TracksInPlaylistAdapter
 import com.practicum.playlistmaker.search.domain.Track
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import java.io.File
 import kotlin.getValue
 
 class PlayListFragment : Fragment() {
@@ -34,7 +31,6 @@ class PlayListFragment : Fragment() {
     private var _binding: FragmentCurrentPlaylistBinding? = null
     private val binding get() = _binding!!
     private lateinit var playListAdapter : TracksInPlaylistAdapter
-    private lateinit var recyclerView : RecyclerView
 
     val bundle = Bundle()
 
@@ -82,7 +78,7 @@ class PlayListFragment : Fragment() {
             state = BottomSheetBehavior.STATE_HIDDEN
         }
 
-        recyclerView = binding.tracksInPlaylist
+        var recyclerView = binding.tracksInPlaylist
 
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
@@ -165,12 +161,11 @@ class PlayListFragment : Fragment() {
     }
 
     fun render(playlist: Playlist, tracks: List<Track>, summaryTime:Int, tracksAmount: Int) {
-        val filePath = File(requireContext()
-            .getExternalFilesDir(Environment.DIRECTORY_PICTURES), "artwork_album")
-        val file = File(filePath, playlist.pathToArtwork)
+
+        val uri=viewModel.getImageUri()
 
         Glide.with(this)
-            .load(file)
+            .load(uri)
             .centerCrop()
             .transform(RoundedCorners(
                 dpToPx(8f, this.resources.displayMetrics).toInt()
@@ -179,7 +174,7 @@ class PlayListFragment : Fragment() {
             .into(binding.PlaylistArtwork)
 
         Glide.with(this)
-            .load(file)
+            .load(uri)
             .centerCrop()
             .transform(RoundedCorners(
                 dpToPx(2f, this.resources.displayMetrics).toInt()
@@ -245,7 +240,7 @@ class PlayListFragment : Fragment() {
 
     fun showTracks(tracks: List<Track>) {
         playListAdapter.setTrackList(tracks)
-        recyclerView.visibility= View.VISIBLE
+        binding.tracksInPlaylist.visibility= View.VISIBLE
     }
 
     companion object{

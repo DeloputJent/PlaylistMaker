@@ -30,7 +30,11 @@ class TracksInPlaylistAdapter (
 
     fun setTrackList(tracks: List<Track>) {
         this.tracks.clear()
-        this.tracks.addAll(tracks)
+        val sortedTracks = mutableListOf<Track>()
+        for (i in (tracks.size - 1) downTo 0) {
+            sortedTracks.add(tracks[i])
+        }
+        this.tracks.addAll(sortedTracks)
         notifyDataSetChanged()
     }
 

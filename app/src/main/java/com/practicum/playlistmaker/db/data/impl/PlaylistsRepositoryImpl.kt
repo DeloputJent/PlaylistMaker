@@ -1,5 +1,6 @@
 package com.practicum.playlistmaker.db.data.impl
 
+import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.practicum.playlistmaker.db.PlaylistsDatabase
@@ -50,17 +51,23 @@ class PlaylistsRepositoryImpl(
 
     override suspend fun deleteTrackFromPlaylist(trackId: String, playlistId: Int) {
         val playList = getPlaylistById(playlistId)
+
         val trackIdsList: MutableList<String> = getTracksID(playList).toMutableList()
+
         if (trackIdsList.contains(trackId)) trackIdsList.remove(trackId)
+
         val tracksId = gson.toJson(trackIdsList.toList())
+
         val updatedPlayList=playList.copy(tracksId=tracksId, tracksAmount = trackIdsList.size)
         updatePlaylist(updatedPlayList)
-        if (!checkIfTrackInPlaylists(trackId)) {
-            val track = getTrackByID(trackId)
-            if (track != null) {
-            dropOutTrack(track)}
-        }
 
+        val isTrackStillPresent = checkIfTrackInPlaylists(trackId)
+
+        Log.d("table",isTrackStillPresent.toString())
+        if (!isTrackStillPresent) {
+            val track = getTrackByID(trackId)
+            dropOutTrack(track)
+        }
     }
 
     override fun getTracksFromPlaylist(tracksIdList: List<String>): Flow<List<Track>> = flow {
@@ -88,13 +95,16 @@ class PlaylistsRepositoryImpl(
         )
     }
 
-    private suspend fun checkIfTrackInPlaylists (trackId: String): Boolean {
-        val playlists = convertFromPlaylistEntityList(playlistBase.getPlaylistsDao().getPlayLists())
-        var result = false
-        playlists.forEach { playlist -> run {
-            if (getTracksID(playlist).contains(trackId)) result = true
-            else result = false
-        }        }
+    private suspend fun checkIfTrackInPlaylists (trackId: String):Boolean {
+       val tracksId = playlistBase.getPlaylistsDao().getTracksId()
+        var result: Boolean =false
+        //Log.d("table",tracksId)
+        tracksId.forEach { trackIds->
+            if( gson.fromJson<MutableList<String>>(
+                trackIds,object : TypeToken<List<String>>(){}.type).contains(trackId)) {
+              result = true
+            } else result = false
+        }
        return result
     }
 
