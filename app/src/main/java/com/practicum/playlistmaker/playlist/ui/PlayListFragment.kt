@@ -50,8 +50,8 @@ class PlayListFragment : Fragment() {
         viewModel.getPlaylistsById(currentPlaylistId)
 
         viewModel.observeCurrentPlaylist().observe(viewLifecycleOwner) {
-            render(it.playList, it.tracks, it.summaryTime, it.tracksAmount)
             viewModel.setTrackSet(it.tracks)
+            render(it.playList, it.tracks, it.summaryTime, it.tracksAmount)
         }
 
         viewModel.isPlaylistDeleted.observe(viewLifecycleOwner) {
@@ -78,7 +78,7 @@ class PlayListFragment : Fragment() {
             state = BottomSheetBehavior.STATE_HIDDEN
         }
 
-        var recyclerView = binding.tracksInPlaylist
+        val recyclerView = binding.tracksInPlaylist
 
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 

@@ -1,11 +1,11 @@
 package com.practicum.playlistmaker.playlist.di
 
-import com.practicum.playlistmaker.playlist.data.FileStorageRepositoryImpl
+import com.practicum.playlistmaker.filestorage.data.FileStorageRepositoryImpl
 import com.practicum.playlistmaker.playlist.data.PlayListExternalNavigator
-import com.practicum.playlistmaker.playlist.domain.FileStorageInteractorImpl
+import com.practicum.playlistmaker.filestorage.domain.FileStorageInteractorImpl
 import com.practicum.playlistmaker.playlist.domain.PlaylistSharingInteractorImpl
-import com.practicum.playlistmaker.playlist.domain.api.FileStorageInteractor
-import com.practicum.playlistmaker.playlist.domain.api.FileStorageRepository
+import com.practicum.playlistmaker.filestorage.domain.api.FileStorageInteractor
+import com.practicum.playlistmaker.filestorage.domain.api.FileStorageRepository
 import com.practicum.playlistmaker.playlist.domain.api.PlaylistIntentProvider
 import com.practicum.playlistmaker.playlist.domain.api.PlaylistSharingInteractor
 import com.practicum.playlistmaker.playlist.ui.PlayListViewModel

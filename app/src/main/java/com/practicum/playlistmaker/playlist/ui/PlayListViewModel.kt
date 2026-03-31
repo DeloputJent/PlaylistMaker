@@ -9,7 +9,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.practicum.playlistmaker.db.domain.PlaylistsInteractor
 import com.practicum.playlistmaker.medialib.domain.Playlist
-import com.practicum.playlistmaker.playlist.domain.api.FileStorageInteractor
+import com.practicum.playlistmaker.filestorage.domain.api.FileStorageInteractor
 import com.practicum.playlistmaker.playlist.domain.api.PlaylistSharingInteractor
 import com.practicum.playlistmaker.search.domain.Track
 import kotlinx.coroutines.launch
@@ -67,11 +67,12 @@ class PlayListViewModel(private val dbinteractor: PlaylistsInteractor,
         viewModelScope.launch {
             currentPlaylist = dbinteractor.getPlaylistById(playlistId)
             dbinteractor.getTracksFromPlaylist(getTracksID(currentPlaylist))
-                .collect { playListTracks ->
+                .collect { playListTracks -> run {
                     currentPlaylistLiveData.postValue(
                         PlayListScreen(currentPlaylist, playListTracks)
                     )
-                }
+                    currentTrackSet = playListTracks
+                }                }
         }
     }
 
@@ -87,12 +88,7 @@ class PlayListViewModel(private val dbinteractor: PlaylistsInteractor,
     fun deleteTrackFromPlaylist(track: Track) {
         viewModelScope.launch {
             dbinteractor.deleteTrackFromPlaylist(track.trackId, currentPlaylist.playlistID)
-            dbinteractor.getTracksFromPlaylist(getTracksID(currentPlaylist))
-                .collect { playListTracks ->
-                    currentPlaylistLiveData.postValue(
-                        PlayListScreen(currentPlaylist, playListTracks)
-                    )
-                }
+            getPlaylistsById(currentPlaylist.playlistID)
         }
     }
 

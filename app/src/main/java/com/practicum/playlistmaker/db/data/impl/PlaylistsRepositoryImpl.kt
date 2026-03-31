@@ -1,6 +1,5 @@
 package com.practicum.playlistmaker.db.data.impl
 
-import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.practicum.playlistmaker.db.PlaylistsDatabase
@@ -59,15 +58,9 @@ class PlaylistsRepositoryImpl(
         val tracksId = gson.toJson(trackIdsList.toList())
 
         val updatedPlayList=playList.copy(tracksId=tracksId, tracksAmount = trackIdsList.size)
+
         updatePlaylist(updatedPlayList)
-
-        val isTrackStillPresent = checkIfTrackInPlaylists(trackId)
-
-        Log.d("table",isTrackStillPresent.toString())
-        if (!isTrackStillPresent) {
-            val track = getTrackByID(trackId)
-            dropOutTrack(track)
-        }
+        dropOutIfTrackIsNotInPlaylists(trackId)
     }
 
     override fun getTracksFromPlaylist(tracksIdList: List<String>): Flow<List<Track>> = flow {
@@ -95,17 +88,21 @@ class PlaylistsRepositoryImpl(
         )
     }
 
-    private suspend fun checkIfTrackInPlaylists (trackId: String):Boolean {
-       val tracksId = playlistBase.getPlaylistsDao().getTracksId()
-        var result: Boolean =false
-        //Log.d("table",tracksId)
+    private suspend fun dropOutIfTrackIsNotInPlaylists (trackId: String):Int {
+        val tracksId = playlistBase.getPlaylistsDao().getTracksId()
+        var matchCount: Int = 0
+
         tracksId.forEach { trackIds->
-            if( gson.fromJson<MutableList<String>>(
-                trackIds,object : TypeToken<List<String>>(){}.type).contains(trackId)) {
-              result = true
-            } else result = false
+            val trackList = gson.fromJson<MutableList<String>>(
+                trackIds,object : TypeToken<List<String>>(){}.type
+            )
+            if (trackList.contains(trackId)) matchCount++
         }
-       return result
+        if (matchCount==0) {
+            val track = getTrackByID(trackId)
+            dropOutTrack(track)
+        }
+       return matchCount
     }
 
     private fun convertFromPlaylistEntityList(playlists: List<PlayListEntity>): List<Playlist> {

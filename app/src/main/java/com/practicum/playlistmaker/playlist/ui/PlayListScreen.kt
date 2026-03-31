@@ -20,7 +20,7 @@ class PlayListScreen (val playList: Playlist, val tracks: List<Track>) {
         tracksAmount = tracks.size
     }
 
-    fun convertTimeToMillis(timeString: String): Long {
+    private fun convertTimeToMillis(timeString: String): Long {
         val format = SimpleDateFormat("mm:ss", Locale.getDefault())
         val date: Date? = format.parse(timeString)
         return date?.time ?: 0L
