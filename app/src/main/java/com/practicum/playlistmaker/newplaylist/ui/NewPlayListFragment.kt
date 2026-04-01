@@ -6,6 +6,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,13 +28,14 @@ import com.practicum.playlistmaker.databinding.FragmentNewPlaylistBinding
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 open class NewPlayListFragment: Fragment() {
-    private var _binding: FragmentNewPlaylistBinding? = null
+    var _binding: FragmentNewPlaylistBinding? = null
+
     val binding get() = _binding!!
     private val viewModel: NewPlayListViewModel by viewModel()
-    private lateinit var playlistArtwork:ImageView
+    lateinit var playlistArtwork:ImageView
 
-    private var nameInputControl: TextWatcher? = null
-    private var descriptionInputControl: TextWatcher? = null
+    var nameInputControl: TextWatcher? = null
+    var descriptionInputControl: TextWatcher? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -56,6 +58,8 @@ open class NewPlayListFragment: Fragment() {
                 binding.PlaylistNameHint.isVisible = !s.isNullOrEmpty()
                 binding.createPlaylistButton.isEnabled = !s.isNullOrEmpty()
                 viewModel.playListName=s.toString()
+                Log.d("save", "60.NewPlayListFragment="+s.toString())
+                Log.d("save", "60.NewPlayListviewModel="+viewModel.playListName)
             }
             override fun afterTextChanged(s: Editable?) {}
         }
@@ -65,6 +69,7 @@ open class NewPlayListFragment: Fragment() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 binding.PlaylistDescriptionHint.isVisible = !s.isNullOrEmpty()
                 viewModel.playListDescription=s.toString()
+                Log.d("save", "69.NewPlayListFragment="+s.toString())
             }
             override fun afterTextChanged(s: Editable?) {}
         }
@@ -104,12 +109,13 @@ open class NewPlayListFragment: Fragment() {
         }
 
         binding.createPlaylistButton.setOnClickListener {
-            var path:String=""
+            var path = ""
             if (viewModel.uri!=Uri.EMPTY)
             {
                 path = viewModel.saveImageToPrivateStorage(viewModel.uri, viewModel.playListName)
             }
-            viewModel.createPlayList(viewModel.playListName, viewModel.playListDescription, path)
+            viewModel.createPlayList(viewModel.playListName,
+                viewModel.playListDescription, path)
             val toast = Toast(requireContext())
             toast.duration= Toast.LENGTH_SHORT
             toast.setText(getString(R.string.playlist_created, viewModel.playListName))
@@ -133,7 +139,7 @@ open class NewPlayListFragment: Fragment() {
         _binding = null
     }
 
-    open fun isDescriptionEmpty(): Boolean {
+    fun isDescriptionEmpty(): Boolean {
        return viewModel.isDescriptionEmpty() and (playlistArtwork.drawable==null)
     }
     private fun onScreenCloseDialog(context: Context) {

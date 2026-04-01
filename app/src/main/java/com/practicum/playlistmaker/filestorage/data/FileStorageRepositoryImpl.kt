@@ -1,5 +1,6 @@
 package com.practicum.playlistmaker.filestorage.data
 
+
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -27,6 +28,9 @@ class FileStorageRepositoryImpl(val context: Context): FileStorageRepository {
             .getExternalFilesDir(Environment.DIRECTORY_PICTURES), "artwork_album")
         if(!filePath.exists()) {filePath.mkdirs()}
         val file = File(filePath, picName)
+        if (file.exists()) {
+            file.delete()
+        }
         val inputStream = context.contentResolver.openInputStream(uri)
         val outputStream = FileOutputStream(file)
         BitmapFactory
@@ -34,5 +38,4 @@ class FileStorageRepositoryImpl(val context: Context): FileStorageRepository {
             .compress(Bitmap.CompressFormat.JPEG, 30, outputStream)
         return picName
     }
-
 }

@@ -1,7 +1,7 @@
 package com.practicum.playlistmaker.newplaylist.ui
 
 import android.content.Context
-import android.util.Log
+import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -16,10 +16,20 @@ class ModifyPlayListViewModel(playlistsInteractor: PlaylistsInteractor,
 ): NewPlayListViewModel(playlistsInteractor, fileInteractor, context) {
     var currentPlaylist: Playlist = Playlist()
 
-    override fun createPlayList(playlistName: String, playlistDescription:String, pathToArtwork:String) {
+    override var playListName: String = ""
+    override var playListDescription: String = ""
+
+    override var uri: Uri = Uri.EMPTY
+    val currentPlaylistLiveData = MutableLiveData<Playlist>(currentPlaylist)
+
+    fun observeCurrentPlaylist(): LiveData<Playlist> = currentPlaylistLiveData
+
+    override fun createPlayList(playlistName: String,
+                                playlistDescription:String,
+                                pathToArtwork:String) {
+        viewModelScope.launch {
             val path = if (pathToArtwork=="") currentPlaylist.pathToArtwork
             else pathToArtwork
-            Log.d("Image", "playlistName="+path)
             val playlist = Playlist(
                 playlistID = currentPlaylist.playlistID,
                 playlistName = playlistName,
@@ -28,20 +38,19 @@ class ModifyPlayListViewModel(playlistsInteractor: PlaylistsInteractor,
                 tracksId = currentPlaylist.tracksId,
                 tracksAmount = currentPlaylist.tracksAmount
             )
-        currentPlaylistLiveData.postValue(playlist)
-        viewModelScope.launch {
+            //currentPlaylistLiveData.postValue(playlist)
             playlistsInteractor.updatePlaylist(playlist)
         }
     }
-
-    val currentPlaylistLiveData = MutableLiveData<Playlist>()
-
-    fun observeCurrentPlaylist(): LiveData<Playlist> = currentPlaylistLiveData
 
     fun getPlaylistById(playlistId: Int) {
             viewModelScope.launch {
                 currentPlaylist = playlistsInteractor.getPlaylistById(playlistId)
                 currentPlaylistLiveData.postValue(currentPlaylist)
             }
+    }
+
+    override fun saveImageToPrivateStorage(uri: Uri, playlistName: String): String {
+        return fileInteractor.saveToStorage(this.uri, this.playListName)
     }
 }
