@@ -22,20 +22,25 @@ class FileStorageRepositoryImpl(val context: Context): FileStorageRepository {
         return file.toUri()
     }
 
-    override fun saveToStorage(uri: Uri, playlistName: String): String {
-        val picName=playlistName + "_Artwork" + ".jpg"
+    override fun saveToStorage(uri: Uri, picName: String): String {
         val filePath = File(context
             .getExternalFilesDir(Environment.DIRECTORY_PICTURES), "artwork_album")
-        if(!filePath.exists()) {filePath.mkdirs()}
+        if(!filePath.exists()) { filePath.mkdirs() }
         val file = File(filePath, picName)
-        if (file.exists()) {
-            file.delete()
-        }
         val inputStream = context.contentResolver.openInputStream(uri)
         val outputStream = FileOutputStream(file)
-        BitmapFactory
-            .decodeStream(inputStream)
-            .compress(Bitmap.CompressFormat.JPEG, 30, outputStream)
+        val bitmap = BitmapFactory.decodeStream(inputStream)
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 30, outputStream)
+        bitmap.recycle()
+        inputStream?.close()
+        outputStream.close()
         return picName
+    }
+
+    override fun deleteFile (picName: String):Boolean {
+        val filePath = File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), "artwork_album")
+        val file = File(filePath, picName)
+        if (file.exists()) return file.delete()
+        return false
     }
 }

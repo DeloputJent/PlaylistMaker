@@ -6,7 +6,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -58,8 +57,6 @@ open class NewPlayListFragment: Fragment() {
                 binding.PlaylistNameHint.isVisible = !s.isNullOrEmpty()
                 binding.createPlaylistButton.isEnabled = !s.isNullOrEmpty()
                 viewModel.playListName=s.toString()
-                Log.d("save", "60.NewPlayListFragment="+s.toString())
-                Log.d("save", "60.NewPlayListviewModel="+viewModel.playListName)
             }
             override fun afterTextChanged(s: Editable?) {}
         }
@@ -69,7 +66,6 @@ open class NewPlayListFragment: Fragment() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 binding.PlaylistDescriptionHint.isVisible = !s.isNullOrEmpty()
                 viewModel.playListDescription=s.toString()
-                Log.d("save", "69.NewPlayListFragment="+s.toString())
             }
             override fun afterTextChanged(s: Editable?) {}
         }

@@ -9,8 +9,10 @@ class FileStorageInteractorImpl(private val repository: FileStorageRepository):
     override fun getFile(pathToArtwork: String): Uri {
         return repository.getFile(pathToArtwork)
     }
-
-    override fun saveToStorage(uri: Uri, playlistName: String): String {
-       return repository.saveToStorage(uri, playlistName)
+    override fun saveToStorage(uri: Uri, picName: String): String {
+       return repository.saveToStorage(uri, picName)
+    }
+    override fun deleteFile (picName: String):Boolean {
+        return repository.deleteFile(picName)
     }
 }

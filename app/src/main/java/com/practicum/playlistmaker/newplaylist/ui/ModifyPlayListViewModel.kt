@@ -2,6 +2,7 @@ package com.practicum.playlistmaker.newplaylist.ui
 
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -51,6 +52,10 @@ class ModifyPlayListViewModel(playlistsInteractor: PlaylistsInteractor,
     }
 
     override fun saveImageToPrivateStorage(uri: Uri, playlistName: String): String {
-        return fileInteractor.saveToStorage(this.uri, this.playListName)
+        val picName=playlistName + "_Artwork" + ".jpg"
+        Log.d("FileStorage", "uri=${uri.toString()}")
+        val isDeleted = fileInteractor.deleteFile(picName)
+        Log.d("FileStorage", "isDeleted=${isDeleted.toString()}")
+        return fileInteractor.saveToStorage(uri, picName)
     }
 }

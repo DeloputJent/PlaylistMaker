@@ -39,6 +39,7 @@ open class NewPlayListViewModel(
     }
 
     open fun saveImageToPrivateStorage(uri: Uri, playlistName: String): String {
-        return fileInteractor.saveToStorage(uri, playlistName)
+        val picName=playlistName + "_Artwork" + ".jpg"
+        return fileInteractor.saveToStorage(uri, picName)
     }
 }
