@@ -4,8 +4,6 @@ import com.practicum.playlistmaker.search.data.util.Resource
 import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.search.domain.api.SearchHistoryRepository
 
-
-
 class SearchHistoryRepositoryImpl(
     private val storage: StorageClient<ArrayList<Track>>,
 ): SearchHistoryRepository {

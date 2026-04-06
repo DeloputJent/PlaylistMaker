@@ -26,16 +26,15 @@ import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.FragmentNewPlaylistBinding
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class NewPlayListFragment: Fragment() {
-    private var _binding: FragmentNewPlaylistBinding? = null
-    private val binding get() = _binding!!
+open class NewPlayListFragment: Fragment() {
+    var _binding: FragmentNewPlaylistBinding? = null
+
+    val binding get() = _binding!!
     private val viewModel: NewPlayListViewModel by viewModel()
-    private lateinit var playlistArtwork:ImageView
-    private var playListName: String = ""
-    private var playListDescription: String = ""
-    private var uri: Uri = Uri.EMPTY
-    private var nameInputControl: TextWatcher? = null
-    private var descriptionInputControl: TextWatcher? = null
+    lateinit var playlistArtwork:ImageView
+
+    var nameInputControl: TextWatcher? = null
+    var descriptionInputControl: TextWatcher? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -57,7 +56,7 @@ class NewPlayListFragment: Fragment() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 binding.PlaylistNameHint.isVisible = !s.isNullOrEmpty()
                 binding.createPlaylistButton.isEnabled = !s.isNullOrEmpty()
-                playListName=s.toString()
+                viewModel.playListName=s.toString()
             }
             override fun afterTextChanged(s: Editable?) {}
         }
@@ -66,7 +65,7 @@ class NewPlayListFragment: Fragment() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 binding.PlaylistDescriptionHint.isVisible = !s.isNullOrEmpty()
-                playListDescription=s.toString()
+                viewModel.playListDescription=s.toString()
             }
             override fun afterTextChanged(s: Editable?) {}
         }
@@ -75,7 +74,7 @@ class NewPlayListFragment: Fragment() {
         binding.inputPlaylistDescription.addTextChangedListener(descriptionInputControl)
 
         binding.backFromNewPlaylistButton.setOnClickListener {
-            if (playListName.isEmpty() and playListDescription.isEmpty() and (playlistArtwork.drawable==null)) findNavController().navigateUp()
+            if (isDescriptionEmpty()) findNavController().navigateUp()
             else onScreenCloseDialog(requireContext())
         }
 
@@ -92,8 +91,8 @@ class NewPlayListFragment: Fragment() {
                     )
                     .placeholder(R.drawable.img_placeholder_312)
                     .into( playlistArtwork)
-                this.uri=uri
                 playlistArtwork.setImageURI(uri)
+                viewModel.uri=uri
             }
         }
 
@@ -106,15 +105,16 @@ class NewPlayListFragment: Fragment() {
         }
 
         binding.createPlaylistButton.setOnClickListener {
-            var path:String=""
-            if (uri!=Uri.EMPTY)
+            var path = ""
+            if (viewModel.uri!=Uri.EMPTY)
             {
-                path = viewModel.saveImageToPrivateStorage(uri, playListName)
+                path = viewModel.saveImageToPrivateStorage(viewModel.uri, viewModel.playListName)
             }
-            viewModel.createPlayList(playListName, playListDescription, path)
+            viewModel.createPlayList(viewModel.playListName,
+                viewModel.playListDescription, path)
             val toast = Toast(requireContext())
             toast.duration= Toast.LENGTH_SHORT
-            toast.setText(getString(R.string.playlist_created, playListName))
+            toast.setText(getString(R.string.playlist_created, viewModel.playListName))
             toast.show()
             findNavController().navigateUp()
         }
@@ -126,11 +126,6 @@ class NewPlayListFragment: Fragment() {
             }
         }
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, backCallback)
-
-    }
-
-    override fun onPause() {
-        super.onPause()
     }
 
     override fun onDestroyView() {
@@ -141,7 +136,7 @@ class NewPlayListFragment: Fragment() {
     }
 
     fun isDescriptionEmpty(): Boolean {
-       return playListName.isEmpty() and playListDescription.isEmpty() and (playlistArtwork.drawable==null)
+       return viewModel.isDescriptionEmpty() and (playlistArtwork.drawable==null)
     }
     private fun onScreenCloseDialog(context: Context) {
         val dialog = MaterialAlertDialogBuilder(context)

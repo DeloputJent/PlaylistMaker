@@ -18,4 +18,7 @@ interface TracksInPlaylistsDao {
 
     @Delete (entity = TracksInPlaylistsEntity::class)
     suspend fun dropOut(tracksInPlaylistsEntity: TracksInPlaylistsEntity)
+
+    @Query("SELECT * FROM TracksInPlaylists_table WHERE trackId =:trackId")
+    suspend fun getTrackById(trackId:String): TracksInPlaylistsEntity
 }

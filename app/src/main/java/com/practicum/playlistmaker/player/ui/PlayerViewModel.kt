@@ -1,8 +1,6 @@
 package com.practicum.playlistmaker.player.ui
 
 import android.media.MediaPlayer
-import android.util.Log
-import androidx.core.R
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -179,7 +177,7 @@ class PlayerViewModel(private val track: Track,
         else {
             trackIdsList.add(track.trackId)
             val tracksId = gson.toJson(trackIdsList.toList())
-            val amount = playlist.tracksAmount+1
+            val amount = trackIdsList.size
             val updatedPlaylist = Playlist(
                 playlist.playlistID,
                 playlist.playlistName,

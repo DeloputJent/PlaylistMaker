@@ -3,10 +3,12 @@ package com.practicum.playlistmaker
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
 import com.practicum.playlistmaker.db.di.dataModule
+import com.practicum.playlistmaker.filestorage.di.FileStorageModule
 import com.practicum.playlistmaker.medialib.di.FavoriteTracksModule
 import com.practicum.playlistmaker.medialib.di.PlaylistsModule
 import com.practicum.playlistmaker.newplaylist.di.NewPlayListViewModelModule
 import com.practicum.playlistmaker.player.di.PlayerViewModelModule
+import com.practicum.playlistmaker.playlist.di.CurrentPlaylistModule
 import com.practicum.playlistmaker.search.di.SearchDataModule
 import com.practicum.playlistmaker.search.di.SearchInteractorModule
 import com.practicum.playlistmaker.search.di.SearchRepositoryModule
@@ -27,7 +29,10 @@ class PlayListMakerApplication():Application() {
 
         startKoin {
             androidContext(this@PlayListMakerApplication)
-            modules(PlaylistsModule,
+            modules(
+                FileStorageModule,
+                CurrentPlaylistModule,
+                PlaylistsModule,
                 FavoriteTracksModule,
                 PlayerViewModelModule,
                 SearchDataModule,
